@@ -2,6 +2,8 @@
 
 A [re-frame](https://github.com/Day8/re-frame) application designed to ... well, visit http://capssa.ewha.ac.kr.
 
+![Fig1](./CAPSSA-Fig1.png)
+
 ## Development Mode
 
 ### Run application:
