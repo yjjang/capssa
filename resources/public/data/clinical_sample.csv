@@ -1,0 +1,111 @@
+participant_id	os_days	os_status	dfs_days	dfs_status	Gender	Smoke	Subtype
+Pat01	1567	0	393	0	Female	No	PP / Magn
+Pat02	1506	0	1500	0	Female	No	PP / Magn
+Pat03	708	1	511	1	Female	No	PP / Magn
+Pat04	1595	0	1566	0	Female	No	PI / Squam
+Pat05	1541	0	1326	0	Female	No	PP / Magn
+Pat08	1474	0	1426	0	Female	No	PP / Magn
+Pat10	1470	0	1171	1	Female	No	PI / Squam
+Pat100	972	0	868	0	Female	No	PP / Magn
+Pat101	1034	0	949	0	Female	No	TRU / Bron
+Pat102	959	1	339	1	Female	No	TRU / Bron
+Pat103	1105	0	992	0	Female	No	PI / Squam
+Pat104	958	0	943	0	Female	No	TRU / Bron
+Pat105	946	0	497	1	Female	No	TRU / Bron
+Pat106	932	0	878	0	Female	No	PI / Squam
+Pat107	923	0	918	0	Female	No	TRU / Bron
+Pat108					Female	Yes	PP / Magn
+Pat109					Female	Yes	TRU / Bron
+Pat11	1467	0	773	0	Female	No	PP / Magn
+Pat110					Female	Yes	PI / Squam
+Pat111					Female	Yes	PP / Magn
+Pat112					Female	Yes	PP / Magn
+Pat113					Female	Yes	PP / Magn
+Pat114					Female	Yes	TRU / Bron
+Pat115					Female	Yes	PI / Squam
+Pat12	1467	0	1461	0	Female	No	TRU / Bron
+Pat13	1464	0	1114	0	Female	No	PI / Squam
+Pat15	1569	0	840	1	Female	No	PP / Magn
+Pat16	1532	0	957	0	Female	No	TRU / Bron
+Pat17	1744	0	1562	0	Female	No	TRU / Bron
+Pat18	1461	0	1392	0	Female	No	TRU / Bron
+Pat19	1461	0	1380	0	Female	No	PI / Squam
+Pat20	1457	0	1352	0	Female	No	TRU / Bron
+Pat21	1448	0	1405	0	Female	No	TRU / Bron
+Pat22	1443	0	721	0	Female	No	PP / Magn
+Pat23	1455	0	1134	0	Female	No	TRU / Bron
+Pat24	858	1	278	1	Female	No	PI / Squam
+Pat25	1301	1	728	1	Female	No	PI / Squam
+Pat26	1442	0	1429	0	Female	No	TRU / Bron
+Pat27	1427	0			Female	No	TRU / Bron
+Pat28	1569	0	1062	0	Female	No	PP / Magn
+Pat29	1489	0	1481	0	Female	No	PP / Magn
+Pat30	1407	0	1359	0	Female	No	TRU / Bron
+Pat31	1419	0	594	1	Female	No	PP / Magn
+Pat32	1314	1	539	1	Female	No	PP / Magn
+Pat33	1408	0	1144	1	Female	No	TRU / Bron
+Pat34	1492	0	458	1	Female	No	PP / Magn
+Pat36	1414	0	1394	0	Female	No	PI / Squam
+Pat37	1042	1	22	0	Female	No	PP / Magn
+Pat38	1429	0	1054	0	Female	No	TRU / Bron
+Pat39	1450	0	1414	1	Female	No	PI / Squam
+Pat40	1519	0	1457	0	Female	No	TRU / Bron
+Pat41	1419	0	356	1	Female	No	PP / Magn
+Pat42	1406	0	1359	0	Female	No	TRU / Bron
+Pat43	1393	0	1270	0	Female	No	TRU / Bron
+Pat44	1391	0	1303	0	Female	No	TRU / Bron
+Pat45	1387	0	1291	1	Female	No	PP / Magn
+Pat46	1385	0	327	1	Female	No	PP / Magn
+Pat47	1336	0	1224	0	Female	No	TRU / Bron
+Pat48	1334	0	1034	0	Female	No	TRU / Bron
+Pat49	1331	0	1060	0	Female	No	TRU / Bron
+Pat50	1421	0	1380	0	Female	No	PP / Magn
+Pat51	2141	0	2121	0	Female	No	PP / Magn
+Pat52	1129	1	300	1	Female	No	PI / Squam
+Pat53	1880	1	336	1	Female	No	PI / Squam
+Pat54	1516	1	283	1	Female	No	TRU / Bron
+Pat55	1925	0	883	1	Female	No	PI / Squam
+Pat56	1420	0	1314	0	Female	No	TRU / Bron
+Pat57	1405	0	1335	0	Female	No	TRU / Bron
+Pat58	1324	0	1144	0	Female	No	TRU / Bron
+Pat59	1317	0	1310	0	Female	No	TRU / Bron
+Pat60	1301	0	1272	1	Female	No	TRU / Bron
+Pat61	1301	0	1079	0	Female	No	TRU / Bron
+Pat62	1300	0	434	0	Female	No	PP / Magn
+Pat63	1296	0	1099	0	Female	No	TRU / Bron
+Pat64	1294	0	733	1	Female	No	PI / Squam
+Pat65	126	0	126	0	Female	No	PI / Squam
+Pat66	1280	0	1272	0	Female	No	TRU / Bron
+Pat67	1264	0	998	0	Female	No	TRU / Bron
+Pat68	1352	0	238	1	Female	No	PP / Magn
+Pat69	1244	0	679	1	Female	No	PI / Squam
+Pat70	1212	0	1191	0	Female	No	TRU / Bron
+Pat71	1210	0	1189	0	Female	No	PI / Squam
+Pat72	1464	0	848	1	Female	No	PI / Squam
+Pat73	1488	0	1363	0	Female	No	PP / Magn
+Pat74	1426	0	1070	1	Female	No	TRU / Bron
+Pat75	1377	0	1376	0	Female	No	TRU / Bron
+Pat76	1317	0	1045	0	Female	No	PI / Squam
+Pat77	1308	0	1302	1	Female	No	TRU / Bron
+Pat78	1222	0	1054	0	Female	No	PI / Squam
+Pat79	399	1	201	1	Female	No	PP / Magn
+Pat80	2118	0	889	1	Female	No	PI / Squam
+Pat81	2048	0	1712	0	Female	No	PI / Squam
+Pat82	2038	0	1729	0	Female	No	PI / Squam
+Pat83	1369	0	830	1	Female	No	TRU / Bron
+Pat84	2091	0	1805	0	Female	No	TRU / Bron
+Pat85	1138	1	210	1	Female	No	PI / Squam
+Pat86	1985	0	1897	0	Female	No	PI / Squam
+Pat87	1365	0	1338	0	Female	No	TRU / Bron
+Pat88	1182	0	790	1	Female	No	TRU / Bron
+Pat89	1001	1	672	1	Female	No	PI / Squam
+Pat90	1469	0	1140	0	Female	No	PP / Magn
+Pat91	2146	0	382	0	Female	No	TRU / Bron
+Pat92	1231	0	432	1	Female	No	PI / Squam
+Pat93	1079	0	1050	0	Female	No	PI / Squam
+Pat94	1061	0	187	1	Female	No	TRU / Bron
+Pat95	575	1	252	1	Female	No	PP / Magn
+Pat96	1044	0	371	0	Female	No	PP / Magn
+Pat97	1776	0	771	1	Female	No	PI / Squam
+Pat98	988	0	988	0	Female	No	PI / Squam
+Pat99	972	0	124	0	Female	No	PP / Magn
