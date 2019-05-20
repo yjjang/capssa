@@ -1,8 +1,9 @@
 (ns viz-stra.exp.events
   (:require [re-frame.core :as re-frame]
             [day8.re-frame.http-fx]
-            [ajax.core :as ajax]
+            [ajax.core :as ajax :refer [POST]]
             [viz-stra.events :as e]
+            [viz-stra.subs :as s]
             [viz-stra.exp.db :as exp-db]))
 
 (re-frame/reg-event-db
@@ -36,7 +37,7 @@
   ::http-load-cluster-data
   (fn [{:keys [db]} [_ geneset cohort]]
     (println "Requesting cluster data for " (:name geneset) "@" (:name cohort) "...")
-    {:db (assoc db :http-loading? true)
+    {:db (assoc db :data-loading? true)
      :http-xhrio {:method :post
                   :uri "/expclu"
                   :timeout 60000
@@ -46,7 +47,7 @@
                            :institute (:institute cohort)
                            :cancer-type (:code cohort)}
                   :on-success [::set-cluster-data (:id geneset) (:id cohort)]
-                  :on-failure [::e/http-load-failed]}}))
+                  :on-failure [::e/http-load-failed true]}}))
 
 (re-frame/reg-event-db
   ::set-cluster-data
@@ -54,13 +55,13 @@
     (println "Cluster data loaded")
     (-> db
         (assoc-in [:expression :cluster-data geneset-id cohort-id] json)
-        (assoc :http-loading? false))))
+        (assoc :data-loading? false))))
 
 (re-frame/reg-event-fx
   ::http-load-signature-data
   (fn [{:keys [db]} [_ geneset cohort]]
     (println "Requesting signature data for " (:name geneset) "@" (:name cohort) "...")
-    {:db (assoc db :http-loading? true)
+    {:db (assoc db :data-loading? true)
      :http-xhrio {:method :post
                   :uri "/expsig"
                   :timeout 120000
@@ -68,9 +69,19 @@
                   :response-format (ajax/json-response-format)
                   :params {:genes (:genes geneset)
                            :institute (:institute cohort)
-                           :cancer-type (:code cohort)}
+                           :cancer-type (:code cohort)
+                           :uuid (:uuid cohort)
+                           :clinical-data (get-in db [:clinical-data (:id cohort)])}
                   :on-success [::set-signature-data (:id geneset) (:id cohort)]
-                  :on-failure [::e/http-load-failed]}}))
+                  :on-failure [::e/http-load-failed true]}}))
+
+#_(POST "/expsig"
+        {:format :json
+         :response-format :json
+         :params {:genes ["CDKN2A" "CDKN2B" "CDK4" "RB1"]
+                  :uuid "52b63e20-fed0-4990-9129-23c3fa0049ba"
+                  :clinical-data @(re-frame/subscribe [::s/clinical-data {:id 101}])}
+         :handler #(js/console.log %)})
 
 (re-frame/reg-event-db
   ::set-signature-data
@@ -79,5 +90,5 @@
     (println (get json "message"))
     (-> db
         (assoc-in [:expression :signature-data geneset-id cohort-id] json)
-        (assoc :http-loading? false))))
+        (assoc :data-loading? false))))
 

@@ -192,7 +192,7 @@
                        :link "https://portal.gdc.cancer.gov/projects/TCGA-UCEC"
                        :institute "tcga"
                        :group "The Cancer Genome Atlas (TCGA)"}
-                   101 {:id 101
+                   51 {:id 51
                         :code "luad"
                         :name "Lung Adenocarcinoma (SMCLUAD)"
                         :institute "smc"
@@ -200,9 +200,14 @@
    ;; Clinical data for each cohort i.e. {cohort-id {...clinicals...}}
    :clinical-data {}
    :alert-list []
-   :http-loading? false})
+   :data-loading? false})
 
 ;; inspect the contents of app-db
-#_(let [app-db (deref re-frame.db/app-db)]
-    app-db)
+#_(let [app-db (deref re-frame.db/app-db)
+        luad-clinicals (-> app-db :clinical-data (get 13))
+        user-clinicals (-> app-db :clinical-data (get 101))]
+    (js/console.log luad-clinicals)
+    (js/console.log user-clinicals)
+    ;(-> app-db :cohorts)
+    )
 

@@ -78,7 +78,7 @@
           (v/present [:genes] "You should provide a list of gene symbols!"))
     (let [gs (-> @geneset
                  (update :genes #(filter (complement empty?) (string/split % #"[\s+,]"))))]
-      (println "Uploading a geneset : " gs)
+      (js/console.log "Uploading a geneset : " gs)
       (swap! ui-state assoc :doing? true)
       (POST "/geneset"
             {:format :json
@@ -194,7 +194,7 @@
      :placeholder "Type a name of gene or pathway to search in MSigDB"]))
 
 
-(defn upload-panel []
+(defn- upload-geneset-panel []
   [re-com/h-box
    :gap "10px"
    :children [[re-com/v-box
@@ -219,6 +219,210 @@
                            ": "]
                           [msigdb-suggestion-form]
                           [:span {:style {:color "grey"}} "* Press ESC key to reset"]]]]])
+
+(defn- data-desc [data-type]
+  (case data-type
+    :alters
+    [re-com/v-box
+     :children
+     [[:p.info-heading "Data format for genomic changes"]
+      [:p "You can select a file with " [:span.info-bold {:style {:color "pink"}} "somatic mutations"] " and "
+       [:span.info-bold {:style {:color "pink"}} "CNVs"] " for upload."]
+      [:p "Mutation files should have " [:span.info-bold "comma-separated"] " or " [:span.info-bold "tab-delimited"]
+       " " [:span.info-bold "three"] " columns without header line."]
+      [:p "Each rows should have values for the followings in the given order: "]
+      [:ol
+       [:li [:span.info-bold {:style {:color "yellow"}} "Patient"] " : Patient ID"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "Gene"] " : HUGO gene symbol"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "Alteration"]
+        " : An alteration event should be one of the following definitions: "
+        [:ul
+         [:li "For CNVs, "
+          [:ul
+           [:li [:span.info-bold "Amplification"]]
+           [:li [:span.info-bold "Homozygous_Deletion"]]]]
+         [:li "For somatic matations, "
+          [:ul
+           [:li [:span.info-bold "Nonsense_Mutation"]]
+           [:li [:span.info-bold "Splice_site"]]
+           [:li [:span.info-bold "Translation_Start_Site"]]
+           [:li [:span.info-bold "Missense_Mutation"]]
+           [:li [:span.info-bold "Nonstop_Mutation"]]
+           [:li [:span.info-bold "Frame_Shift_Ins"] ", " [:span.info-bold "Frame_Shift_Del"]]
+           [:li [:span.info-bold "In_Frame_Ins"] ", " [:span.info-bold "In_Frame_Del"]]
+           [:li [:span.info-bold "RNA"] ", " [:span.info-bold "lincRNA"]]
+           [:li [:span.info-bold "3'Flank"] ", " [:span.info-bold "3'UTR"] ", "
+            [:span.info-bold "5'Flank"] ", " [:span.info-bold "5'UTR"]]
+           [:li [:span.info-bold "Silent"]]]]]]]
+      [:p "An example is below:"]
+      [:code
+       "Pat01	MIR1253	Homozygous_Deletion" [:br]
+       "Pat01	UBA7	Missense_Mutation" [:br]
+       "Pat01	AQP8	Silent" [:br]
+       "Pat01	OXR1	Amplification" [:br]
+       "Pat01	EGFR	In_Frame_Del" [:br]
+       "Pat01	PSMA7	Nonsense_Mutation" [:br]]]]
+    :exp
+    [re-com/v-box
+     :children
+     [[:p.info-heading "Data format for gene expressions"]
+      [:p "You can select a file with " [:span.info-bold {:style {:color "pink"}} "gene expressions"] " for upload."]
+      [:p "Expression files should have " [:span.info-bold "comma-separated"] " or " [:span.info-bold "tab-delimited"]
+       " " [:span.info-bold "three"] " columns without a header line."]
+      [:p "Each rows should have values for the followings in the given order: "]
+      [:ol
+       [:li [:span.info-bold {:style {:color "yellow"}} "Paient"] " : Patient ID"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "Gene"] " : HUGO gene symbol"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "Estimated count"]
+        " : Normalized read count. e.g. " [:span.info-bold "FPKM"] " or " [:span.info-bold "TPM"]]]
+      [:p "An example is below:"]
+      [:code
+       "Pat01	ADAM33	3.02" [:br]
+       "Pat01	ACOX3	24.51" [:br]
+       "Pat01	ABI3	9.37" [:br]
+       "Pat01	ADPRHL2	33.82" [:br]
+       "Pat01	ADAM32	0.4" [:br]
+       "Pat01	ACSL1	123.77" [:br]]]]
+    :clinical
+    [re-com/v-box
+     :children
+     [[:p.info-heading "Data format for clinical information"]
+      [:p "You can select a file with " [:span.info-bold {:style {:color "pink"}} "clinical information"] " for upload."]
+      [:p "Files should have " [:span.info-bold "comma-separated"] " or " [:span.info-bold "tab-delimited"]
+       " arbitrary number of columns " [:span.info-bold "with headers"] "."]
+      [:p "Headers can have any names you want. Exceptionally, "
+       [:span.bold " header names holding patient IDs and survival information must be one of the followings: "]]
+      [:ol
+       [:li [:span.info-bold {:style {:color "yellow"}} "participant_id"] " : Patient ID"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "os_days"] " : Overall survival days"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "os_status"]
+        " : Indication if a patient's overall survival time is cencored"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "dfs_days"] " : Disease-free survival days"]
+       [:li [:span.info-bold {:style {:color "yellow"}} "dfs_status"]
+        " : Indication if a patient's disease-free survival time is cencored"]]
+      [:p "An example is below:"]
+      [:code
+       "participant_id	os_days	os_status	dfs_days	dfs_status	smoke	subtype" [:br]
+       "Pat01	1567	0	393	0	No	Magnoid" [:br]
+       "Pat02	1506	0	1500	0	No	Squamoid" [:br]
+       "Pat03	708	1	511	1	No	Bronchioid" [:br]
+       "Pat04	1470	0	1171	1	No	Squamoid" [:br]
+       "Pat05	959	1	339	1	No	Bronchioid" [:br]]]]))
+
+(defn- upload-btn [up-files data-type]
+  (let [file (@up-files data-type)]
+    [re-com/v-box
+     :style {:background (case data-type :clinical "#F9F9F9" "#F0F0F0") :padding-left "10px"}
+     :gap "10px"
+     :children
+     [[re-com/gap :size "10px"]
+      [:h4 (case data-type
+             :alters "Somatic mutations and CNVs"
+             :exp "Gene expressions"
+             :clinical "Clinical information")
+       [re-com/info-button
+        :width "500px"
+        :style {:color "blue" :margin-left "5px"}
+        :info [data-desc data-type]]]
+      [re-com/h-box
+       :children
+       [[:label.semibold {:style {:cursor "pointer"}}
+         [re-com/h-box
+          :gap "10px"
+          :children
+          [[:input.hidden
+            {:type "file"
+             :accept "*.csv"
+             :on-change #(let [target (.-currentTarget %)
+                               f (-> target .-files (aget 0))]
+                           (set! (.-value target) "")
+                           (swap! up-files assoc data-type f))}]
+           [:i.fa.fa-upload.fa-lg]
+           [re-com/label :label (if file (.-name file) " Click here to upload a csv ...")]]]]
+        [re-com/gap :size "5px"]
+        (if file
+          [:i.fa.fa-times {:style {:color "red" :cursor "pointer"}
+                           :on-click #(swap! up-files assoc data-type nil)}]
+          [:span
+           [:i {:style {:margin-left "15px" :margin-right "5px"} :class "zmdi zmdi-file-text"}]
+           [re-com/hyperlink-href
+            :label "example"
+            :href (case data-type
+                    :alters "data/alteration_sample.csv"
+                    :exp "data/expression_sample.csv"
+                    :clinical "data/clinical_sample.csv")
+            :target "_blank"
+            :tooltip "Download an example csv"]])]]]]))
+
+(defn- upload-cohort-panel [up-files]
+  (let [cohort-name (reagent/atom "")]
+    (fn []
+      [re-com/v-box
+       :width "400px"
+       :gap "10px"
+       :children
+       [[upload-btn up-files :alters]
+        [upload-btn up-files :exp]
+        [upload-btn up-files :clinical]
+        [re-com/gap :size "10px"]
+        [re-com/h-box
+         :gap "10px"
+         :align :center
+         :children
+         [[re-com/label :label "Cohort name: "]
+          [re-com/input-text
+           :width "300px"
+           :placeholder "Enter a display name here."
+           :model cohort-name
+           :change-on-blur? false
+           :on-change #(reset! cohort-name %)]]]
+        [re-com/gap :size "20px"]
+        [re-com/button
+         :label [:span "Upload " [:i.zmdi.zmdi-hc-fw-rc.zmdi-upload]]
+         :disabled? (not (and (or (@up-files :alters) (@up-files :exp)) (not-empty @cohort-name)))
+         :on-click
+         #(let [cohort-desc {:id (-> @(re-frame/subscribe [::s/cohort-ids])
+                                     last
+                                     ((fn [id] (inc (if (> id 100) id 100)))))
+                             :uuid (str (random-uuid))
+                             :name @cohort-name}]
+            (re-frame/dispatch [::e/add-a-cohort cohort-desc])
+            (doseq [[type file] @up-files]
+              (when file
+                (js/Papa.parse
+                  file
+                  #js {:header (case type :clinical true false)
+                       :dynamicTyping true
+                       :skipEmptyLines "greedy"
+                       :complete
+                       (fn [result]
+                         (let [data (.-data result)]
+                           (re-frame/dispatch [::e/store-cohort-data cohort-desc type data])))})))
+            (reset! up-files {:alters nil :exp nil :clinical nil})
+            (reset! cohort-name ""))
+         :style {:color "white"
+                 :background-color "#4d90fe"
+                 :font-size "18px"
+                 :font-weight "250"
+                 :border "none"
+                 :border-radius "0px"
+                 :padding "6px 10px"}]]])))
+
+(def active-upload-panel (reagent/atom :geneset))
+(def upload-files (reagent/atom {:alters nil :exp nil :clinical nil}))
+
+(defn upload-panel []
+  [re-com/v-box
+   :height "100%"
+   :children
+   [[Nav {:bs-style "tabs" :active-key @active-upload-panel
+          :on-select #(when % (reset! active-upload-panel (keyword %)))}
+     [NavItem {:event-key "geneset"} "Gene set"]
+     [NavItem {:event-key "cohort"} "Cohort data"]]
+    [re-com/gap :size "10px"]
+    (case @active-upload-panel
+      :geneset [upload-geneset-panel]
+      :cohort [upload-cohort-panel upload-files])]])
 
 ;; -------------------------------------------------------------
 
@@ -370,7 +574,8 @@
   (let [brand @(re-frame/subscribe [::s/name])
         default-genesets @(re-frame/subscribe [::s/default-genesets])
         user-genesets @(re-frame/subscribe [::s/user-genesets])
-        cohorts @(re-frame/subscribe [::s/cohort-list])]
+        default-cohorts @(re-frame/subscribe [::s/default-cohorts])
+        user-cohorts @(re-frame/subscribe [::s/user-cohorts])]
     [Navbar {:inverse true :fluid true}
      [Navbar-Header
       [Navbar-Brand [:a {:href "#"
@@ -446,8 +651,11 @@
       :position :below-left
       :style {:float "left"}
       :anchor [re-com/single-dropdown
-               :choices (mapv #(-> {:id (:id %) :label (:name %) :group (:group %)})
-                              cohorts)
+               :choices (concat
+                          (mapv #(-> {:id (:id %) :label (:name %) :group (:group %)})
+                                user-cohorts)
+                          (mapv #(-> {:id (:id %) :label (:name %) :group (:group %)})
+                                default-cohorts))
                :model (re-frame/subscribe [::s/selected-cohort-id])
                :placeholder "Choose a cohort"
                :width "360px"
@@ -519,7 +727,7 @@
               :top (case @active-panel
                      :mutation-panel "60px"
                      :expression-panel "60px"
-                     "0px")
+                     "50px")
               :left "80%"
               :opacity "0.7"
               :z-index "300"}

@@ -128,7 +128,7 @@
   (if-let [json @(re-frame/subscribe [::subs/landscape-data])]
     (do (reset! spinning? true)
         [mutation-landscape-with-spinning json])
-    (if @(re-frame/subscribe [::s/http-loading?])
+    (if @(re-frame/subscribe [::s/data-loading?])
       [Spinner 1200]
       (re-frame/dispatch [::events/http-load-landscape-data
                           @(re-frame/subscribe [::s/selected-geneset])
@@ -204,9 +204,10 @@
                    (if-let [json @(re-frame/subscribe [::s/survival-data cohort])]
                      [landscape-surv-plot json @landscape-division @visible-only?]
                      (if (or (nil? @(re-frame/subscribe [::subs/landscape-data]))
-                             @(re-frame/subscribe [::s/http-loading?]))
+                             @(re-frame/subscribe [::s/data-loading?]))
                        [Spinner]
-                       (re-frame/dispatch [::e/http-load-clinical-data cohort]))))
+                       (when-not (:user? cohort)
+                         (re-frame/dispatch [::e/http-load-clinical-data cohort])))))
                  (when (pos? (count (:disabled @landscape-division)))
                    [re-com/checkbox
                     :label "Includes visible samples only"
@@ -217,6 +218,10 @@
                    [landscape-sankey-plot on @landscape-division]
                    [:div [Glyphicon {:glyph "hand-left"}] " Select a subtype category."])
     [:div]))
+
+#_(js/console.log @(re-frame/subscribe [::subs/landscape-data]))
+#_(let [cohort @(re-frame/subscribe [::s/selected-cohort])]
+    (js/console.log @(re-frame/subscribe [::s/survival-data cohort])))
 
 ;; -------------------------------------------------------------------------
 
@@ -232,7 +237,11 @@
     [re-com/h-box
      :gap "10px"
      :style {:flex-flow "wrap"}
-     :children [[landscape-panel]
+     :children [(let [cohort @(re-frame/subscribe [::s/selected-cohort])]
+                  (if (and (:user? cohort) (nil? @(re-frame/subscribe [::s/clinical-data cohort])))
+                    (when-not @(re-frame/subscribe [::s/data-loading?])
+                      (re-frame/dispatch [::e/local-load-clinical-data cohort]))
+                    [landscape-panel]))
                 (if @landscape-loaded?
                   [re-com/v-box
                    :gap "10px"

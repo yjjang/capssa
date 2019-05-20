@@ -4,6 +4,9 @@
             ;; -- Foreign libs --------------
             [cljsjs.d3]
             [cljsjs.jquery]
+            [cljsjs.papaparse]
+            [cljsjs.pouchdb]
+            [cljsjs.pouchdb-find]
             [highcharts]
             [highcharts.more]
             [highcharts.modules.exporting]

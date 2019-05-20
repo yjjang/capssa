@@ -7,20 +7,33 @@
             [ajax.core :as ajax]
             [viz-stra.db :as db]))
 
+(def gss-storage-key "local-genesets")
+(def cos-storage-key "local-cohorts")
+(def user-cohorts-group "User Supplied Cohorts")
+
 (re-frame/reg-event-fx
   ::initialize-db
-  [(re-frame/inject-cofx :local-stored-genesets)]
-  (fn  [{:keys [local-stored-gss]} _]
-    {:db (update db/default-db :genesets merge local-stored-gss)}))
-
-(def gss-storage-key "local-genesets")
+  [(re-frame/inject-cofx :local-stored-genesets)
+   (re-frame/inject-cofx :local-stored-cohorts)]
+  (fn  [{:keys [local-stored-genesets local-stored-cohorts]} _]
+    {:db (-> db/default-db
+             (update :genesets merge local-stored-genesets)
+             (update :cohorts merge local-stored-cohorts))}))
 
 (re-frame/reg-cofx
   :local-stored-genesets
   (fn [cofx _]
-    (assoc cofx :local-stored-gss
+    (assoc cofx :local-stored-genesets
            (into (sorted-map)
                  (some->> (.getItem js/localStorage gss-storage-key)
+                          (cljs.reader/read-string))))))
+
+(re-frame/reg-cofx
+  :local-stored-cohorts
+  (fn [cofx _]
+    (assoc cofx :local-stored-cohorts
+           (into (sorted-map)
+                 (some->> (.getItem js/localStorage cos-storage-key)
                           (cljs.reader/read-string))))))
 
 (def genesets->local-store
@@ -28,6 +41,11 @@
     #(let [gss (into (sorted-map)
                      (filter (fn [[_ gene]] (:user? gene)) %))]
        (.setItem js/localStorage gss-storage-key (str gss)))))
+
+(def cohorts->local-store
+  (re-frame/after
+    #(let [cohorts (into (sorted-map) (filter (fn [[_ cohort]] (:user? cohort)) (:cohorts %)))]
+       (.setItem js/localStorage cos-storage-key (str cohorts)))))
 
 (re-frame/reg-event-db
   ::add-a-geneset
@@ -68,7 +86,7 @@
   [(re-frame/path :genesets)
    genesets->local-store]
   (fn [genesets [_ gs]]
-    (re-frame/dispatch
+    (re-frame/dispatch-sync
       [::add-alert {:alert-type :warning
                     :heading "Gene set removed."
                     :body (:name gs)}])
@@ -85,12 +103,78 @@
   (fn [db [_ geneset-id]]
     (assoc db :selected-geneset-id geneset-id)))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::add-a-cohort
-  (fn [db [_ cohort-info]]
-    (let [id (-> (:cohorts db) keys last ((fnil inc 0)))
-          cohort (assoc cohort-info :id id)]
-      (assoc-in db [:cohorts id] cohort))))
+  [cohorts->local-store]
+  (fn [{:keys [db]} [_ cohort]]
+    (let []
+      {:db (assoc-in db [:cohorts (:id cohort)]
+                     (-> cohort
+                         (assoc :user? true)
+                         (assoc :group user-cohorts-group)
+                         (assoc :alters false)
+                         (assoc :exp false)
+                         (assoc :clinical nil)))
+       :dispatch [::add-alert {:alert-type :info
+                               :heading "Cohort data added."
+                               :body (:name cohort)}]})))
+
+(re-frame/reg-event-fx
+  ::store-cohort-data
+  [cohorts->local-store]
+  (fn [{:keys [db]} [_ {:keys [id name uuid]} type data]]
+    (case type
+      :clinical
+      (let [clinical-store (str id type)]
+        {:pouchdb-store {:clinical-store clinical-store
+                         :docs data
+                         :on-success [:pouchdb-clinical-store-success id name clinical-store]
+                         :on-failure #(js/console.log (.-message %))}})
+      {:http-xhrio {:method :post
+                    :uri "/upload"
+                    :timeout 30000
+                    :format (ajax/json-request-format)
+                    :response-format (ajax/json-response-format)
+                    :params {:uuid uuid :type type :data data}
+                    :on-success [:http-cohort-store-success id name type]
+                    :on-failure [::http-load-failed false]}})))
+
+(re-frame/reg-event-fx
+  :pouchdb-clinical-store-success
+  [cohorts->local-store]
+  (fn [{:keys [db]} [_ id name clinical-store res]]
+    {:db (assoc-in db [:cohorts id :clinical] clinical-store)
+     :dispatch [::add-alert {:alert-type :info
+                             :heading name
+                             :body "Clinical information has been stored."}]}))
+
+(re-frame/reg-event-fx
+  :http-cohort-store-success
+  [cohorts->local-store]
+  (fn [{:keys [db]} [_ id name type res]]
+    (let [rows (get res "rows")]
+      {:db (assoc-in db [:cohorts id type] true)
+       :dispatch [::add-alert {:alert-type :info
+                               :heading name
+                               :body (str rows " rows have been stored.")}]})))
+
+(re-frame/reg-fx
+  :pouchdb-store
+  (fn [{:keys [clinical-store docs on-success on-failure]}]
+    (let [pouchdb (js/PouchDB. clinical-store)]
+      (.. pouchdb
+          (bulkDocs docs)
+          (then #(do (re-frame/dispatch (conj on-success %)) (.close pouchdb)))
+          (catch #(do (on-failure %) (.close pouchdb)))))))
+
+(re-frame/reg-event-fx
+  ::remove-a-cohort
+  [cohorts->local-store]
+  (fn [{:keys [db]} [_ cohort-id]]
+    {:dispatch [::add-alert {:alert-type :warning
+                                  :heading "Cohort data removed."
+                                  :body (get-in db [:cohorts cohort-id :name])}]
+     :db (update db :cohorts dissoc cohort-id)}))
 
 (re-frame/reg-event-db
   ::select-a-cohort
@@ -102,9 +186,9 @@
 
 (re-frame/reg-event-fx
   ::http-load-failed
-  (fn [{:keys [db]} [_ details]]
-    {:db (assoc db :http-loading? false)
-     :http-error details}))
+  (fn [{:keys [db]} [_ retry? details]]
+    {:db (assoc db :data-loading? false)
+     :http-error (assoc details :retry? retry?)}))
 
 (re-frame/reg-fx
   :http-error
@@ -112,7 +196,7 @@
     (re-frame/dispatch
       [::add-alert
        {:alert-type :danger
-        :heading "HTTP request failed. Retrying..."
+        :heading (str "HTTP request failed." (if (:retry? details) " Retrying ..." ""))
         :body [:div
                [:p (:uri details)]
                [:p (:debug-message details)]]}])))
@@ -121,7 +205,7 @@
   ::http-load-clinical-data
   (fn [{:keys [db]} [_ cohort]]
     (println "Requesting clinical data for" (:name cohort) "...")
-    {:db (assoc db :http-loading? true)
+    {:db (assoc db :data-loading? true)
      :http-xhrio {:method :post
                   :uri "/clinical"
                   :timeout 30000
@@ -129,15 +213,51 @@
                   :response-format (ajax/json-response-format)
                   :params {:institute (:institute cohort) :cancer-type (:code cohort)}
                   :on-success [::set-clinical-data (:id cohort)]
-                  :on-failure [::http-load-failed]}}))
+                  :on-failure [::http-load-failed true]}}))
+
+(re-frame/reg-event-fx
+  ::local-load-clinical-data
+  (fn [{:keys [db]} [_ cohort]]
+    (println "Requesting clinical data for" (:name cohort) "...")
+    (if-let [clinical-store (:clinical cohort)]
+      {:db (assoc db :data-loading? true)
+       :pouchdb-load {:clinical-store clinical-store
+                      :on-success [::set-clinical-data (:id cohort)]
+                      :on-failure #(js/console.log (.-message %))}}
+      {:db (assoc db :data-loading? true)
+       :dispatch [::set-clinical-data (:id cohort) []]})))
+
+(re-frame/reg-fx
+  :pouchdb-load
+  (fn [{:keys [clinical-store on-success on-failure]}]
+    (let [pouchdb (js/PouchDB. clinical-store)]
+      (.. pouchdb
+          (allDocs #js {:include_docs true})
+          (then #(let [docs (->> (.-rows %)
+                                 (map (fn [row] (.-doc row)))
+                                 (map (fn [doc]
+                                        (js-delete doc "_id")
+                                        (js-delete doc "_rev")
+                                        (when-not (number? (.-os_days doc)) (set! (.-os_days doc) nil))
+                                        (when-not (number? (.-dfs_days doc)) (set! (.-dfs_days doc) nil))
+                                        (when-not (number? (.-os_status doc)) (set! (.-os_status doc) nil))
+                                        (when-not (number? (.-dfs_status doc)) (set! (.-dfs_status doc) nil))
+                                        doc))
+                                 js->clj vec)]
+                   (re-frame/dispatch-sync (conj on-success docs))
+                   (.close pouchdb)))
+          (catch #(do (on-failure %) (.close pouchdb)))))))
+
+#_(re-frame/dispatch [::local-load-clinical-data {:clinical "101:clinical" :id 101}])
+#_(re-frame/dispatch [::local-load-clinical-data {:clinical "102:clinical" :id 102}])
 
 (re-frame/reg-event-db
   ::set-clinical-data
   (fn [db [_ cohort-id json]]
-    (println "Clinical data loaded")
+    (println "Clinical data loaded" (if (empty? json) "(empty)" ""))
     (-> db
         (assoc-in [:clinical-data cohort-id] json)
-        (assoc :http-loading? false))))
+        (assoc :data-loading? false))))
 
 (re-frame/reg-event-db
   ::set-active-panel
@@ -147,9 +267,10 @@
 (re-frame/reg-event-db
   ::add-alert
   (fn [db [_ alert]]
-    (let [{:keys [alert-type heading body] :or {alert-type :info}} alert
+    (let [{:keys [alert-type heading body auto-close?] :or {alert-type :info auto-close? true}} alert
           id (gensym)]
-      (js/setTimeout #(re-frame/dispatch [::remove-alert id]) 5000)
+      (when auto-close?
+        (js/setTimeout #(re-frame/dispatch [::remove-alert id]) 10000))
       (update db :alert-list
               insert-nth 0 {:id id
                             :alert-type alert-type

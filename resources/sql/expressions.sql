@@ -11,6 +11,17 @@ WHERE institute_short = :institute
   AND hugo_symbol IN (:v*:genes)
 GROUP BY participant_id, hugo_symbol;
 
+-- :name get-cohort-exp-values-user :? :*
+-- :doc Get TPM values by genes and cancer type
+
+SELECT participant_id,
+       hugo_symbol,
+       tpm
+FROM VS_LOCAL_RNASEQRAW_CURATED_TB
+WHERE uuid = :uuid
+  AND hugo_symbol IN (:v*:genes)
+GROUP BY participant_id, hugo_symbol;
+
 -- :name get-cohort-prognostic-values :? :*
 -- :doc Get log2 TPM values, overall survival days and status by genes and cancer type
 /* :require [clojure.string :as s] */

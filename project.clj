@@ -2,7 +2,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.339"]
                  [org.clojure/core.async "0.4.474"]
-                 [org.clojure/java.jdbc "0.7.8"]
+                 [org.clojure/java.jdbc "0.7.9"]
                  [reagent "0.8.1"]
                  [re-frame "0.10.6"]
                  [day8.re-frame/http-fx "0.1.6"]
@@ -15,10 +15,14 @@
                  [yogthos/config "1.1.1"]
                  [ring "1.6.3"]
                  [ring/ring-json "0.4.0"]
+                 [http-kit "2.3.0"]
                  [cljs-ajax "0.7.4"]
                  [cljsjs/react-bootstrap "0.31.5-0"]
                  [cljsjs/d3 "4.12.0-0"]
                  [cljsjs/jquery "3.2.1-0"]
+                 [cljsjs/papaparse "4.1.1-1"]
+                 [cljsjs/pouchdb "7.0.0-0"]
+                 [cljsjs/pouchdb-find "7.0.0-1"]
                  [cheshire "5.8.0"]
                  [hikari-cp "2.6.0"]
                  [com.layerware/hugsql "0.4.9"]
@@ -39,18 +43,24 @@
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "test/js"]
 
-  :figwheel {:css-dirs ["resources/public/css"]
-             :ring-handler viz-stra.handler/dev-handler}
-
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.10"]
                                   [figwheel-sidecar "0.5.16"]
-                                  [com.cemerick/piggieback "0.2.2"]]
+                                  [cider/piggieback "0.4.1"]]
                    :source-paths ["src/cljs"]
                    :plugins [[lein-cljsbuild "1.1.7"]
                              [lein-figwheel "0.5.16"]
+                             ;[lein-ring "0.12.5"]
                              [lein-doo "0.1.10"]]}}
 
-  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]
+  :figwheel {:ring-handler viz-stra.handler/dev-handler
+             :css-dirs ["resources/public/css"]}
+
+  ;:ring {:handler viz-stra.handler/dev-handler
+  ;       :auto-reload? true
+  ;       :open-browser? false
+  ;       :adapter {:request-header-size 128000000}}
+
+  :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]
                  :init (do (use 'figwheel-sidecar.repl-api)
                            (start-figwheel!))
                  :timeout 120000}
@@ -137,5 +147,4 @@
 :uberjar-name "CaPSSA.jar"
 
 ;:prep-tasks [["cljsbuild" "once" "min"] "compile"]
-)
-
+:aliases {"distbuild" ["clean" "compile" ["cljsbuild" "once" "min"] "uberjar"]})

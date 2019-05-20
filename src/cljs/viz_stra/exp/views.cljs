@@ -22,19 +22,19 @@
          :response-format :json
          :params {:genes ["TP53" "RB1"]
                   :cancer-type "luad"}
-         :handler #(println %)})
+         :handler #(js/console.log %)})
 
 ;; JQuery style request form params
 #_(POST "/echo.f"
         {:body (str "chi_square_score=" 0.2022848103007694)
          :response-format :raw
-         :handler #(println %)})
+         :handler #(js/console.log %)})
 
 ;; P-value for chi-squared score
 #_(POST "/chip"
         {:body (str "chi_square_score=" 0.34817053791078745)
          :response-format :raw
-         :handler #(println %)});0.5551505694514616
+         :handler #(js/console.log %)});0.5551505694514616
 
 ;; -- Hierarchical clustering UI -------------------------------------------
 
@@ -429,7 +429,7 @@
   (if-let [json @(re-frame/subscribe [::subs/cluster-data])]
     ;[cluster-heatmap json]
     (do (reset! spinning? true) [cluster-heatmap-with-spinning json])
-    (if @(re-frame/subscribe [::s/http-loading?])
+    (if @(re-frame/subscribe [::s/data-loading?])
       [Spinner (+ (:width inchlib-settings) (:legend_area_width inchlib-settings))]
       (re-frame/dispatch [::events/http-load-cluster-data
                           @(re-frame/subscribe [::s/selected-geneset])
@@ -634,7 +634,7 @@
                  (let [cohort @(re-frame/subscribe [::s/selected-cohort])]
                    (if-let [json @(re-frame/subscribe [::s/survival-data cohort])]
                      [cluster-surv-plot c-indices json]
-                     (if @(re-frame/subscribe [::s/http-loading?])
+                     (if @(re-frame/subscribe [::s/data-loading?])
                        [Spinner]
                        (re-frame/dispatch [::e/http-load-clinical-data cohort]))))
                  [:div [Glyphicon {:glyph "hand-left"}] " Select a cluster in the dendrogram."])
@@ -811,7 +811,7 @@
     ;[signature-panel json]
     (do (reset! spinning? true)
         [signature-panel-with-spinning json])
-    (if @(re-frame/subscribe [::s/http-loading?])
+    (if @(re-frame/subscribe [::s/data-loading?])
       [Spinner 1200]
       (re-frame/dispatch[::events/http-load-signature-data
                          @(re-frame/subscribe [::s/selected-geneset])
@@ -1050,7 +1050,11 @@
   [re-com/h-box
    :gap "10px"
    :style {:flex-flow "wrap"}
-   :children [[risk-signature]
+   :children [(let [cohort @(re-frame/subscribe [::s/selected-cohort])]
+                (if (and (:user? cohort) (nil? @(re-frame/subscribe [::s/clinical-data cohort])))
+                  (when-not @(re-frame/subscribe [::s/data-loading?])
+                    (re-frame/dispatch [::e/local-load-clinical-data cohort]))
+                  [risk-signature]))
               (if @risk-division
                 [re-com/v-box
                  :gap "10px"
@@ -1066,6 +1070,9 @@
                      :width "200px"]
                     [risk-sub-plot @selected-plot]])]
                 [:div])]])
+
+#_(js/console.log @(re-frame/subscribe [::subs/signature-data]))
+#_(js/console.log @(re-frame/subscribe [::subs/cluster-data]))
 
 ;; -------------------------------------------------------------------------
 

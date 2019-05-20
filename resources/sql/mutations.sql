@@ -10,6 +10,16 @@ WHERE institute_short = :institute
   AND hugo_symbol IN (:v*:genes)
 ORDER BY gene;
 
+-- :name get-mutation-list-user :? :*
+-- :doc Get mutations in all patients for the given user dataset
+
+SELECT DISTINCT participant_id participant_id,
+                hugo_symbol gene,
+                variant_classification type
+FROM VS_LOCAL_MUTATION_CNV_TB
+WHERE uuid = :uuid AND hugo_symbol IN (:v*:genes)
+ORDER BY gene;
+
 -- :name get-subtype-list :? :*
 -- :doc Get patient subtypes for the given cancer type
 /* :require [clojure.string :as s] */

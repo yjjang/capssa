@@ -8,4 +8,6 @@
 (defn -main [& args]
   (let [port (Integer/parseInt (or (env :port) "8080"))]
     (println "Starting CaPSSA server on port" port "...")
-    (run-jetty (wrap-with-logger handler) {:port port :join? false})))
+    (run-jetty
+      (wrap-with-logger handler)
+      {:port port :join? false :request-header-size 256000000})))

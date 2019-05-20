@@ -5,6 +5,9 @@
 out
 /src/clj/viz_stra/db.clj
 
+# Vim swap files
+.*.sw*
+
 # Created by https://www.gitignore.io/api/clojure
 # Edit at https://www.gitignore.io/?templates=clojure
 

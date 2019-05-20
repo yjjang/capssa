@@ -17,9 +17,9 @@
                   (fn [db _]
                     (:alert-list db)))
 
-(re-frame/reg-sub ::http-loading?
+(re-frame/reg-sub ::data-loading?
                   (fn [db _]
-                    (:http-loading? db)))
+                    (:data-loading? db)))
 
 (re-frame/reg-sub ::geneset-list
                   (fn [db _] (vals (:genesets db))))
@@ -37,8 +37,24 @@
 (re-frame/reg-sub ::geneset-of
                   (fn [db [_ id]] ((:genesets db) id)))
 
+(re-frame/reg-sub ::cohort-ids
+                  (fn [db _] (keys (:cohorts db))))
+
 (re-frame/reg-sub ::cohort-list
                   (fn [db _] (vals (:cohorts db))))
+
+(re-frame/reg-sub ::default-cohorts
+                  :<- [::cohort-list]
+                  (fn [co-list _]
+                    (filter #(not (:user? %)) co-list)))
+
+(re-frame/reg-sub ::user-cohorts
+                  :<- [::cohort-list]
+                  (fn [co-list _]
+                    (filter :user? co-list)))
+
+(re-frame/reg-sub ::cohort-of
+                  (fn [db [_ id]] ((:cohorts db) id)))
 
 (re-frame/reg-sub ::selected-geneset
                   (fn [db _] (get-in db [:genesets (:selected-geneset-id db)])))

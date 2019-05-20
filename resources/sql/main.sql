@@ -13,3 +13,4 @@ SELECT *
 FROM BIOBANK.VS_MSIGDB_GENESETS_TB
 WHERE (name LIKE :like OR genes LIKE :like)
   AND (LENGTH(genes) - LENGTH(REPLACE(genes, ',', ''))) < :limit;
+

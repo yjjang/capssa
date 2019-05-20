@@ -12,11 +12,13 @@
             [clojure.java.io :as io]
             [clojure.set :as set]
             [clojure.string :as string]
+            [clojure.walk :refer [stringify-keys]]
             [clojure.core.async :refer [>!! alts!! chan timeout]]
             [ajax.core :as ajax]
             [clojure.core.matrix :as m]
             [incanter.core :refer [log2]]
-            [incanter.stats :refer [mean correlation]]))
+            [incanter.stats :refer [mean correlation]]
+            [clojure.java.jdbc :as jdbc]))
 
 (defn echo-params [req]
   (let [params (:params req)]
@@ -180,23 +182,46 @@
           (-> scores vals sort)))
 
 (defn get-exp-signature [req]
-  (let [genes (get-in req [:params :genes])
-        institute (get-in req [:params :institute])
-        cancer-type (get-in req [:params :cancer-type])
-        subtypes (get-subtype-values CGIS {:institute institute :cancer-type cancer-type})
-        patients (get-patients-data institute cancer-type)
-        cohort-data (get-cohort-exp-values CGIS {:institute institute :cancer-type cancer-type :genes genes})]
-    {:status 0
-     :message "OK"
-     :data {:subtype_list subtypes
-            :patient_list patients
-            :gene_list (map (fn [g] {:hugo_symbol g}) genes)
-            :cohort_rna_list cohort-data
-            :sample_rna_list []}
-     ;:cox (cox institute cancer-type genes)
-     ;; Without additional DB query
-     :cox (cox2 cohort-data patients)
-     :fc (when (> (count genes) 1) (farthest-centroid cohort-data patients))}))
+  (if-let [uuid (get-in req [:params :uuid])]
+    (let [genes (get-in req [:params :genes])
+          clinical-data (get-in req [:params :clinical-data])
+          subtypes (->> clinical-data
+                        (map #(dissoc % :participant_id :os_days :os_status :dfs_days :dfs_status))
+                        (map #(map (fn [[k v]] {:subtype k :value v :column_type "value"}) %))
+                        (apply concat)
+                        (into #{}) vec
+                        (sort-by (juxt :subtype :value)))
+          patients (map stringify-keys clinical-data)
+          cohort-data (get-cohort-exp-values-user CGIS {:uuid uuid :genes genes})]
+      {:status 0
+       :message "OK"
+       :data {:subtype_list subtypes
+              :patient_list patients
+              :gene_list (map (fn [g] {:hugo_symbol g}) genes)
+              :cohort_rna_list cohort-data
+              :sample_rna_list []}
+       :cox (when (let [c (first clinical-data)]
+                    (and (contains? c :os_days) (contains? c :os_status)))
+              (cox2 cohort-data patients))
+       :fc (when (and (contains? (first clinical-data) :os_days) (> (count genes) 1))
+             (farthest-centroid cohort-data patients))})
+    (let [genes (get-in req [:params :genes])
+          institute (get-in req [:params :institute])
+          cancer-type (get-in req [:params :cancer-type])
+          subtypes (get-subtype-values CGIS {:institute institute :cancer-type cancer-type})
+          patients (get-patients-data institute cancer-type)
+          cohort-data (get-cohort-exp-values CGIS {:institute institute :cancer-type cancer-type :genes genes})]
+      {:status 0
+       :message "OK"
+       :data {:subtype_list subtypes
+              :patient_list patients
+              :gene_list (map (fn [g] {:hugo_symbol g}) genes)
+              :cohort_rna_list cohort-data
+              :sample_rna_list []}
+       ;:cox (cox institute cancer-type genes)
+       ;; Without additional DB query
+       :cox (cox2 cohort-data patients)
+       :fc (when (> (count genes) 1) (farthest-centroid cohort-data patients))})))
 
 (defn response-for-exp-clusters [req]
   (let [genes (get-in req [:params :genes])
@@ -234,19 +259,30 @@
     (filter mut-genes genes))
 
 (defn get-mut-landscape [req]
-  (let [genes (get-in req [:params :genes])
-        institute (get-in req [:params :institute])
-        cancer-type (get-in req [:params :cancer-type])
-        muts (get-mutation-list CGIS {:institute institute :cancer-type cancer-type :genes genes})]
-    {:status 0
-     :message "OK"
-     :data {:name (str "Comutations in " (string/upper-case institute) " " (string/upper-case cancer-type))
-            :type (string/upper-case cancer-type)
-            :mutation_list muts
-            :gene_list (map (fn [g] {:gene g :p 0.0 :q 0.0})
-                            (filter (set (map :gene muts)) genes))
-            :group_list (get-group-list institute cancer-type)
-            :patient_list []}}))
+  (if-let [uuid (get-in req [:params :uuid])]
+    (let [genes (get-in req [:params :genes])
+          muts (get-mutation-list-user CGIS {:uuid uuid :genes genes})]
+      {:status 0
+       :message "OK"
+       :data {:name (str "Comutations in user data: " uuid)
+              :type "USER"
+              :mutation_list muts
+              :gene_list (map (fn [g] {:gene g :p 0.0 :q 0.0})
+                              (filter (set (map :gene muts)) genes))
+              :group_list [] :patient_list []}})
+    (let [genes (get-in req [:params :genes])
+          institute (get-in req [:params :institute])
+          cancer-type (get-in req [:params :cancer-type])
+          muts (get-mutation-list CGIS {:institute institute :cancer-type cancer-type :genes genes})]
+      {:status 0
+       :message "OK"
+       :data {:name (str "Comutations in " (string/upper-case institute) " " (string/upper-case cancer-type))
+              :type (string/upper-case cancer-type)
+              :mutation_list muts
+              :gene_list (map (fn [g] {:gene g :p 0.0 :q 0.0})
+                              (filter (set (map :gene muts)) genes))
+              :group_list (get-group-list institute cancer-type)
+              :patient_list []}})))
 
 (defn validate-gene-symbols [req]
   (let [genes (get-in req [:params :genes])
@@ -266,6 +302,19 @@
 
 #_(geneset-suggestions-for "p53" :cols #{"C2"})
 
+(defn upload-local-cohort [req]
+  (let [type (keyword (get-in req [:params :type]))
+        uuid (get-in req [:params :uuid])
+        data (mapv #(-> % vec (conj uuid)) (get-in req [:params :data]))
+        table (case type :alters :VS_LOCAL_MUTATION_CNV_TB :exp :VS_LOCAL_RNASEQRAW_CURATED_TB)
+        rows (->> data (jdbc/insert-multi! CGIS table nil) count)]
+    (jdbc/execute! CGIS ["INSERT IGNORE INTO VS_LOCAL_COHORT_UUID (uuid) VALUES (?)" uuid])
+    {:message "OK"
+     :rows rows
+     :datetime (-> CGIS
+                   (jdbc/query ["SELECT original_date FROM VS_LOCAL_COHORT_UUID WHERE uuid = ?" uuid])
+                   first (get :original_date) str (subs 0 10))}))
+
 
 (defroutes routes
   (GET "/" [] (resource-response "index.html" {:root "public"}))
@@ -280,6 +329,7 @@
   (POST "/geneset" req (response (validate-gene-symbols req)))
   (POST "/cox" req (response (cox req)))
   (POST "/msig" req (response (geneset-suggestions-for (get-in req [:params :word]))))
+  (POST "/upload" req (response (upload-local-cohort req)))
   (resources "/"))
 
 (def handler (-> routes

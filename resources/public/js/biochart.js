@@ -1710,7 +1710,7 @@ function survival ()	{
 		}
 
 		SurvivalCurveBroilerPlate.pvalueSettings = {
-			url: opts.pvalueURL || "http://www.cbioportal.org/calcPval.do",
+			url: opts.pvalueURL || "/chip",
 		};
 
 		if (opts.styles)	{
