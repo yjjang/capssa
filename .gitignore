@@ -26,6 +26,8 @@ pom.xml.asc
 .lein-failures
 .nrepl-port
 .cpcache/
+.cljs_nashorn_repl/
+/nashorn_code_cache/
 
 # End of https://www.gitignore.io/api/clojure
 

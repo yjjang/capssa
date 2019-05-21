@@ -289,77 +289,77 @@
         (.add tooltip) (.moveToTop) (.draw)))))
 
 (defn- draw-legends [il]
-  (let [settings (.-settings il)
-        headers (.-column_metadata_header il)
-        features (js->clj (.. il -column_metadata -features))
-        p-indices (.. il -on_features -data)
-        desc (js->clj (.-column_metadata_descs il))
-        colors (.-column_metadata_colors settings)
-        selected-sub-plot (re-frame/subscribe [::subs/cluster-sub-plot])]
-    (loop [indices (keys desc)
-           h-step 0]
-      (if indices
-        (let [i (first indices)
-              feature-vals (get features (js/parseInt i))
-              values (->> (map #(get feature-vals %) p-indices)
-                          set vec (sort (fn [a b]
-                                          (if (= a "NA") 1
-                                            (if (= b "NA") -1
-                                              (compare a b))))))
-              header (aget headers i)
-              cols (zipmap values (map #(._get_color_for_value
-                                          il
-                                          (if-let [str2num (get-in desc [i "str2num"])]
-                                            (if-let [v (get str2num %)] v %) %)
-                                          (get-in desc [i "min"])
-                                          (get-in desc [i "max"])
-                                          (get-in desc [i "middle"])
-                                          colors)
-                                       values))
-              y (+ h-step (.-header_height il))
-              l-margin 2
-              text (.clone (.. il -objects_ref -column_header)
-                           (clj->js {:x (+ l-margin (.-width settings))
-                                     :y y
-                                     :fontSize (.-metadata_font_size settings)
-                                     :fontStyle "bold"
-                                     :text header}))
-              ]
-          (.add (.-header_layer il) text)
-          (.on text "click"
-               #(case @selected-sub-plot
-                  :box-plot (reset! cluster-boxplot-feature header)
-                  :sankey-plot (reset! cluster-sankey-feature header)
-                  nil))
-          (.on text "mouseover"
-               #(show-tooltip
-                  il % (case @selected-sub-plot
-                         :box-plot "Click to use as a subtype category"
-                         :sankey-plot "Click to use in the concordance view"
-                         nil)))
-          (.draw text)
-          (loop [cols cols
-                 y (+ 18 h-step (.-header_height il))]
-            (when-not (empty? cols)
-              (let [[v col] (first cols)
-                    icon (.clone (.. il -objects_ref -legend_icon)
-                                 (clj->js {:x (+ l-margin 1 (.-width settings))
-                                           :y y
-                                           :width 8 :height 8
-                                           :fill col}))
-                    text (.clone (.. il -objects_ref -column_header)
-                                 (clj->js {:x (+ l-margin 13 (.-width settings))
-                                           :y y
-                                           :fontSize (.-metadata_font_size settings)
-                                           :fontStyle "normal"
-                                           :text v}))]
-                (.add (.-header_layer il) icon)
-                (.draw icon)
-                (.add (.-header_layer il) text)
-                (.draw text))
-              (recur (next cols) (+ y 18))))
-          (recur (next indices) (+ 36 h-step (* 18 (count values)))))
-        h-step))))
+  (when (.-column_metadata il)
+    (let [settings (.-settings il)
+          headers (.-column_metadata_header il)
+          features (js->clj (.. il -column_metadata -features))
+          p-indices (.. il -on_features -data)
+          desc (js->clj (.-column_metadata_descs il))
+          colors (.-column_metadata_colors settings)
+          selected-sub-plot (re-frame/subscribe [::subs/cluster-sub-plot])]
+      (loop [indices (keys desc)
+             h-step 0]
+        (if indices
+          (let [i (first indices)
+                feature-vals (get features (js/parseInt i))
+                values (->> (map #(get feature-vals %) p-indices)
+                            set vec (sort (fn [a b]
+                                            (if (= a "NA") 1
+                                              (if (= b "NA") -1
+                                                (compare a b))))))
+                header (aget headers i)
+                cols (zipmap values (map #(._get_color_for_value
+                                            il
+                                            (if-let [str2num (get-in desc [i "str2num"])]
+                                              (if-let [v (get str2num %)] v %) %)
+                                            (get-in desc [i "min"])
+                                            (get-in desc [i "max"])
+                                            (get-in desc [i "middle"])
+                                            colors)
+                                         values))
+                y (+ h-step (.-header_height il))
+                l-margin 2
+                text (.clone (.. il -objects_ref -column_header)
+                             (clj->js {:x (+ l-margin (.-width settings))
+                                       :y y
+                                       :fontSize (.-metadata_font_size settings)
+                                       :fontStyle "bold"
+                                       :text header}))]
+            (.add (.-header_layer il) text)
+            (.on text "click"
+                 #(case @selected-sub-plot
+                    :box-plot (reset! cluster-boxplot-feature header)
+                    :sankey-plot (reset! cluster-sankey-feature header)
+                    nil))
+            (.on text "mouseover"
+                 #(show-tooltip
+                    il % (case @selected-sub-plot
+                           :box-plot "Click to use as a subtype category"
+                           :sankey-plot "Click to use in the concordance view"
+                           nil)))
+            (.draw text)
+            (loop [cols cols
+                   y (+ 18 h-step (.-header_height il))]
+              (when-not (empty? cols)
+                (let [[v col] (first cols)
+                      icon (.clone (.. il -objects_ref -legend_icon)
+                                   (clj->js {:x (+ l-margin 1 (.-width settings))
+                                             :y y
+                                             :width 8 :height 8
+                                             :fill col}))
+                      text (.clone (.. il -objects_ref -column_header)
+                                   (clj->js {:x (+ l-margin 13 (.-width settings))
+                                             :y y
+                                             :fontSize (.-metadata_font_size settings)
+                                             :fontStyle "normal"
+                                             :text v}))]
+                  (.add (.-header_layer il) icon)
+                  (.draw icon)
+                  (.add (.-header_layer il) text)
+                  (.draw text))
+                (recur (next cols) (+ y 18))))
+            (recur (next indices) (+ 36 h-step (* 18 (count values)))))
+          h-step)))))
 
 (defn- reg-inchlib-events [il]
   (aset (.-events il) "on_zoom"
@@ -660,7 +660,11 @@
   [re-com/h-box
    :gap "10px"
    :style {:flex-flow "wrap"}
-   :children [[inchlib]
+   :children [(let [cohort @(re-frame/subscribe [::s/selected-cohort])]
+                (if (and (:user? cohort) (nil? @(re-frame/subscribe [::s/clinical-data cohort])))
+                  (when-not @(re-frame/subscribe [::s/data-loading?])
+                    (re-frame/dispatch [::e/local-load-clinical-data cohort]))
+                  [inchlib]))
               (if @inchlib-mounted?
                 [re-com/v-box
                  :gap "10px"
@@ -767,14 +771,19 @@
                           :data (assoc (get json "data") "signature_list" genesets)
                           :divisionFunc on-division
                           :riskFunctions
-                          (if (get json "fc")
-                            [{:name "Median" :func median-scores}
-                             {:name "Prognostic Index" :func prognostic-index
-                              :isDefault true}
-                             {:name "Farthest Centroid" :func farthest-centroid}]
-                            [{:name "Median" :func median-scores}
-                             {:name "Prognostic Index" :func prognostic-index
-                              :isDefault true}])
+                          (if (get json "cox")
+                            (if (get json "fc")
+                              [{:name "Median" :func median-scores}
+                               {:name "Prognostic Index" :func prognostic-index
+                                :isDefault true}
+                               {:name "Farthest Centroid" :func farthest-centroid}]
+                              [{:name "Median" :func median-scores}
+                               {:name "Prognostic Index" :func prognostic-index
+                                :isDefault true}])
+                            (if (get json "fc")
+                              [{:name "Median" :func median-scores :isDefault true}
+                               {:name "Farthest Centroid" :func farthest-centroid}]
+                              [{:name "Median" :func median-scores :isDefault true}]))
                           :onSubtypeSelection on-subtype-select}]
                 (println "Drawing expression signature ...")
                 (dom/removeChildren (dom/getElement "main"))

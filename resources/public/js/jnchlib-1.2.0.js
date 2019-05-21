@@ -923,6 +923,9 @@ var InCHlib;
               var hash_object = self._get_hash_object(columns[i]);
               min = 0;
               max = self._hack_size(hash_object)-1;
+              // New start
+              if(max == 0) max = 0.5
+              // New end
               middle = max/2;
               data2descs[i] = {"min": min, "max": max, "middle": middle, "str2num": hash_object};
           }

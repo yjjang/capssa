@@ -45,9 +45,20 @@
                   :response-format (ajax/json-response-format)
                   :params {:genes (:genes geneset)
                            :institute (:institute cohort)
-                           :cancer-type (:code cohort)}
+                           :cancer-type (:code cohort)
+                           :uuid (:uuid cohort)
+                           :clinical-data (when (:user? cohort)
+                                            (get-in db [:clinical-data (:id cohort)]))}
                   :on-success [::set-cluster-data (:id geneset) (:id cohort)]
                   :on-failure [::e/http-load-failed true]}}))
+
+#_(POST "/expclu"
+        {:format :json
+         :response-format :json
+         :params {:genes ["CDKN2A" "CDKN2B" "CDK4" "RB1"]
+                  :uuid "52b63e20-fed0-4990-9129-23c3fa0049ba"
+                  :clinical-data (deref (re-frame/subscribe [::s/clinical-data {:id 101}]))}
+         :handler #(js/console.log %)})
 
 (re-frame/reg-event-db
   ::set-cluster-data
@@ -80,7 +91,7 @@
          :response-format :json
          :params {:genes ["CDKN2A" "CDKN2B" "CDK4" "RB1"]
                   :uuid "52b63e20-fed0-4990-9129-23c3fa0049ba"
-                  :clinical-data @(re-frame/subscribe [::s/clinical-data {:id 101}])}
+                  :clinical-data (deref (re-frame/subscribe [::s/clinical-data {:id 101}]))}
          :handler #(js/console.log %)})
 
 (re-frame/reg-event-db

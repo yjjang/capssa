@@ -10,4 +10,4 @@
     (println "Starting CaPSSA server on port" port "...")
     (run-jetty
       (wrap-with-logger handler)
-      {:port port :join? false :request-header-size 256000000})))
+      {:port port :join? false :request-header-size 64000000})))

@@ -101,8 +101,8 @@
                 :jar true
                 :compiler {:main viz-stra.core
                            :output-to "resources/public/js/compiled/app.js"
-                           :optimizations :advanced
                            :closure-defines {goog.DEBUG false}
+                           :optimizations :advanced
                            :pretty-print false
                            ;; Added for foreign libs
                            :foreign-libs [{:file "resources/public/js/biochart.js"
@@ -147,4 +147,4 @@
 :uberjar-name "CaPSSA.jar"
 
 ;:prep-tasks [["cljsbuild" "once" "min"] "compile"]
-:aliases {"distbuild" ["clean" "compile" ["cljsbuild" "once" "min"] "uberjar"]})
+)

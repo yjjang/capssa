@@ -225,15 +225,26 @@
 
 (defn response-for-exp-clusters [req]
   (let [genes (get-in req [:params :genes])
-        institute (get-in req [:params :institute])
-        cancer-type (get-in req [:params :cancer-type])
         response-channel (chan)]
     (ajax/POST "http://localhost:8008"
                {:format :json
                 :response-format :json
-                :params {:genes genes
-                         :institute institute
-                         :cancer-type cancer-type}
+                :params (if-let [uuid (get-in req [:params :uuid])]
+                          (let [clinical-data (get-in req [:params :clinical-data])]
+                            {:genes genes
+                             :uuid uuid
+                             :c-features (if-let [m (first clinical-data)]
+                                           (-> m (dissoc :participant_id
+                                                         :os_days :os_status
+                                                         :dfs_days :dfs_status) keys) [])
+                             :c-values (->> clinical-data
+                                            (map #(dissoc % :os_days :os_status :dfs_days :dfs_status))
+                                            (map vals))})
+                          (let [institute (get-in req [:params :institute])
+                                cancer-type (get-in req [:params :cancer-type])]
+                            {:genes genes
+                             :institute institute
+                             :cancer-type cancer-type}))
                 :handler #(>!! response-channel %)})
     (if-let [data (first (alts!! [response-channel (timeout 60000)]))]
       (response data)

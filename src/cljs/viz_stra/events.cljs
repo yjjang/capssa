@@ -1,6 +1,7 @@
 (ns viz-stra.events
   (:require [cljs.reader]
             [clojure.string :as string]
+            [clojure.walk :refer [stringify-keys]]
             [re-frame.core :as re-frame]
             [day8.re-frame.http-fx]
             [re-com.util :refer [insert-nth remove-id-item]]
@@ -233,19 +234,22 @@
     (let [pouchdb (js/PouchDB. clinical-store)]
       (.. pouchdb
           (allDocs #js {:include_docs true})
-          (then #(let [docs (->> (.-rows %)
-                                 (map (fn [row] (.-doc row)))
-                                 (map (fn [doc]
-                                        (js-delete doc "_id")
-                                        (js-delete doc "_rev")
-                                        (when-not (number? (.-os_days doc)) (set! (.-os_days doc) nil))
-                                        (when-not (number? (.-dfs_days doc)) (set! (.-dfs_days doc) nil))
-                                        (when-not (number? (.-os_status doc)) (set! (.-os_status doc) nil))
-                                        (when-not (number? (.-dfs_status doc)) (set! (.-dfs_status doc) nil))
-                                        doc))
-                                 js->clj vec)]
-                   (re-frame/dispatch-sync (conj on-success docs))
-                   (.close pouchdb)))
+          (then (fn [res]
+                  (let [NaN->nil #(if (number? %) % nil)
+                        docs (->> (js->clj res :keywordize-keys true)
+                                  :rows (map :doc)
+                                  (map #(-> (dissoc % :_id :_rev)
+                                            (update :os_days NaN->nil)
+                                            (update :os_status NaN->nil)
+                                            (update :dfs_days NaN->nil)
+                                            (update :dfs_status NaN->nil)))
+                                  (map #(->> (dissoc % :participant_id)
+                                             keys sort
+                                             (cons :participant_id)
+                                             (select-keys %)))
+                                  stringify-keys vec)]
+                    (re-frame/dispatch (conj on-success docs))
+                    (.close pouchdb))))
           (catch #(do (on-failure %) (.close pouchdb)))))))
 
 #_(re-frame/dispatch [::local-load-clinical-data {:clinical "101:clinical" :id 101}])

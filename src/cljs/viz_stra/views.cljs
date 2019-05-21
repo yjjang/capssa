@@ -78,7 +78,7 @@
           (v/present [:genes] "You should provide a list of gene symbols!"))
     (let [gs (-> @geneset
                  (update :genes #(filter (complement empty?) (string/split % #"[\s+,]"))))]
-      (js/console.log "Uploading a geneset : " gs)
+      (println "Uploading a geneset : " gs)
       (swap! ui-state assoc :doing? true)
       (POST "/geneset"
             {:format :json
