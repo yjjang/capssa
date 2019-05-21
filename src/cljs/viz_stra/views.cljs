@@ -569,6 +569,7 @@
 
 (def geneset-to-delete (reagent/atom nil))
 (def geneset-to-edit (reagent/atom nil))
+(def cohort-to-delete (reagent/atom nil))
 
 (defn- top-navbar [active-panel]
   (let [brand @(re-frame/subscribe [::s/name])
@@ -579,7 +580,8 @@
     [Navbar {:inverse true :fluid true}
      [Navbar-Header
       [Navbar-Brand [:a {:href "#"
-                         :on-click #(re-frame/dispatch [::e/set-active-panel :home-panel])}
+                         :on-click #(re-frame/dispatch [::e/set-active-panel :home-panel])
+                         :style {:color "pink"}}
                      brand]]]
      [re-com/popover-anchor-wrapper
       :showing? (:analyses eg-steps)
@@ -588,8 +590,12 @@
       :anchor [Nav {:active-key @active-panel :bs-style "pills"
                     :on-select #(re-frame/dispatch [::e/set-active-panel (keyword %)])}
                [NavItem {:event-key "upload-panel"} [Glyphicon {:glyph "cloud-upload"}] " Upload"]
-               [NavItem {:event-key "mutation-panel"} [Glyphicon {:glyph "tasks"}] " Mutation"]
-               [NavItem {:event-key "expression-panel"} [Glyphicon {:glyph "signal"}] " Expression"]]
+               [NavItem {:event-key "mutation-panel"}
+                [Glyphicon {:glyph "tasks" :style {:color "yellow"}}]
+                [:span {:style {:color "yellow"}} " Mutation"]]
+               [NavItem {:event-key "expression-panel"}
+                [Glyphicon {:glyph "signal" :style {:color "yellow"}}]
+                [:span {:style {:color "yellow"}} " Expression"]]]
       :popover [re-com/popover-content-wrapper
                 :width "400px"
                 :close-button? false
@@ -652,9 +658,9 @@
       :style {:float "left"}
       :anchor [re-com/single-dropdown
                :choices (concat
-                          (mapv #(-> {:id (:id %) :label (:name %) :group (:group %)})
+                          (mapv #(-> {:id (:id %) :label (:name %) :group (:group %) :it %})
                                 user-cohorts)
-                          (mapv #(-> {:id (:id %) :label (:name %) :group (:group %)})
+                          (mapv #(-> {:id (:id %) :label (:name %) :group (:group %) :it %})
                                 default-cohorts))
                :model (re-frame/subscribe [::s/selected-cohort-id])
                :placeholder "Choose a cohort"
@@ -662,6 +668,19 @@
                :max-height "420px"
                :filter-box? true
                :style {:margin "8px"}
+               :render-fn #(let [cohort (:it %)]
+                             [:div [:span (:name cohort)]
+                              (when (> (:id cohort) 100)
+                                [re-com/h-box
+                                 :style {:float "right"}
+                                 :children
+                                 [[re-com/row-button
+                                   :md-icon-name "zmdi-delete"
+                                   :mouse-over-row? true
+                                   :tooltip "Delete this cohort"
+                                   :attr {:on-mouse-down
+                                          (fn [e] (do (.stopPropagation e)
+                                                      (reset! cohort-to-delete cohort)))}]]])])
                :on-change #(re-frame/dispatch [::e/select-a-cohort %])]
       :popover [re-com/popover-content-wrapper
                 :width "350px"
@@ -674,7 +693,7 @@
                 :on-select #(re-frame/dispatch [::e/set-active-panel :help-panel])}
        [Glyphicon {:glyph "question-sign"}] " Help"]]]))
 
-(defn- del-geneset [gs]
+(defn- geneset-del [gs]
   (let [gs-id (:id gs)
         curr-gs-id (:id @(re-frame/subscribe [::s/selected-geneset]))]
     (println "Deleting geneset:" (:name gs))
@@ -684,13 +703,24 @@
     (re-frame/dispatch [::exp-evts/on-geneset-deleted gs-id])
     (re-frame/dispatch [::mut-evts/on-geneset-deleted gs-id])))
 
-(defn geneset-del-modal-panel []
-  (when-let [gs @geneset-to-delete]
+(defn- cohort-del [co]
+  (let [co-id (:id co)
+        curr-co-id (:id @(re-frame/subscribe [::s/selected-cohort]))]
+    (println "Deleting cohort:" (:name co))
+    (when (= curr-co-id co-id)
+      ; TCGA LUAD as default
+      (re-frame/dispatch [::e/select-a-cohort 13]))
+    (re-frame/dispatch [::e/remove-a-cohort co])
+    (re-frame/dispatch [::exp-evts/on-cohort-deleted co-id])
+    (re-frame/dispatch [::mut-evts/on-cohort-deleted co-id])))
+
+(defn deletion-modal-panel [to-delete del-fn]
+  (when-let [it @to-delete]
     [re-com/modal-panel
-     ;:backdrop-on-click #(reset! geneset-to-delete nil)
+     ;:backdrop-on-click #(reset! to-delete nil)
      :child [re-com/v-box
              :width "400px"
-             :children [[:h4 "Are you sure to delete " [:code (:name gs)] "?"]
+             :children [[:h4 "Are you sure to delete " [:code (:name it)] "?"]
                         [re-com/gap :size "20px"]
                         [re-com/h-box
                          :gap "15px"
@@ -698,12 +728,11 @@
                          [[re-com/button
                            :label "Delete"
                            :class "btn-danger"
-                           :on-click #(do (del-geneset gs)
-                                          (reset! geneset-to-delete nil))]
+                           :on-click #(do (del-fn it) (reset! to-delete nil))]
                           [re-com/button
                            :label "Cancel"
                            :class "btn-primary"
-                           :on-click #(reset! geneset-to-delete nil)]]]]]]))
+                           :on-click #(reset! to-delete nil)]]]]]]))
 
 (defn geneset-edit-modal-panel []
   (when @geneset-to-edit
@@ -741,7 +770,8 @@
      :children [[top-navbar active-panel]
                 [alerts-list-panel active-panel]
                 [panels active-panel]
-                [geneset-del-modal-panel]
+                [deletion-modal-panel geneset-to-delete geneset-del]
+                [deletion-modal-panel cohort-to-delete cohort-del]
                 [geneset-edit-modal-panel]]]))
 
 (comment

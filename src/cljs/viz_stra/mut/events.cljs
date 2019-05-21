@@ -11,6 +11,12 @@
     (update-in db [:mutation :landscape-data] dissoc geneset-id)))
 
 (re-frame/reg-event-db
+  ::on-cohort-deleted
+  (fn [db [_ cohort-id]]
+    (reduce #(update-in %1 [:mutation :landscape-data %2] dissoc cohort-id)
+            db (keys (get-in db [:mutation :landscape-data])))))
+
+(re-frame/reg-event-db
   ::initialize-db
   (fn [db _]
     (merge db mut-db/default-db)))

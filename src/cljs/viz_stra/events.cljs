@@ -87,7 +87,7 @@
   [(re-frame/path :genesets)
    genesets->local-store]
   (fn [genesets [_ gs]]
-    (re-frame/dispatch-sync
+    (re-frame/dispatch
       [::add-alert {:alert-type :warning
                     :heading "Gene set removed."
                     :body (:name gs)}])
@@ -171,11 +171,26 @@
 (re-frame/reg-event-fx
   ::remove-a-cohort
   [cohorts->local-store]
-  (fn [{:keys [db]} [_ cohort-id]]
-    {:dispatch [::add-alert {:alert-type :warning
-                                  :heading "Cohort data removed."
-                                  :body (get-in db [:cohorts cohort-id :name])}]
-     :db (update db :cohorts dissoc cohort-id)}))
+  (fn [{:keys [db]} [_ cohort]]
+    {:http-xhrio {:method :post
+                  :uri "/unload"
+                  :timeout 30000
+                  :format (ajax/json-request-format)
+                  :response-format (ajax/json-response-format)
+                  :params {:uuid (:uuid cohort)}
+                  :on-success [::add-alert {:alert-type :info
+                                            :heading "Cohort data has been removed."
+                                            :body (:name cohort)}]
+                  :on-failure [::http-load-failed false]}
+     :pouchdb-destroy {:clinical-store (:clinical cohort)}
+     :db (update db :cohorts dissoc (:id cohort))}))
+
+(re-frame/reg-fx
+  :pouchdb-destroy
+  (fn [{:keys [clinical-store on-success on-failure]}]
+    (let [pouchdb (js/PouchDB. clinical-store)]
+      (.. pouchdb
+          (destroy) (then #(print clinical-store "deleted.")) (catch #(js/console.log %))))))
 
 (re-frame/reg-event-db
   ::select-a-cohort

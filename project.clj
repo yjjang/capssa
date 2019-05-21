@@ -1,7 +1,7 @@
 (defproject viz-stra "0.1.0-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.9.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/clojurescript "1.10.339"]
-                 [org.clojure/core.async "0.4.474"]
+                 [org.clojure/core.async "0.4.490"]
                  [org.clojure/java.jdbc "0.7.9"]
                  [reagent "0.8.1"]
                  [re-frame "0.10.6"]
@@ -13,18 +13,17 @@
                  [secretary "1.2.3"]
                  [compojure "1.6.1"]
                  [yogthos/config "1.1.1"]
-                 [ring "1.6.3"]
+                 [ring "1.7.1"]
                  [ring/ring-json "0.4.0"]
-                 [http-kit "2.3.0"]
-                 [cljs-ajax "0.7.4"]
-                 [cljsjs/react-bootstrap "0.31.5-0"]
-                 [cljsjs/d3 "4.12.0-0"]
-                 [cljsjs/jquery "3.2.1-0"]
+                 [cljs-ajax "0.8.0"]
+                 [cljsjs/react-bootstrap "0.32.4-0"]
+                 [cljsjs/d3 "5.9.2-0"]
+                 [cljsjs/jquery "3.4.0-0"]
                  [cljsjs/papaparse "4.1.1-1"]
                  [cljsjs/pouchdb "7.0.0-0"]
                  [cljsjs/pouchdb-find "7.0.0-1"]
-                 [cheshire "5.8.0"]
-                 [hikari-cp "2.6.0"]
+                 [cheshire "5.8.1"]
+                 [hikari-cp "2.7.1"]
                  [com.layerware/hugsql "0.4.9"]
                  [mysql/mysql-connector-java "5.1.47"]
                  [org.apache.commons/commons-math3 "3.6.1"]
@@ -32,9 +31,9 @@
                  [incanter/incanter-core "1.9.3"]
                  [javastat "1.4.0-beta"]
                  [org.clojure/tools.logging "0.4.1"]
-                 [org.slf4j/slf4j-api "1.7.25"]
+                 [org.slf4j/slf4j-api "1.7.26"]
                  [ch.qos.logback/logback-classic "1.2.3"]
-                 [io.aviso/pretty "0.1.33"]]
+                 [io.aviso/pretty "0.1.37"]]
 
   :min-lein-version "2.5.3"
 
@@ -44,13 +43,13 @@
                                     "test/js"]
 
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.10"]
-                                  [figwheel-sidecar "0.5.16"]
+                                  [figwheel-sidecar "0.5.18"]
                                   [cider/piggieback "0.4.1"]]
                    :source-paths ["src/cljs"]
                    :plugins [[lein-cljsbuild "1.1.7"]
-                             [lein-figwheel "0.5.16"]
+                             [lein-figwheel "0.5.18"]
                              ;[lein-ring "0.12.5"]
-                             [lein-doo "0.1.10"]]}}
+                             [lein-doo "0.1.11"]]}}
 
   :figwheel {:ring-handler viz-stra.handler/dev-handler
              :css-dirs ["resources/public/css"]}

@@ -14,6 +14,15 @@
         (update-in [:expression :signature-data] dissoc geneset-id))))
 
 (re-frame/reg-event-db
+  ::on-cohort-deleted
+  (fn [db [_ cohort-id]]
+    (-> db
+        (#(reduce (fn [d gid] (update-in d [:expression :cluster-data gid] dissoc cohort-id))
+                  % (keys (get-in % [:expression :cluster-data]))))
+        (#(reduce (fn [d gid] (update-in d [:expression :signature-data gid] dissoc cohort-id))
+                  % (keys (get-in % [:expression :signature-data])))))))
+
+(re-frame/reg-event-db
   ::initialize-db
   (fn [db _]
     (merge db exp-db/default-db)))

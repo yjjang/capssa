@@ -326,6 +326,15 @@
                    (jdbc/query ["SELECT original_date FROM VS_LOCAL_COHORT_UUID WHERE uuid = ?" uuid])
                    first (get :original_date) str (subs 0 10))}))
 
+(defn unload-local-cohort [req]
+  (let [uuid (get-in req [:params :uuid])
+        alt-rows (jdbc/delete! CGIS :VS_LOCAL_MUTATION_CNV_TB ["uuid = ?" uuid]) 
+        exp-rows (jdbc/delete! CGIS :VS_LOCAL_RNASEQRAW_CURATED_TB ["uuid = ?" uuid])]
+    (jdbc/delete! CGIS :VS_LOCAL_COHORT_UUID ["uuid = ?" uuid])
+    {:message "Uploaded cohort has been deleted."
+     :rows {:alt alt-rows :exp exp-rows}
+     :uuid uuid}))
+
 
 (defroutes routes
   (GET "/" [] (resource-response "index.html" {:root "public"}))
@@ -341,6 +350,7 @@
   (POST "/cox" req (response (cox req)))
   (POST "/msig" req (response (geneset-suggestions-for (get-in req [:params :word]))))
   (POST "/upload" req (response (upload-local-cohort req)))
+  (POST "/unload" req (response (unload-local-cohort req)))
   (resources "/"))
 
 (def handler (-> routes

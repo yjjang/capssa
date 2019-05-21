@@ -38,7 +38,7 @@
 
 ;; -- Hierarchical clustering UI -------------------------------------------
 
-(defonce *inchlib* (reagent/atom nil))
+(defonce inchlib-ref (reagent/atom nil))
 
 (def inchlib-settings {:target "inchlib"
                        :metadata false
@@ -180,10 +180,10 @@
                               (js->clj (.. il -settings -column_metadata_colors))))
                  subtypes))))
 
-#_(js/console.log (.-column_metadata_descs @*inchlib*))
+#_(js/console.log (.-column_metadata_descs @inchlib-ref))
 
 (defn- mk-cluster-boxplot-cfg [feature genes c-indices]
-  (let [il @*inchlib*
+  (let [il @inchlib-ref
         feature-names (.. il -column_metadata -feature_names)
         features (js->clj (.. il -column_metadata -features))
         feature-idx (.indexOf feature-names feature)
@@ -394,7 +394,7 @@
               (doto il (.read_data (clj->js data)) (.draw))
               (draw-col-features il)
               (draw-legends il)
-              (reset! *inchlib* il)))]
+              (reset! inchlib-ref il)))]
     (reagent/create-class
       {:reagent-render (fn [] [:div#inchlib])
        :component-did-mount
@@ -411,7 +411,7 @@
        :component-will-unmount
        (fn [this]
          (println "InCHlib will be unmounted")
-         (._delete_all_layers @*inchlib*)
+         (._delete_all_layers @inchlib-ref)
          (reset! cluster-boxplot-feature nil)
          (reset! cluster-sankey-feature nil)
          (reset! current-patient-indices nil)
@@ -490,7 +490,7 @@
        :display-name "Cluster-box-plot"})))
 
 (defn- mk-cluster-gene-boxplot-cfg [genes c-indices]
-  (let [il @*inchlib*
+  (let [il @inchlib-ref
         objs (.-objects2leaves il)
         genes (if (nil? genes) (js->clj (.keys js/Object objs)) genes)
         objs (js->clj objs)
@@ -546,7 +546,7 @@
   [:div#expression_survival
    {:ref #(when %
             (letfn [(->survdiv [c-indices]
-                      (let [il @*inchlib*
+                      (let [il @inchlib-ref
                             p-indices (.. il -on_features -data)
                             ;; total patients in the data
                             patients (-> (.-header il) js->clj)
@@ -583,7 +583,7 @@
                   (bio/survival (clj->js data))))))}])
 
 (defn- mk-cluster-sankey-cfg [feature c-indices]
-  (let [il @*inchlib*
+  (let [il @inchlib-ref
         feature-names (.. il -column_metadata -feature_names)
         features (js->clj (.. il -column_metadata -features))
         feature-idx (.indexOf feature-names feature)

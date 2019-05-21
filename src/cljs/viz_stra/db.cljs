@@ -203,11 +203,10 @@
    :data-loading? false})
 
 ;; inspect the contents of app-db
-#_(let [app-db (deref re-frame.db/app-db)
-        luad-clinicals (-> app-db :clinical-data (get 13))
-        user-clinicals (-> app-db :clinical-data (get 101))]
-    (js/console.log luad-clinicals)
-    (js/console.log user-clinicals)
+#_(let [app-db (deref re-frame.db/app-db)]
+    (js/console.log (get-in app-db [:mutation :landscape-data]))
+    (js/console.log (get-in app-db [:expression :signature-data]))
+    (js/console.log (get-in app-db [:expression :cluster-data]))
     ;(-> app-db :cohorts)
     )
 
