@@ -207,6 +207,7 @@
     (js/console.log (get-in app-db [:mutation :landscape-data]))
     (js/console.log (get-in app-db [:expression :signature-data]))
     (js/console.log (get-in app-db [:expression :cluster-data]))
+    (js/console.log (get-in app-db [:clinical-data]))
     ;(-> app-db :cohorts)
     )
 

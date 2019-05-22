@@ -156,7 +156,10 @@
     (let [rows (get res "rows")]
       {:db (assoc-in db [:cohorts id type] true)
        :dispatch [::add-alert {:alert-type :info
-                               :heading name
+                               :heading (case type
+                                          :alters "Alteration"
+                                          :exp "Expression"
+                                          "None?")
                                :body (str rows " rows have been stored.")}]})))
 
 (re-frame/reg-fx
@@ -183,7 +186,9 @@
                                             :body (:name cohort)}]
                   :on-failure [::http-load-failed false]}
      :pouchdb-destroy {:clinical-store (:clinical cohort)}
-     :db (update db :cohorts dissoc (:id cohort))}))
+     :db (-> db
+             (update :clinical-data dissoc (:id cohort))
+             (update :cohorts dissoc (:id cohort)))}))
 
 (re-frame/reg-fx
   :pouchdb-destroy
