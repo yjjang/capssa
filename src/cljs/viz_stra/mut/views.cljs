@@ -12,7 +12,7 @@
             [viz-stra.mut.events :as events]
             [viz-stra.mut.subs :as subs]
             [viz-stra.comp :refer [Nav NavItem NavDropdown MenuItem Glyphicon Loader Spinner
-                                   modify-geneset-form]])
+                                   modify-geneset-form export-popover export-button]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 
@@ -263,51 +263,57 @@
    :height "50px"
    :align :center
    :justify :between
-   :children [[Nav {:bs-style "tabs" :active-key @active-panel-id
-                    :on-select #(when % (re-frame/dispatch [::events/set-active-panel (keyword %)]))}
-               [NavItem {:event-key "landscape-panel"} "Mutational patterns"]
-               ;[NavItem {:event-key "exclusivity-panel"} "Mutual Exclusivity"]
-               ]
-              [re-com/alert-box
-               :alert-type :info
-               :style {:color "#222"
-                       :background-color "#eff9e3"
-                       :border-top "none"
-                       :border-right "none"
-                       :border-bottom "none"
-                       :border-left "4px solid green"
-                       :border-radius "0px"}
-               :heading (let [gs @(re-frame/subscribe [::s/selected-geneset])
-                              co @(re-frame/subscribe [::s/selected-cohort])
-                              showing? (reagent/atom false)
-                              geneset-to-edit (reagent/atom nil)
-                              cancel-popover #(do (reset! showing? false)
-                                                  (reset! geneset-to-edit nil))]
-                          [:span
-                           (when (:user? gs)
-                             [re-com/popover-anchor-wrapper
-                              :showing? showing?
-                              :position :below-center
-                              :anchor [re-com/row-button
-                                       :md-icon-name "zmdi-edit"
-                                       :style {:margin-right "5px"}
-                                       :mouse-over-row? true
-                                       :tooltip "Edit this gene set"
-                                       :on-click #(when-not @showing?
-                                                    (do (reset! geneset-to-edit gs)
-                                                        (reset! showing? true)))]
-                              :popover [re-com/popover-content-wrapper
-                                        :width "460px"
-                                        :title "Modify a gene set"
-                                        :on-cancel cancel-popover
-                                        :body [modify-geneset-form geneset-to-edit cancel-popover]]])
-                           (if-let [link (:link gs)]
-                             [:a {:href link :target "_blank"} (:name gs)]
-                             (:name gs))
-                           " @ "
-                           (if-let [link (:link co)]
-                             [:a {:href link :target "_blank"} (:name co)]
-                             (:name co))])]]])
+   :children
+   [[Nav {:bs-style "tabs" :active-key @active-panel-id
+          :on-select #(when % (re-frame/dispatch [::events/set-active-panel (keyword %)]))}
+     [NavItem {:event-key "landscape-panel"}
+      [:span {:style {:font-size "16px"}} "Mutational patterns"
+       (let [showing? (reagent/atom false)
+             disabled? (not= @active-panel-id :landscape-panel)]
+         [export-popover [export-button disabled? :showing? showing?]
+          :showing? showing?
+          :save-all #(println "Save all")
+          :save-group #(println "Save groups only")])]]]
+    [re-com/alert-box
+     :alert-type :info
+     :style {:color "#222"
+             :background-color "#eff9e3"
+             :border-top "none"
+             :border-right "none"
+             :border-bottom "none"
+             :border-left "4px solid green"
+             :border-radius "0px"}
+     :heading (let [gs @(re-frame/subscribe [::s/selected-geneset])
+                    co @(re-frame/subscribe [::s/selected-cohort])
+                    showing? (reagent/atom false)
+                    geneset-to-edit (reagent/atom nil)
+                    cancel-popover #(do (reset! showing? false)
+                                        (reset! geneset-to-edit nil))]
+                [:span
+                 (when (:user? gs)
+                   [re-com/popover-anchor-wrapper
+                    :showing? showing?
+                    :position :below-center
+                    :anchor [re-com/row-button
+                             :md-icon-name "zmdi-edit"
+                             :style {:margin-right "5px"}
+                             :mouse-over-row? true
+                             :tooltip "Edit this gene set"
+                             :on-click #(when-not @showing?
+                                          (do (reset! geneset-to-edit gs)
+                                              (reset! showing? true)))]
+                    :popover [re-com/popover-content-wrapper
+                              :width "460px"
+                              :title "Modify a gene set"
+                              :on-cancel cancel-popover
+                              :body [modify-geneset-form geneset-to-edit cancel-popover]]])
+                 (if-let [link (:link gs)]
+                   [:a {:href link :target "_blank"} (:name gs)]
+                   (:name gs))
+                 " @ "
+                 (if-let [link (:link co)]
+                   [:a {:href link :target "_blank"} (:name co)]
+                   (:name co))])]]])
 
 (defn main-panel []
   (let [active-panel-id (re-frame/subscribe [::subs/active-panel])]

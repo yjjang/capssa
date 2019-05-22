@@ -192,7 +192,7 @@
 
 (re-frame/reg-fx
   :pouchdb-destroy
-  (fn [{:keys [clinical-store on-success on-failure]}]
+  (fn [{:keys [clinical-store]}]
     (let [pouchdb (js/PouchDB. clinical-store)]
       (.. pouchdb
           (destroy) (then #(print clinical-store "deleted.")) (catch #(js/console.log %))))))

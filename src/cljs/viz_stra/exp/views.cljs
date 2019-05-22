@@ -13,7 +13,7 @@
             [viz-stra.exp.events :as events]
             [viz-stra.exp.subs :as subs]
             [viz-stra.comp :refer [Nav NavItem NavDropdown MenuItem Glyphicon Loader Spinner
-                                   modify-geneset-form]])
+                                   modify-geneset-form export-popover export-button]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 ;; JSON request and response testing
@@ -1108,8 +1108,22 @@
    :children
    [[Nav {:bs-style "tabs" :active-key @active-panel
           :on-select #(when % (re-frame/dispatch [::events/set-active-panel (keyword %)]))}
-     [NavItem {:event-key "risk-panel"} "Risk Scores"]
-     [NavItem {:event-key "cluster-panel"} "Hierarchical Clustering"]]
+     [NavItem {:event-key "risk-panel"}
+      [:span {:style {:font-size "16px"}} "Risk Scores"
+       (let [showing? (reagent/atom false)
+             disabled? (not= @active-panel :risk-panel)]
+         [export-popover [export-button disabled? :showing? showing?]
+          :showing? showing?
+          :save-all #(println "Save all")
+          :save-group #(println "Save groups only")])]]
+     [NavItem {:event-key "cluster-panel"}
+      [:span {:style {:font-size "16px"}} "Hierarchical Clsutering"
+       (let [showing? (reagent/atom false)
+             disabled? (not= @active-panel :cluster-panel)]
+         [export-popover [export-button disabled? :showing? showing?]
+          :showing? showing?
+          :save-all #(println "Save all")
+          :save-group #(println "Save groups only")])]]]
     [re-com/alert-box
      :alert-type :info
      :style {:color "#222"
@@ -1141,6 +1155,7 @@
                     :popover [re-com/popover-content-wrapper
                               :width "460px"
                               :title "Modify a gene set"
+                              :backdrop-opacity 0.3
                               :on-cancel cancel-popover
                               :body [modify-geneset-form geneset-to-edit cancel-popover]]])
                  (if-let [link (:link gs)]

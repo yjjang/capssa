@@ -1,6 +1,7 @@
 (ns viz-stra.comp
   (:require [reagent.core :refer [adapt-react-class] :as reagent]
             [re-frame.core :as re-frame]
+            [re-com.core :as re-com]
             [cljsjs.react-bootstrap]
             [clojure.string :as string]
             [ajax.core :refer [POST]]
@@ -120,4 +121,50 @@
                   (f/button-default {:style {:font-weight "400" :margin-left "10px"}}
                                     [:span [:i {:class "zmdi zmdi-close"}] " Cancel"]
                                     close-fn)))))))
+
+(defn export-popover [anchor & {:keys [showing? save-all save-group]}]
+  [re-com/popover-anchor-wrapper
+   :showing? showing?
+   :position :below-center
+   :anchor anchor
+   :popover [re-com/popover-content-wrapper
+             :width "180px"
+             :padding "4px"
+             :arrow-length 0
+             :arrow-width 0
+             :arrow-gap 5
+             :backdrop-opacity 0.3
+             :on-cancel #(reset! showing? false)
+             :close-button? false
+             :body [re-com/v-box
+                    :gap "2px"
+                    :children
+                    [[re-com/button
+                      :label [:span [:i.zmdi.zmdi-hc-fw-rc.zmdi-download] " Save all"]
+                      :tooltip [re-com/p {:style {:text-align "left" :width "400px" :min-width "400px"}}
+                                "Export all information in the result. e.g. the list of patients and their stratification, mutation status on the genes, gene expression values, and clinical information."]
+                      :on-click save-all
+                      :style {:color "white"
+                              :background-color "#4d90fe"
+                              :font-size "14px"
+                              :border "none"
+                              :width "170px"}]
+                     [re-com/button
+                      :label [:span [:i.zmdi.zmdi-hc-fw-rc.zmdi-download] " Save groups only"]
+                      :tooltip "Export patient stratification results only."
+                      :on-click save-group
+                      :style {:color "white"
+                              :background-color "#4d90fe"
+                              :font-size "14px"
+                              :border "none"
+                              :width "170px"}]]]]])
+
+(defn export-button [disabled? & {:keys [showing?]}]
+  [re-com/md-icon-button
+   :style {:margin-left "10px"}
+   :size :smaller
+   :md-icon-name "zmdi-save"
+   :disabled? disabled?
+   :tooltip (if disabled? nil "Save analysis results")
+   :on-click #(swap! showing? not)])
 
