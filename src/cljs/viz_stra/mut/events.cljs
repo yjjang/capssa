@@ -62,21 +62,26 @@
 (defn- add-group-list [db cohort json]
   (let [patients (->> (get-in json ["data" "mutation_list"])
                       (map #(get % "participant_id"))
-                      (into #{}))]
+                      (into #{}))
+        fill-na #(let [data (mapv (fn [p] {"participant_id" p "value" "NA"}) patients)]
+                   (assoc-in json ["data" "group_list"] [{"name" "No clinical data" "data" data}]))]
     ;(js/console.log (get-in db [:clinical-data (:id cohort)]))
     (let [clinical-dat (get-in db [:clinical-data (:id cohort)])]
       (if (empty? clinical-dat)
-        (let [data (mapv (fn [p] {"participant_id" p "value" "NA"}) patients)]
-          (assoc-in json ["data" "group_list"] [{"name" "No clinical data" "data" data}]))
+        (fill-na)
         (let [names (-> (map #(first %) (first clinical-dat))
-                        set (disj "participant_id" "os_days" "os_status" "dfs_days" "dfs_status"))
-              group-list (vec (for [n names]
-                                {"name" n
-                                 "data" (mapv (fn [m] {"participant_id" (get m "participant_id")
-                                                       "value" (get m n)})
-                                              #_(filter #(patients (get % "participant_id")) clinical-dat)
-                                              clinical-dat)}))]
-          (assoc-in json ["data" "group_list"] group-list))))))
+                        set
+                        (disj "participant_id" "os_days" "os_status" "dfs_days" "dfs_status"))]
+          (if (empty? names)
+            (fill-na)
+            (let [group-list
+                  (vec (for [n names]
+                         {"name" n
+                          "data" (mapv (fn [m]
+                                         {"participant_id" (get m "participant_id")
+                                          "value" (get m n)})
+                                       clinical-dat)}))]
+              (assoc-in json ["data" "group_list"] group-list))))))))
 
 (re-frame/reg-event-db
   ::set-landscape-data

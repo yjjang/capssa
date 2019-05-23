@@ -6,6 +6,7 @@
             [cljs.core.async :refer [<! timeout]]
             [goog.dom :as dom]
             [cgis.biochart :as bio]
+            [viz-stra.utils :refer [save-as-text]]
             [viz-stra.events :as e]
             [viz-stra.subs :as s]
             [viz-stra.mut.db :as db]
@@ -272,8 +273,55 @@
              disabled? (not= @active-panel-id :landscape-panel)]
          [export-popover [export-button disabled? :showing? showing?]
           :showing? showing?
-          :save-all #(println "Save all")
-          :save-group #(println "Save groups only")])]]]
+          :save-all
+          (fn []
+            (reset! showing? false)
+            (let [landscape @(re-frame/subscribe [::subs/landscape-data])
+                  div @landscape-division
+                  pats (->> div vals (apply concat) set)
+                  genes (mapv #(% "gene") (get-in landscape ["data" "gene_list"]))
+                  alters (get-in landscape ["data" "mutation_list"])
+                  clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
+                  cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id") keys sort))
+                  fields (concat [:group] genes cnames)
+                  data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
+                            (reduce (fn [m p]
+                                      (assoc m p (apply array-map
+                                                        (concat [:participant_id p]
+                                                                (reduce #(conj %1 %2 nil) [] fields)))))
+                                    (sorted-map) pats)
+                            ; Stratification result -> :group
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "G1")) % (:enabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "G2")) % (:disabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "O")) % (:others div)))
+                            ; Mutation status on each genes
+                            (#(reduce (fn [d a]
+                                        (let [pid (a "participant_id")]
+                                          (if (pats pid) (assoc-in d [pid (a "gene")] (a "type")) d)))
+                                      % alters))
+                            ; Clinical information
+                            (#(reduce (fn [d c]
+                                        (let [pid (c "participant_id")]
+                                          (if (pats pid)
+                                            (reduce (fn [e n] (assoc-in e [pid n] (c n))) d cnames)
+                                            d)))
+                                      % clinicals)))
+                  csv (.unparse js/Papa (clj->js (vals data))
+                                #js {:header true :delimiter "\t"})]
+              (save-as-text csv "alteration_all.tsv")))
+          :save-group
+          (fn []
+            (reset! showing? false)
+            (let [div @landscape-division
+                  data (->> (concat 
+                              (reduce #(conj %1 [%2 "G1"]) [] (:enabled div))
+                              (reduce #(conj %1 [%2 "G2"]) [] (:disabled div))
+                              (reduce #(conj %1 [%2 "O"]) [] (:others div)))
+                            (sort-by first)
+                            (cons [:participant_id :group]))
+                  csv (.unparse js/Papa (clj->js data)
+                                #js {:header true :delimiter "\t"})]
+              (save-as-text csv "alteration_groups.tsv")))])]]]
     [re-com/alert-box
      :alert-type :info
      :style {:color "#222"
@@ -305,6 +353,7 @@
                     :popover [re-com/popover-content-wrapper
                               :width "460px"
                               :title "Modify a gene set"
+                              :backdrop-opacity 0.3
                               :on-cancel cancel-popover
                               :body [modify-geneset-form geneset-to-edit cancel-popover]]])
                  (if-let [link (:link gs)]

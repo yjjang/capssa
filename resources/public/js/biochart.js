@@ -9,8 +9,8 @@ function axises ()	{
 		구분지어 줬다.
 	 */
 	model.byD3v = function (scale, orient, opts)	{
-		var axis = (bio.dependencies.version.d3v4() ? 
-							 d3['axis' + orient.pronoun()](scale) : 
+		var axis = (bio.dependencies.version.d3v4() ?
+							 d3['axis' + orient.pronoun()](scale) :
 							 d3.svg.axis().scale(scale).orient(orient)).ticks(5);
 		// TickValues 가 존재할 경우 적용.
 		if (opts && opts.tickValues)	{
@@ -47,7 +47,7 @@ function axises ()	{
 			return group;
 		}
 
-		return group.selectAll(item).remove(), group; 
+		return group.selectAll(item).remove(), group;
 	};
 	/*
 		최종 반환 함수.
@@ -59,8 +59,8 @@ function axises ()	{
 
 		}
 
-		return opts.exclude ? 
-			exclude(setting.group.call(set), opts.exclude) : 
+		return opts.exclude ?
+			exclude(setting.group.call(set), opts.exclude) :
 			 				setting.group.call(set);
 	};
 	/*
@@ -102,7 +102,7 @@ function bar ()	{
 		Range 값을 구해주는 함수.
 	 */
 	function range (size, m1, m2, start)	{
-		return start === 'left' || start === 'top' ? 
+		return start === 'left' || start === 'top' ?
 					[m1, size - m2]: [size - m2, m1];
 	};
 
@@ -114,9 +114,9 @@ function bar ()	{
 		model.copyY = [].concat(opts.yaxis);
 		model.extremeValue = false;
 		model.startTo = opts.startTo || ['top', 'left'];
-		model.rangeX = range(model.width, model.margin.left, 
+		model.rangeX = range(model.width, model.margin.left,
 												 model.margin.right, model.startTo[1]);
-		model.rangeY = range(model.height, model.margin.top, 
+		model.rangeY = range(model.height, model.margin.top,
 												 model.margin.bottom, model.startTo[0]);
 		model.scaleX = bio.scales().get(model.copyX, model.rangeX);
 		model.scaleY = bio.scales().get(model.copyY, model.rangeY);
@@ -133,9 +133,9 @@ function bar ()	{
 				objYaxis[ay] = true;
 			});
 
-			if (Object.keys(objYaxis).length === 
+			if (Object.keys(objYaxis).length ===
 					model.copyY.length)	{
-				if (objYaxis[bio.math.min(model.copyY)] && 
+				if (objYaxis[bio.math.min(model.copyY)] &&
 						objYaxis[bio.math.max(model.copyY)])	{
 					model.extremeValue = true;
 				}
@@ -144,7 +144,7 @@ function bar ()	{
 
 		model.opts = bio.objects.clone(opts);
 		model.opts.id = model.id + '_bar_rect';
-		model.opts.element = 
+		model.opts.element =
 		model.group.selectAll('.' + model.id + '_bar_rect')
 
 		bio.rectangle(model.opts, model);
@@ -162,89 +162,89 @@ function circle ()	{
 			element: opts.element,
 			data: opts.data || null,
 			attr: !opts.attr ? null : {
-				id: function (d, i) { 
-					return opts.attr.id ? 
-					typeof(opts.attr.id) !== 'function' ?  
-								(opts.id || that.id || 
-								 opts.element.attr('id')) + 
-									'_circle' : 
-								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id || 
-								 opts.element.attr('id')) + 
+				id: function (d, i) {
+					return opts.attr.id ?
+					typeof(opts.attr.id) !== 'function' ?
+								(opts.id || that.id ||
+								 opts.element.attr('id')) +
+									'_circle' :
+								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id ||
+								 opts.element.attr('id')) +
 									'_circle'
 				},
 				cx: function (d, i)	{
-					return opts.attr.cx ? 
-					typeof(opts.attr.cx) !== 'function' ?  
-								 opts.attr.cx : 
+					return opts.attr.cx ?
+					typeof(opts.attr.cx) !== 'function' ?
+								 opts.attr.cx :
 								 opts.attr.cx.call(this, d, i, that) : 0;
 				},
 				cy: function (d, i)	{
-					return opts.attr.cy ? 
-					typeof(opts.attr.cy) !== 'function' ?  
-								 opts.attr.cy : 
+					return opts.attr.cy ?
+					typeof(opts.attr.cy) !== 'function' ?
+								 opts.attr.cy :
 								 opts.attr.cy.call(this, d, i, that) : 0;
 				},
 				r: function (d, i)	{
-					return opts.attr.r ? 
-					typeof(opts.attr.r) !== 'function' ?  
-								 opts.attr.r : 
+					return opts.attr.r ?
+					typeof(opts.attr.r) !== 'function' ?
+								 opts.attr.r :
 								 opts.attr.r.call(this, d, i, that) : 0;
 				},
 			},
 			style: !opts.style ? null : {
-				'fill': function (d, i) { 
-					return opts.style.fill ? 
-					typeof(opts.style.fill) !== 'function' ?  
+				'fill': function (d, i) {
+					return opts.style.fill ?
+					typeof(opts.style.fill) !== 'function' ?
 								 opts.style.fill : opts.style.fill.call(
-								 	this, d, i, that) : '#000000'; 
+								 	this, d, i, that) : '#000000';
 				},
 				'fill-opacity': function (d, i)	{
-					return opts.style.fillOpacity ? 
-					typeof(opts.style.fillOpacity) !== 'function' ?  
-								 opts.style.fillOpacity : 
+					return opts.style.fillOpacity ?
+					typeof(opts.style.fillOpacity) !== 'function' ?
+								 opts.style.fillOpacity :
 								 opts.style.fillOpacity.call(
-								 	this, d, i, that) : 1; 
+								 	this, d, i, that) : 1;
 				},
-				'stroke': function (d, i) { 
-					return opts.style.stroke ? 
-					typeof(opts.style.stroke) !== 'function' ?  
-								 opts.style.stroke : 
+				'stroke': function (d, i) {
+					return opts.style.stroke ?
+					typeof(opts.style.stroke) !== 'function' ?
+								 opts.style.stroke :
 								 opts.style.stroke.call(
-								 	this, d, i, that) : 'none'; 
+								 	this, d, i, that) : 'none';
 				},
-				'stroke-width': function (d, i) { 
+				'stroke-width': function (d, i) {
 					return opts.style.strokeWidth ?
-					typeof(opts.style.strokeWidth) !== 'function' ?  
-								 opts.style.strokeWidth : 
+					typeof(opts.style.strokeWidth) !== 'function' ?
+								 opts.style.strokeWidth :
 								 opts.style.strokeWidth.call(
-								 	this, d, i, that) : '0px'; 
+								 	this, d, i, that) : '0px';
 				},
 				'filter': function (d, i)	{
 					return opts.style.filter ?
-					typeof(opts.style.filter) !== 'function' ?  
-								 opts.style.filter : 
+					typeof(opts.style.filter) !== 'function' ?
+								 opts.style.filter :
 								 opts.style.filter.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 				'cursor': function (d, i)	{
 					return opts.style.cursor ?
-					typeof(opts.style.cursor) !== 'function' ?  
-								 opts.style.cursor : 
+					typeof(opts.style.cursor) !== 'function' ?
+								 opts.style.cursor :
 								 opts.style.cursor.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 			},
 			on: !opts.on ? null : {
 				click: function (d, i)	{
-					opts.on.click ? 
+					opts.on.click ?
 					opts.on.click.call(this, d, i, that) : false;
 				},
 				mouseover: function (d, i)	{
-					opts.on.mouseover ? 
+					opts.on.mouseover ?
 					opts.on.mouseover.call(this, d, i, that) : false;
 				},
 				mouseout: function (d, i)	{
-					opts.on.mouseout ? 
+					opts.on.mouseout ?
 					opts.on.mouseout.call(this, d, i, that) : false;
 				},
 			},
@@ -261,17 +261,17 @@ function divisionLine ()	{
 		model = bio.sizing.chart.default(model, opts);
 		model.position = { now: {}, init: {} };
 		model.isMarker = typeof(opts.isMarker) === 'undefined' ? true : opts.isMarker;
-		opts.pathElement = 
-		bio.objects.getType(opts.pathElement) !== 'Array' ? 
+		opts.pathElement =
+		bio.objects.getType(opts.pathElement) !== 'Array' ?
 		[opts.pathElement] : opts.pathElement;
 		model.division_data = opts.data;
 		model.division_info = opts.info || [
-			{ 
-				additional: 0, color: '#000000', direction: null, 
+			{
+				additional: 0, color: '#000000', direction: null,
 				text: 'Low', textWidth: 10,
 			},
-			{ 
-				additional: 0, color: '#FFFFFF', direction: null, 
+			{
+				additional: 0, color: '#FFFFFF', direction: null,
 				text: 'High', textWidth: 10,
 			}
 		];
@@ -281,13 +281,13 @@ function divisionLine ()	{
 			di.text.replace(' ', 'a'), opts.style.fontSize || '10px');
 		});
 		model.axis = [].concat(opts.axis);
-		model.range = [model.margin.left, model.width - 
+		model.range = [model.margin.left, model.width -
 										model.margin.right];
 		model.scale = bio.scales().get(model.axis, model.range);
 		model.invert = bio.scales().invert(model.scale);
 
 		if (that.data.bar)	{
-			var median = model.axis[model.axis.length % 2 === 1 ? 
+			var median = model.axis[model.axis.length % 2 === 1 ?
 									(model.axis.length + 1) / 2 : model.axis.length / 2];
 
 			model.division_info[0].start = model.scale(model.axis[0]);
@@ -298,7 +298,7 @@ function divisionLine ()	{
 			model.division_info[0].start = model.scale(model.axis[0]);
 			model.division_info[0].end = model.scale(opts.idxes);
 			model.division_info[1].start = model.scale(opts.idxes);
-			model.division_info[1].end = 
+			model.division_info[1].end =
 			model.scale(model.axis.length - 1);
 		}
 
@@ -313,12 +313,12 @@ function divisionLine ()	{
 
 		model.opts.text.id = model.id + '_division_text';
 		model.opts.text.data = model.division_info;
-		model.opts.text.element = 
+		model.opts.text.element =
 		model.textGroup.selectAll(
 			'#' + model.id + '_division_text');
 		model.opts.shape.id = model.id + '_division_shape';
 		model.opts.shape.data = model.division_info;
-		model.opts.shape.element = 
+		model.opts.shape.element =
 		model.shapeGroup.selectAll(
 			'#' + model.id + '_division_shape');
 
@@ -335,21 +335,21 @@ function divisionLine ()	{
 			cp1.path_x = model.division_info[0].end;
 			cp2.path_x = model.division_info[0].end;
 			cp1.path_y = i === 0 ? 10 : 0;
-			cp2.path_y = i === 0 ? 
+			cp2.path_y = i === 0 ?
 			path.attr('height') : path.attr('height') - 18;
 
 			model.opts[path_key] = bio.objects.clone(opts);
-			model.opts[path_key].id = 
+			model.opts[path_key].id =
 			model.id + '_division_path_' + i;
 			model.opts[path_key].data = markers;
-			model.opts[path_key].element = 
+			model.opts[path_key].element =
 			bio.rendering().addGroup(path, 0, 0, 'division-path-' + i);
 
 			model.opts[shape_key] = bio.objects.clone(opts);
-			model.opts[shape_key].id = 
+			model.opts[shape_key].id =
 			model.id + '_division_shape_' + i;
 			model.opts[shape_key].data = [markers[i]];
-			model.opts[shape_key].element = 
+			model.opts[shape_key].element =
 			bio.rendering().addGroup(path, 0, 0, 'division-shape-' + i)
 				 .selectAll('#' + model.id + '_division_shape_' + i);
 			if (model.isMarker)	{
@@ -432,7 +432,7 @@ function drawing ()	{
 
 		try {
 			var result = text.getBoundingClientRect()[type].toFixed();
-			// var result = type === 'width' ? 
+			// var result = type === 'width' ?
 			// 		textWidth(text) : textHeight(text, block);
 		} finally {
 			document.body.removeChild(
@@ -476,11 +476,11 @@ function drawing ()	{
 	 */
 	model.fitText = function (txt, width, height, font)	{
 		var num = 10,	// default 10px.
-				fontStr =  num + 'px ' + (font || 'normal'); 
+				fontStr =  num + 'px ' + (font || 'normal');
 
-		while (model.textSize.height(fontStr) < height && 
+		while (model.textSize.height(fontStr) < height &&
 					model.textSize.width(txt, fontStr) < width)	{
-		
+
 			fontStr = (num += 1, num) + 'px ' + font;
 		}
 
@@ -491,7 +491,7 @@ function drawing ()	{
 	 */
 	model.textOverflow = function (txt, font, width, padding)	{
 		var result = '';
-		
+
 		padding = padding || 5;
 
 		if (model.textSize.width(txt, font) < width - padding)	{
@@ -516,7 +516,7 @@ function drawing ()	{
 	model.getParentSVG = function (node)	{
 		if (node.parentElement.tagName === 'svg')	{
 			return node.parentElement;
-		} 
+		}
 
 		return model.getParentSVG(node.parentElement);
 	};
@@ -538,13 +538,13 @@ function drawing ()	{
 				result = null;
 
 		bio.iteration.loop(sourceList, function (child)	{
-			if (child.tagName === destination.toUpperCase() || 
-		'.' + child.className === destination || 
+			if (child.tagName === destination.toUpperCase() ||
+		'.' + child.className === destination ||
 		'#' + child.id === destination)	{
 				result = child;
 
 				return;
-			} 
+			}
 		});
 
 		return result;
@@ -553,8 +553,8 @@ function drawing ()	{
 		Slide down 애니메이션 구현 함수.
 	 */
 	model.slideDown = function (target)	{
-		var init = target.style.height ? 
-				parseFloat(target.style.height) : 
+		var init = target.style.height ?
+				parseFloat(target.style.height) :
 				target.getBoundingClientRect().height,
 				height = 0;
 
@@ -574,8 +574,8 @@ function drawing ()	{
 		Slide down 애니메이션 구현 함수.
 	 */
 	model.slideUp = function (target)	{
-		var init = target.style.height ? 
-				parseFloat(target.style.height) : 
+		var init = target.style.height ?
+				parseFloat(target.style.height) :
 				target.getBoundingClientRect().height,
 				height = parseFloat(target.style.height);
 
@@ -602,7 +602,7 @@ function drawing ()	{
 			.get(function (err, xml)	{
 				if (err) throw err;
 
-				return callback ? callback(xml) : result = xml;		
+				return callback ? callback(xml) : result = xml;
 			});
 
 		return result;
@@ -654,12 +654,12 @@ function heat ()	{
 			var key = d.x + d.y,
 					prio = bio.landscapeConfig().byCase(d.value);
 
-			model.value[key] ? 
-			bio.boilerPlate.variantInfo[model.value[key][prio][0]] > 
-			bio.boilerPlate.variantInfo[d.value] ? 
-			model.value[key][prio].unshift(d.value) : 
-			model.value[key][prio].push(d.value) : 
-		 (model.value[key] = { cnv: [], var: [], x: d.x, y: d.y }, 
+			model.value[key] ?
+			bio.boilerPlate.variantInfo[model.value[key][prio][0]] >
+			bio.boilerPlate.variantInfo[d.value] ?
+			model.value[key][prio].unshift(d.value) :
+			model.value[key][prio].push(d.value) :
+		 (model.value[key] = { cnv: [], var: [], x: d.x, y: d.y },
 		 	model.value[key][prio].push(d.value));
 		});
 
@@ -669,12 +669,12 @@ function heat ()	{
 	return function (opts, that)	{
 		model = bio.objects.clone(that || {});
 		model = bio.sizing.chart.default(model, opts);
-		
+
 		model.copyX = [].concat(opts.xaxis);
 		model.copyY = [].concat(opts.yaxis);
-		model.rangeX = [model.margin.left, 
+		model.rangeX = [model.margin.left,
 			model.width - model.margin.right];
-		model.rangeY = [model.margin.top, 
+		model.rangeY = [model.margin.top,
 			model.height - model.margin.bottom];
 		model.scaleX = bio.scales().get(model.copyX, model.rangeX);
 		model.scaleY = bio.scales().get(model.copyY, model.rangeY);
@@ -683,12 +683,12 @@ function heat ()	{
 										opts.element, 0, 0, 'heatmap');
 
 		model.opts = bio.objects.clone(opts);
-		model.opts.data = model.duplicate ? 
+		model.opts.data = model.duplicate ?
 			removeDuplicate(model.opts.data) : model.opts.data;
 		model.opts.id = model.id + '_heatmap_rect';
-		model.opts.element = 
+		model.opts.element =
 		model.group.selectAll('.' + model.id + '_heatmap_rect');
-		
+
 		bio.rectangle(model.opts, model);
 	};
 };
@@ -708,15 +708,15 @@ function legend ()	{
 												model.legendData, model.fontSize);
 		model.fontHeight = bio.drawing()
 				 .textSize.height(model.fontSize);
-		model.shapeWidth = model.width - 
-	 (model.margin.left + model.margin.right + 
+		model.shapeWidth = model.width -
+	 (model.margin.left + model.margin.right +
 	 	model.fontWidth.value);
 
 		model.shapeGroup = bio.rendering().addGroup(
-												opts.element, model.margin.top, 
+												opts.element, model.margin.top,
 												model.margin.left, 'legend-shape');
 		model.textGroup = bio.rendering().addGroup(
-												opts.element, model.margin.top, 
+												opts.element, model.margin.top,
 												model.margin.left, 'legend-text');
 
 		model.opts = {
@@ -724,10 +724,10 @@ function legend ()	{
 			shape: bio.objects.clone(opts),
 		};
 		model.opts.text.id = model.id + '_legend_text';
-		model.opts.text.element = 
+		model.opts.text.element =
 		model.textGroup.selectAll('#' + model.id + '_legend_text');
 		model.opts.shape.id = model.id + '_legend_shape';
-		model.opts.shape.element = 
+		model.opts.shape.element =
 		model.shapeGroup.selectAll('#' + model.id + '_legend_shape');
 
 		if (opts.attr && opts.attr.width)	{
@@ -743,7 +743,7 @@ function legend ()	{
 		var div = opts.element.node().parentNode,
 				bcr = model.textGroup.node().getBoundingClientRect();
 		// Legend div 를 type 수에 맞는 세로 길이로 재 설정한다.
-		div.style.height = bcr.height + 
+		div.style.height = bcr.height +
 		model.margin.top + model.padding + 'px';
 		// 왼쪽에 바짝 붙은 div 를 조금 떨어뜨리기 위한 코드.
 		div.style.width = model.width - 5 + 'px';
@@ -757,7 +757,7 @@ function needle ()	{
 		Range 값을 구해주는 함수.
 	 */
 	function range (size, m1, m2, start)	{
-		return start === 'left' || start === 'top' ? 
+		return start === 'left' || start === 'top' ?
 					[m1, size - m2] : [size - m2, m1];
 	};
 
@@ -767,9 +767,9 @@ function needle ()	{
 
 		model.copyX = [].concat(opts.xaxis);
 		model.copyY = [].concat(opts.yaxis);
-		model.rangeX = [model.margin.left, 
+		model.rangeX = [model.margin.left,
 			model.width - model.margin.right];
-		model.rangeY = [model.height - model.margin.bottom, 
+		model.rangeY = [model.height - model.margin.bottom,
 										model.margin.top];
 		model.scaleX = bio.scales().get(model.copyX, model.rangeX);
 		model.scaleY = bio.scales().get(model.copyY, model.rangeY);
@@ -785,11 +785,11 @@ function needle ()	{
 		};
 		model.opts.line.element = model.lineGroup;
 		model.opts.shape.data = opts.shapeData;
-		model.opts.shape.element = 
+		model.opts.shape.element =
 		model.shapeGroup.selectAll('#' + model.id + '_needle_shape');
 
 		bio.iteration.loop(opts.lineData, function (ld)	{
-			model.opts.line.data = ld.value;		
+			model.opts.line.data = ld.value;
 
 			bio.path(model.opts.line, model);
 		});
@@ -813,29 +813,29 @@ function network ()	{
 	};
 
 	function v4 (nodes, links)	{
-		return d3.forceSimulation(nodes) 
+		return d3.forceSimulation(nodes)
       			 .force('charge',
       			 	d3.forceManyBody().strength(function (d, i)	{
-      			 		return d.group ? 
-      			 		-300 - (600 * (d.radius / 100)) : 
+      			 		return d.group ?
+      			 		-300 - (600 * (d.radius / 100)) :
       			 		-300 - (600 * (d.radius / 100));
       			 	}))
-      			 .force('link', 
+      			 .force('link',
       			 	d3.forceLink(links)
       			 		.id(function(d) { return d.text; })
       			 		.distance(function (d)	{
-      			 			return d.source.group && d.target.group ? 
-      			 						90 - (90 * (d.source.radius / 100)) : 
-      			 						d.isOne === 1 ? 
-      			 						10 + (1050 * (d.source.radius / 100)) : 
+      			 			return d.source.group && d.target.group ?
+      			 						90 - (90 * (d.source.radius / 100)) :
+      			 						d.isOne === 1 ?
+      			 						10 + (1050 * (d.source.radius / 100)) :
       			 						190 - (190 * (d.source.radius / 100));
-      			 		})) 
+      			 		}))
       			 .force('x', d3.forceX(function (d)	{
-      			 		return d.group ? model.width / 2.1 : 
+      			 		return d.group ? model.width / 2.1 :
       			 			model.width - model.width * (d.index / 10);
       			 }))
       			 .force('y', d3.forceY(function (d)	{
-      			 		return d.group ? model.height / 2.5 : 
+      			 		return d.group ? model.height / 2.5 :
       			 										 model.height * 0.95;
       			 }));
 	};
@@ -848,11 +848,11 @@ function network ()	{
 			id: className,
 			element: g,
 			attr: {
-				rx: 2, 
-				ry: 2, 
+				rx: 2,
+				ry: 2,
 				y: top,
-				x: left, 
-				width: width, 
+				x: left,
+				width: width,
 				height: height,
 			},
 			style: {
@@ -892,7 +892,7 @@ function network ()	{
 				links = [];
 		// Compound, Nodes, Links 분류 작업.
 		bio.iteration.loop(model.network_data, function (net)	{
-			net.type === 'compound' ? compound = net : 
+			net.type === 'compound' ? compound = net :
 			net.type === 'node' ? nodes.push(net) : links.push(net);
 		});
 		// Member 는 그룹으로 분류.
@@ -927,18 +927,18 @@ function network ()	{
 			height: model.arrow_width,
 			svg: model.element.append('svg:defs'),
 		});
-		buildArea('infomation', model.height * 0.05, 10, 
+		buildArea('infomation', model.height * 0.05, 10,
 					model.width - 20, model.height * 0.1);
-		buildArea('compound', model.height * 0.15, 10, 
+		buildArea('compound', model.height * 0.15, 10,
 				model.width - 20, model.height * 0.54);
-		writeInfo(compound.text, 
-			model.height * 0.105, model.width / 2 - 
+		writeInfo(compound.text,
+			model.height * 0.105, model.width / 2 -
 			bio.drawing().textSize.width(compound.text, '16px') / 2);
 		// Force layout 생성.
-		var force = bio.dependencies.version.d3v4() ? 
+		var force = bio.dependencies.version.d3v4() ?
 								v4(nodes, links) : v3(nodes, links);
 		// Animation 없이 draw.
-		for (var i = 0, n = 
+		for (var i = 0, n =
 			Math.ceil(Math.log(force.alphaMin()) /
 			Math.log(1 - force.alphaDecay())); i < n; ++i) {
 	    force.tick();
@@ -1000,14 +1000,14 @@ function network ()	{
 						dy = d.target.y - d.source.y,
 						dr = Math.sqrt(dx * dx + dy * dy);
 
-				var offsetX = dx * (d.target.radius + 
+				var offsetX = dx * (d.target.radius +
 											model.arrow_width) / dr,
-						offsetY = dy * (d.target.radius + 
+						offsetY = dy * (d.target.radius +
 											model.arrow_width) / dr;
 
-				return 'M' + d.source.x + ',' + d.source.y + 
-							 'A' + dr + ',' + dr + ' 0 0,1 ' + 
-          					(d.target.x - offsetX) + ',' + 
+				return 'M' + d.source.x + ',' + d.source.y +
+							 'A' + dr + ',' + dr + ' 0 0,1 ' +
+          					(d.target.x - offsetX) + ',' +
           					(d.target.y - offsetY);
 			});
 
@@ -1027,19 +1027,19 @@ function path ()	{
 	function toLine (opts, that)	{
 		var target = this;
 
-		return (bio.dependencies.version.d3v4() ? 
+		return (bio.dependencies.version.d3v4() ?
 						d3.line() : d3.svg.line())
 							.x(function (d, i)	{
-								return opts.attr.x ? 
-								typeof(opts.attr.x) !== 'function' ?  
-									 		 opts.attr.x : 
-									 		 opts.attr.x.call(target, d, i, that) : 0; 
-							})	
+								return opts.attr.x ?
+								typeof(opts.attr.x) !== 'function' ?
+									 		 opts.attr.x :
+									 		 opts.attr.x.call(target, d, i, that) : 0;
+							})
 							.y(function (d, i)	{
-								return opts.attr.y ? 
-								typeof(opts.attr.y) !== 'function' ?  
-											 opts.attr.y : 
-											 opts.attr.y.call(target, d, i, that) : 0; 
+								return opts.attr.y ?
+								typeof(opts.attr.y) !== 'function' ?
+											 opts.attr.y :
+											 opts.attr.y.call(target, d, i, that) : 0;
 							});
 	};
 
@@ -1050,13 +1050,13 @@ function path ()	{
 			element: opts.element,
 			attr: !opts.attr ? null : {
 				id: function (d, i) {
-					return opts.attr.id ? 
-					typeof(opts.attr.id) !== 'function' ?  
-								(opts.id || that.id || 
-								 opts.element.attr('id')) + 
-									'_path' : 
-								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id || 
-								 opts.element.attr('id')) + 
+					return opts.attr.id ?
+					typeof(opts.attr.id) !== 'function' ?
+								(opts.id || that.id ||
+								 opts.element.attr('id')) +
+									'_path' :
+								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id ||
+								 opts.element.attr('id')) +
 									'_path';
 				},
 				d: function (d, i)	{
@@ -1064,32 +1064,32 @@ function path ()	{
 				},
 			},
 			style: !opts.style ? null : {
-				'fill': function (d, i) { 
-					return opts.style.fill ? 
-					typeof(opts.style.fill) !== 'function' ?  
+				'fill': function (d, i) {
+					return opts.style.fill ?
+					typeof(opts.style.fill) !== 'function' ?
 								 opts.style.fill : opts.style.fill.call(
-								 	this, d, i, that) : '#A8A8A8'; 
+								 	this, d, i, that) : '#A8A8A8';
 				},
-				'stroke': function (d, i) { 
-					return opts.style.stroke ? 
-					typeof(opts.style.stroke) !== 'function' ?  
-								 opts.style.stroke : 
+				'stroke': function (d, i) {
+					return opts.style.stroke ?
+					typeof(opts.style.stroke) !== 'function' ?
+								 opts.style.stroke :
 								 opts.style.stroke.call(
-								 	this, d, i, that) : '#A8A8A8'; 
+								 	this, d, i, that) : '#A8A8A8';
 				},
-				'stroke-width': function (d, i) { 
+				'stroke-width': function (d, i) {
 					return opts.style.strokeWidth ?
-					typeof(opts.style.strokeWidth) !== 'function' ?  
-								 opts.style.strokeWidth : 
+					typeof(opts.style.strokeWidth) !== 'function' ?
+								 opts.style.strokeWidth :
 								 opts.style.strokeWidth.call(
-								 	this, d, i, that) : '1px'; 
+								 	this, d, i, that) : '1px';
 				},
 				'stroke-dasharray': function (d, i)	{
 					return opts.style.strokeDash ?
-					typeof(opts.style.strokeDash) !== 'function' ?  
-								 opts.style.strokeDash : 
+					typeof(opts.style.strokeDash) !== 'function' ?
+								 opts.style.strokeDash :
 								 opts.style.strokeDash.call(
-								 	this, d, i, that) : 'none'; 
+								 	this, d, i, that) : 'none';
 				}
 			},
 		});
@@ -1108,124 +1108,124 @@ function rectangle ()	{
 			data: opts.data || null,
 			attr: !opts.attr ? null : {
 				id: function (d, i) {
-					return opts.attr.id ? 
-					typeof(opts.attr.id) !== 'function' ?  
-								(opts.id || that.id || 
-								 opts.element.attr('id')) + 
-									'_rect' : 
-								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id || 
-								 opts.element.attr('id')) + 
+					return opts.attr.id ?
+					typeof(opts.attr.id) !== 'function' ?
+								(opts.id || that.id ||
+								 opts.element.attr('id')) +
+									'_rect' :
+								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id ||
+								 opts.element.attr('id')) +
 									'_rect'
 				},
 				x: function (d, i)	{
-					return opts.attr.x ? 
-					typeof(opts.attr.x) !== 'function' ?  
-								 opts.attr.x : 
+					return opts.attr.x ?
+					typeof(opts.attr.x) !== 'function' ?
+								 opts.attr.x :
 								 opts.attr.x.call(this, d, i, that) : 0;
 				},
 				y: function (d, i)	{
-					return opts.attr.y ? 
-					typeof(opts.attr.y) !== 'function' ?  
-								 opts.attr.y : 
+					return opts.attr.y ?
+					typeof(opts.attr.y) !== 'function' ?
+								 opts.attr.y :
 								 opts.attr.y.call(this, d, i, that) : 0;
 				},
 				rx: function (d, i)	{
-					return opts.attr.rx ? 
-					typeof(opts.attr.rx) !== 'function' ?  
-								 opts.attr.rx : 
+					return opts.attr.rx ?
+					typeof(opts.attr.rx) !== 'function' ?
+								 opts.attr.rx :
 								 opts.attr.rx.call(this, d, i, that) : 0;
 				},
 				ry: function (d, i)	{
-					return opts.attr.ry ? 
-					typeof(opts.attr.ry) !== 'function' ?  
-								 opts.attr.ry : 
+					return opts.attr.ry ?
+					typeof(opts.attr.ry) !== 'function' ?
+								 opts.attr.ry :
 								 opts.attr.ry.call(this, d, i, that) : 0;
 				},
 				width: function (d, i)	{
-					return opts.attr.width ? 
-					typeof(opts.attr.width) !== 'function' ?  
-								 opts.attr.width : 
-								 opts.attr.width.call(this, d, i, that) < 0 ? 
-								 Math.abs(opts.attr.width.call(this, d, i, that)) : 
+					return opts.attr.width ?
+					typeof(opts.attr.width) !== 'function' ?
+								 opts.attr.width :
+								 opts.attr.width.call(this, d, i, that) < 0 ?
+								 Math.abs(opts.attr.width.call(this, d, i, that)) :
 								 opts.attr.width.call(this, d, i, that) : 1;
 				},
 				height: function (d, i)	{
-					return opts.attr.height ? 
-					typeof(opts.attr.height) !== 'function' ?  
-								 opts.attr.height : 
-								 opts.attr.height.call(this, d, i, that) < 0 ? 
-								 Math.abs(opts.attr.height.call(this, d, i, that)) : 
+					return opts.attr.height ?
+					typeof(opts.attr.height) !== 'function' ?
+								 opts.attr.height :
+								 opts.attr.height.call(this, d, i, that) < 0 ?
+								 Math.abs(opts.attr.height.call(this, d, i, that)) :
 								 opts.attr.height.call(this, d, i, that) : 1;
 				},
 			},
 			style: !opts.style ? null : {
-				'fill': function (d, i) { 
-					return opts.style.fill ? 
-					typeof(opts.style.fill) !== 'function' ?  
+				'fill': function (d, i) {
+					return opts.style.fill ?
+					typeof(opts.style.fill) !== 'function' ?
 								 opts.style.fill : opts.style.fill.call(
-								 	this, d, i, that) : '#000000'; 
+								 	this, d, i, that) : '#000000';
 				},
-				'fill-opacity': function (d, i) { 
-					return opts.style.fillOpacity ? 
-					typeof(opts.style.fillOpacity) !== 'function' ?  
-								 opts.style.fillOpacity : 
+				'fill-opacity': function (d, i) {
+					return opts.style.fillOpacity ?
+					typeof(opts.style.fillOpacity) !== 'function' ?
+								 opts.style.fillOpacity :
 								 opts.style.fillOpacity.call(
-								 	this, d, i, that) : 'none'; 
+								 	this, d, i, that) : 'none';
 				},
-				'stroke': function (d, i) { 
-					return opts.style.stroke ? 
-					typeof(opts.style.stroke) !== 'function' ?  
-								 opts.style.stroke : 
+				'stroke': function (d, i) {
+					return opts.style.stroke ?
+					typeof(opts.style.stroke) !== 'function' ?
+								 opts.style.stroke :
 								 opts.style.stroke.call(
-								 	this, d, i, that) : 'none'; 
+								 	this, d, i, that) : 'none';
 				},
-				'stroke-width': function (d, i) { 
+				'stroke-width': function (d, i) {
 					return opts.style.strokeWidth ?
-					typeof(opts.style.strokeWidth) !== 'function' ?  
-								 opts.style.strokeWidth : 
+					typeof(opts.style.strokeWidth) !== 'function' ?
+								 opts.style.strokeWidth :
 								 opts.style.strokeWidth.call(
-								 	this, d, i, that) : '0px'; 
+								 	this, d, i, that) : '0px';
 				},
 				'filter': function (d, i)	{
 					return opts.style.filter ?
-					typeof(opts.style.filter) !== 'function' ?  
-								 opts.style.filter : 
+					typeof(opts.style.filter) !== 'function' ?
+								 opts.style.filter :
 								 opts.style.filter.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 				'cursor': function (d, i)	{
 					return opts.style.cursor ?
-					typeof(opts.style.cursor) !== 'function' ?  
-								 opts.style.cursor : 
+					typeof(opts.style.cursor) !== 'function' ?
+								 opts.style.cursor :
 								 opts.style.cursor.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 			},
 			on: !opts.on ? null : {
 				click: function (d, i)	{
-					opts.on.click ? 
+					opts.on.click ?
 					opts.on.click.call(this, d, i, that) : false;
 				},
 				mouseover: function (d, i)	{
-					opts.on.mouseover ? 
+					opts.on.mouseover ?
 					opts.on.mouseover.call(this, d, i, that) : false;
 				},
 				mouseout: function (d, i)	{
-					opts.on.mouseout ? 
+					opts.on.mouseout ?
 					opts.on.mouseout.call(this, d, i, that) : false;
 				},
 			},
 			call: !opts.call ? null : {
 				start: function (d, i)	{
-					opts.call.start ? 
+					opts.call.start ?
 					opts.call.start.call(this, d, i, that) : false;
 				},
 				drag: function (d, i)	{
-					opts.call.drag ? 
+					opts.call.drag ?
 					opts.call.drag.call(this, d, i, that) : false;
 				},
 				end: function (d, i)	{
-					opts.call.end ? 
+					opts.call.end ?
 					opts.call.end.call(this, d, i, that) : false;
 				},
 			},
@@ -1241,7 +1241,7 @@ function rendering ()	{
 	 */
 	model.createSVG = function (element, width, height)	{
 		var dom = bio.dom().get(element),
-				classify = dom.id ? '#' + dom.id : 
+				classify = dom.id ? '#' + dom.id :
 						 '.' + dom.className,
 				w = width || parseFloat(dom.style.width),
 				h = height || parseFloat(dom.style.height);
@@ -1256,19 +1256,19 @@ function rendering ()	{
 	 */
 	model.addGroup = function (svg, top, left, classify)	{
 		svg = bio.dependencies.version.d3v4() ? svg : svg[0][0];
-		svg = bio.objects.getType(svg) === 'Array' || 
-					bio.objects.getType(svg) === 'Object' ? 
+		svg = bio.objects.getType(svg) === 'Array' ||
+					bio.objects.getType(svg) === 'Object' ?
 					svg : d3.select(svg);
 
 		classify = classify || '';
 
 		var id = svg.attr('id'),
-				isExist = d3.selectAll('.' + id + 
+				isExist = d3.selectAll('.' + id +
 															 '.' + classify + '-g-tag');
-		
+
 		return (isExist.node() ? isExist : svg).append('g')
 			 		.attr('class', id + ' ' + classify + '-g-tag')
-			 		.attr('transform', 
+			 		.attr('transform',
 			 			'translate(' + left + ', ' + top + ')');
 	};
 	/*
@@ -1307,11 +1307,11 @@ function rendering ()	{
 	function setDrag (shape, drags)	{
 		if (!drags) { return false; }
 
-		var drag = bio.dependencies.version.d3v4() ? 
+		var drag = bio.dependencies.version.d3v4() ?
 				d3.drag() : d3.behavior.drag().origin(Object);
 
 		bio.iteration.loop(drags, function (name, value)	{
-			name = bio.dependencies.version.d3v4() ? 
+			name = bio.dependencies.version.d3v4() ?
 						 name : name !== 'drag' ? 'drag' + name : name;
 
 			drag.on(name, value);
@@ -1333,7 +1333,7 @@ function rendering ()	{
 			throw new Error ('Not defined SVG Element');
 		}
 
-		var s = !this.data ? this.element.append(shape) : 
+		var s = !this.data ? this.element.append(shape) :
 						 this.element.data(this.data).enter().append(shape);
 
 		this.text ? setText(s, this.text) : false;
@@ -1367,7 +1367,7 @@ function rendering ()	{
 		Triangle 을 만드는데 필요한 문자열을 생성해주는 함수.
 	 */
 	model.triangleStr = function (x, y, len, direction)	{
-		var sign = direction === 'left' || 
+		var sign = direction === 'left' ||
 							 direction === 'bottom' ? -1 : 1,
 				x1, y1, x2, y2;
 
@@ -1383,9 +1383,9 @@ function rendering ()	{
 			y2 = y1;
 		}
 
-		return x + ',' + y + 
-		' ' + (x + x1) + ',' + (y + y1) + 
-		' ' + (x + x2) + ',' + (y + y2) + 
+		return x + ',' + y +
+		' ' + (x + x1) + ',' + (y + y1) +
+		' ' + (x + x2) + ',' + (y + y2) +
 		 ' ' + x + ',' + y;
 	};
 	/*
@@ -1437,7 +1437,7 @@ function rendering ()	{
 	 */
 	model.marker = function (opts)	{
 		opts.svg.selectAll('marker')
-	     	.data(opts.data || [''])      
+	     	.data(opts.data || [''])
 	  	 	.enter().append('svg:marker')
 	     	.attr('id', function (d)	{
 	     		return opts.id ? 'marker_' + d[opts.id] : 'marker';
@@ -1451,7 +1451,7 @@ function rendering ()	{
 	     	.append('svg:path')
 	     	.attr('d', 'M0,-5L10,0L0,5')
 	     	.attr('fill', function (d)	{
-	     		return opts.color ? d[opts.color] : '#333333'; 
+	     		return opts.color ? d[opts.color] : '#333333';
 	     	});
 	};
 	/*
@@ -1474,7 +1474,7 @@ function rendering ()	{
 		g.setAttributeNS(null, 'transform', transform);
 
 		var matrix = g.transform.baseVal.consolidate().matrix;
-		
+
 		return {
 			scale: [matrix.a, matrix.d],
 			translate: [matrix.e, matrix.f],
@@ -1495,24 +1495,24 @@ function scales ()	{
 		Ordinal scale 반환.
 	 */
 	model.ordinal = function (domain, range)	{
-		return bio.dependencies.version.d3v4() ? 
-					 d3.scaleBand().domain(domain).range(range) : 
+		return bio.dependencies.version.d3v4() ?
+					 d3.scaleBand().domain(domain).range(range) :
 					 d3.scale.ordinal().domain(domain).rangeBands(range);
 	};
 	/*
 	 	Linear scale 반환.
 	 */
 	model.linear = function (domain, range)	{
-		return bio.dependencies.version.d3v4() ? 
-					 d3.scaleLinear().domain(domain).range(range) : 
+		return bio.dependencies.version.d3v4() ?
+					 d3.scaleLinear().domain(domain).range(range) :
 					 d3.scale.linear().domain(domain).range(range);
 	};
 	/*
 		Domain 데이터에서 첫번째 값이 정수일 경우
-		이는 Linear 데이터로 분류하고 그 외에는 Ordinal 로 분류한다. 
+		이는 Linear 데이터로 분류하고 그 외에는 Ordinal 로 분류한다.
 	 */
 	function scaleType (domain)	{
-		return bio.objects.getType(domain[0]) === 'Number' ? 
+		return bio.objects.getType(domain[0]) === 'Number' ?
 					 'linear' : 'ordinal';
 	};
 	/*
@@ -1528,10 +1528,10 @@ function scales ()	{
 		var domain = scale.domain(),
 				range = scale.range();
 
-		var sc = scaleType(domain) === 'linear' ? 
-				bio.dependencies.version.d3v4() ? 
-				d3.scaleLinear() : d3.scale.linear() : 
-				bio.dependencies.version.d3v4() ? 
+		var sc = scaleType(domain) === 'linear' ?
+				bio.dependencies.version.d3v4() ?
+				d3.scaleLinear() : d3.scale.linear() :
+				bio.dependencies.version.d3v4() ?
 				d3.scaleQuantize() : d3.scale.quantize();
 
 		return sc.domain(range).range(domain);
@@ -1540,9 +1540,9 @@ function scales ()	{
 		Scale bandWidth 값을 반환한다.
 	 */
 	model.band = function (scale)	{
-		return bio.dependencies.version.d3v4() ? 
+		return bio.dependencies.version.d3v4() ?
 					scale.bandwidth() : scale.rangeBand();
-	};	
+	};
 
 	return function ()	{
 		return model;
@@ -1557,12 +1557,12 @@ function scatter ()	{
 		model = bio.objects.clone(that || {});
 		model = bio.sizing.chart.default(model, opts);
 		model.scatter_data = opts.data;
-		
+
 		model.copyX = [].concat(opts.xaxis);
 		model.copyY = [].concat(opts.yaxis);
-		model.rangeX = [model.margin.left, 
+		model.rangeX = [model.margin.left,
 			model.width - model.margin.right];
-		model.rangeY = [model.margin.top, 
+		model.rangeY = [model.margin.top,
 			model.height - model.margin.bottom];
 		model.scaleX = bio.scales().get(model.copyX, model.rangeX);
 		model.scaleY = bio.scales().get(model.copyY, model.rangeY);
@@ -1573,7 +1573,7 @@ function scatter ()	{
 		model.opts = bio.objects.clone(opts);
 		model.opts.data = model.scatter_data;
 		model.opts.id = model.id + '_scatter_shape';
-		model.opts.element = 
+		model.opts.element =
 		model.group.selectAll('#' + model.id + '_scatter_shape');
 
 		bio.circle(model.opts, model);
@@ -1607,7 +1607,7 @@ function survival ()	{
 
 		bio.iteration.loop(data, function (d)	{
 			if (d)	{
-				// if ((d.os_days !== 0 && d.os_days !== null && d.os_status !== null) && 
+				// if ((d.os_days !== 0 && d.os_days !== null && d.os_status !== null) &&
 				// 		(d.dfs_days !== 0 && d.dfs_days !== null && d.dfs_status !== null))	{
 					var osm = d.os_days === null ? null : (d.os_days / 30),
 						dfsm = d.dfs_days === null ? null : (d.dfs_days / 30);
@@ -1699,7 +1699,7 @@ function survival ()	{
 			SurvivalCurveBroilerPlate.subGroupSettings.legend = {
 				low: 'Low score group', high: 'High score group',
 			};
-			SurvivalCurveBroilerPlate.subGroupSettings.line_color = { low: '#00AC52', high: '#FF6252' };			
+			SurvivalCurveBroilerPlate.subGroupSettings.line_color = { low: '#00AC52', high: '#FF6252' };
 		} else {
 			SurvivalCurveBroilerPlate.subGroupSettings.legend = {
 				low: opts.legends.low.text, high: opts.legends.high.text,
@@ -1753,109 +1753,109 @@ function text ()	{
 			element: opts.element,
 			data: opts.data || null,
 			attr: !opts.attr ? null : {
-				id: function (d) { 
-					return opts.attr.id ? 
-					typeof(opts.attr.id) !== 'function' ?  
-								(opts.id || that.id || 
-								 opts.element.attr('id')) + 
-									'_text' : 
-								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id || 
-								 opts.element.attr('id')) + 
+				id: function (d) {
+					return opts.attr.id ?
+					typeof(opts.attr.id) !== 'function' ?
+								(opts.id || that.id ||
+								 opts.element.attr('id')) +
+									'_text' :
+								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id ||
+								 opts.element.attr('id')) +
 									'_text';
 				},
 				x: function (d, i)	{
-					return opts.attr.x ? 
-					typeof(opts.attr.x) !== 'function' ?  
-								 opts.attr.x : 
+					return opts.attr.x ?
+					typeof(opts.attr.x) !== 'function' ?
+								 opts.attr.x :
 								 opts.attr.x.call(this, d, i, that) : 0;
 				},
 				y: function (d, i)	{
-					return opts.attr.y ? 
-					typeof(opts.attr.y) !== 'function' ?  
-								 opts.attr.y : 
+					return opts.attr.y ?
+					typeof(opts.attr.y) !== 'function' ?
+								 opts.attr.y :
 								 opts.attr.y.call(this, d, i, that) : 0;
 				},
 				// title: function (d, i)	{
-				// 	return opts.attr.title ? 
-				// 	typeof(opts.attr.title) !== 'function' ?  
-				// 				 opts.attr.title : 
+				// 	return opts.attr.title ?
+				// 	typeof(opts.attr.title) !== 'function' ?
+				// 				 opts.attr.title :
 				// 				 opts.attr.title.call(this, d, i, that) : 0;
 				// },
 			},
 			style: !opts.style ? null : {
 				'fill': function (d, i)	{
 					return opts.style.fill ?
-					typeof(opts.style.fill) !== 'function' ?  
-								 opts.style.fill : 
+					typeof(opts.style.fill) !== 'function' ?
+								 opts.style.fill :
 								 opts.style.fill.call(
 								 	this, d, i, that) : '#000000';
 				},
 				'font-size': function (d, i)	{
-					return opts.style.fontSize ? 
-					typeof(opts.style.fontSize) !== 'function' ?  
-								 opts.style.fontSize : 
+					return opts.style.fontSize ?
+					typeof(opts.style.fontSize) !== 'function' ?
+								 opts.style.fontSize :
 								 opts.style.fontSize.call(
 								 	this, d, i, that) : '10px';
 				},
-				'font-family': function (d, i) { 
-					return opts.style.fontFamily ? 
-					typeof(opts.style.fontFamily) !== 'function' ?  
-								 opts.style.fontFamily : 
+				'font-family': function (d, i) {
+					return opts.style.fontFamily ?
+					typeof(opts.style.fontFamily) !== 'function' ?
+								 opts.style.fontFamily :
 								 opts.style.fontFamily.call(
-								 	this, d, i, that) : 'Arial'; 
+								 	this, d, i, that) : 'Arial';
 				},
 				'font-weight': function (d, i) {
-					return opts.style.fontWeight ? 
-					typeof(opts.style.fontWeight) !== 'function' ?  
-								 opts.style.fontWeight : 
+					return opts.style.fontWeight ?
+					typeof(opts.style.fontWeight) !== 'function' ?
+								 opts.style.fontWeight :
 								 opts.style.fontWeight.call(
 								 	this, d, i, that) : 'normal';
 				},
 				'alignment-baseline': function (d, i)	{
-					return opts.style.alignmentBaseline ? 
-					typeof(opts.style.alignmentBaseline) !== 'function' ?  
-								 opts.style.alignmentBaseline : 
+					return opts.style.alignmentBaseline ?
+					typeof(opts.style.alignmentBaseline) !== 'function' ?
+								 opts.style.alignmentBaseline :
 								 opts.style.alignmentBaseline.call(
 								 	this, d, i, that) : 'middle';
 				},
 				'cursor': function (d, i)	{
 					return opts.style.cursor ?
-					typeof(opts.style.cursor) !== 'function' ?  
-								 opts.style.cursor : 
+					typeof(opts.style.cursor) !== 'function' ?
+								 opts.style.cursor :
 								 opts.style.cursor.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 				'stroke': function (d, i)	{
 					return opts.style.stroke ?
-					typeof(opts.style.stroke) !== 'function' ?  
-								 opts.style.stroke : 
+					typeof(opts.style.stroke) !== 'function' ?
+								 opts.style.stroke :
 								 opts.style.stroke.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 				'stroke-width': function (d, i)	{
 					return opts.style.strokeWidth ?
-					typeof(opts.style.strokeWidth) !== 'function' ?  
-								 opts.style.strokeWidth : 
+					typeof(opts.style.strokeWidth) !== 'function' ?
+								 opts.style.strokeWidth :
 								 opts.style.strokeWidth.call(
-								 	this, d, i, that) : false; 
-				},	
+								 	this, d, i, that) : false;
+				},
 			},
 			on: !opts.on ? null : {
 				click: function (d, i)	{
-					opts.on.click ? 
+					opts.on.click ?
 					opts.on.click.call(this, d, i, that) : false;
 				},
 				mouseover: function (d, i)	{
-					opts.on.mouseover ? 
+					opts.on.mouseover ?
 					opts.on.mouseover.call(this, d, i, that) : false;
 				},
 				mouseout: function (d, i)	{
-					opts.on.mouseout ? 
+					opts.on.mouseout ?
 					opts.on.mouseout.call(this, d, i, that) : false;
 				},
 			},
-			text: function (d, i)	{ 
-				return opts.text ? typeof(opts.text) !== 'function' ?  
+			text: function (d, i)	{
+				return opts.text ? typeof(opts.text) !== 'function' ?
 							 opts.text : opts.text.call(this, d, i, that) : '';
 			},
 		});
@@ -1873,84 +1873,84 @@ function triangle ()	{
 			element: opts.element,
 			data: opts.data || null,
 			attr: !opts.attr ? null : {
-				id: function (d, i) { 
-					return opts.attr.id ? 
-					typeof(opts.attr.id) !== 'function' ?  
-								(opts.id || that.id || 
-								 opts.element.attr('id')) + 
-									'_triangle' : 
-								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id || 
-								 opts.element.attr('id')) + 
+				id: function (d, i) {
+					return opts.attr.id ?
+					typeof(opts.attr.id) !== 'function' ?
+								(opts.id || that.id ||
+								 opts.element.attr('id')) +
+									'_triangle' :
+								 opts.attr.id.call(this, d, i, that) : (opts.id || that.id ||
+								 opts.element.attr('id')) +
 									'_triangle';
 				},
 				points: function (d, i)	{
-					return opts.attr.points ? 
-					typeof(opts.attr.points) !== 'function' ?  
-								 opts.attr.points : 
+					return opts.attr.points ?
+					typeof(opts.attr.points) !== 'function' ?
+								 opts.attr.points :
 								 opts.attr.points.call(this, d, i, that) : 0;
 				},
 			},
 			style: !opts.style ? null : {
-				'fill': function (d, i) { 
-					return opts.style.fill ? 
-					typeof(opts.style.fill) !== 'function' ?  
+				'fill': function (d, i) {
+					return opts.style.fill ?
+					typeof(opts.style.fill) !== 'function' ?
 								 opts.style.fill : opts.style.fill.call(
-								 	this, d, i, that) : '#000000'; 
+								 	this, d, i, that) : '#000000';
 				},
-				'stroke': function (d, i) { 
-					return opts.style.stroke ? 
-					typeof(opts.style.stroke) !== 'function' ?  
-								 opts.style.stroke : 
+				'stroke': function (d, i) {
+					return opts.style.stroke ?
+					typeof(opts.style.stroke) !== 'function' ?
+								 opts.style.stroke :
 								 opts.style.stroke.call(
-								 	this, d, i, that) : 'none'; 
+								 	this, d, i, that) : 'none';
 				},
-				'stroke-width': function (d, i) { 
+				'stroke-width': function (d, i) {
 					return opts.style.strokeWidth ?
-					typeof(opts.style.strokeWidth) !== 'function' ?  
-								 opts.style.strokeWidth : 
+					typeof(opts.style.strokeWidth) !== 'function' ?
+								 opts.style.strokeWidth :
 								 opts.style.strokeWidth.call(
-								 	this, d, i, that) : '0px'; 
+								 	this, d, i, that) : '0px';
 				},
 				'filter': function (d, i)	{
 					return opts.style.filter ?
-					typeof(opts.style.filter) !== 'function' ?  
-								 opts.style.filter : 
+					typeof(opts.style.filter) !== 'function' ?
+								 opts.style.filter :
 								 opts.style.filter.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 				'cursor': function (d, i)	{
 					return opts.style.cursor ?
-					typeof(opts.style.cursor) !== 'function' ?  
-								 opts.style.cursor : 
+					typeof(opts.style.cursor) !== 'function' ?
+								 opts.style.cursor :
 								 opts.style.cursor.call(
-								 	this, d, i, that) : false; 
+								 	this, d, i, that) : false;
 				},
 			},
 			on: !opts.on ? null : {
 				click: function (d, i)	{
-					opts.on.click ? 
+					opts.on.click ?
 					opts.on.click.call(this, d, i, that) : false;
 				},
 				mouseover: function (d, i)	{
-					opts.on.mouseover ? 
+					opts.on.mouseover ?
 					opts.on.mouseover.call(this, d, i, that) : false;
 				},
 				mouseout: function (d, i)	{
-					opts.on.mouseout ? 
+					opts.on.mouseout ?
 					opts.on.mouseout.call(this, d, i, that) : false;
 				},
 			},
 			call: !opts.call ? null : {
 				start: function (d, i)	{
-					opts.call.start ? 
+					opts.call.start ?
 					opts.call.start.call(this, d, i, that) : false;
 				},
 				drag: function (d, i)	{
-					opts.call.drag ? 
+					opts.call.drag ?
 					opts.call.drag.call(this, d, i, that) : false;
 				},
 				end: function (d, i)	{
-					opts.call.end ? 
+					opts.call.end ?
 					opts.call.end.call(this, d, i, that) : false;
 				},
 			},
@@ -2132,7 +2132,7 @@ function boilerPlate ()	{
 		'Mutation': '#5CB755',
 		'None': '#D3D3D3',
 	};
-	
+
 	return model;
 };
 function layout ()	{
@@ -2172,7 +2172,7 @@ function layout ()	{
 							if (isP === 'patient')	{
 								$('#landscape_patient_group, #landscape_patient_sample, #landscape_patient_heatmap').css('box-shadow', 'None').css('background', '#fff')
 							}
-							
+
 							isDraw = false;
 						}
 					});
@@ -2190,20 +2190,20 @@ function layout ()	{
 	model.landscape = function (ids, isPlotted)	{
 		return create(['option', 'title'], 'landscape', ids, isPlotted);
 	};
-	
+
 	model.variants = function (ids)	{
 		return create(['title'], 'variants', ids);
 	};
-	
+
 	model.expression = function (ids)	{
 		return create(
-			['title', 'function', 'color_mapping', 'signature'], 
+			['title', 'function', 'color_mapping', 'signature'],
 			'expression', ids);
 	};
-	
+
 	model.exclusivity = function (ids)	{
 		return create(
-			['title', 'geneset', 'survival', 'empty'], 
+			['title', 'geneset', 'survival', 'empty'],
 			'exclusivity', ids);
 	};
 
@@ -2232,7 +2232,7 @@ function layout ()	{
 	model.get = function (svgs, ids, callback)	{
 		getSVGError(arguments);
 
-		ids = bio.objects.getType(ids) === 'Array' ? 
+		ids = bio.objects.getType(ids) === 'Array' ?
 		ids : [ids];
 
 		bio.iteration.loop(svgs, function (id, value)	{
@@ -2249,7 +2249,7 @@ function layout ()	{
 	 */
 	model.removeGroupTag = function (classify)	{
 		if (classify && typeof classify !== 'string')	{
-			classify = bio.objects.getType(classify) === 'Array' ? 
+			classify = bio.objects.getType(classify) === 'Array' ?
 			classify : [classify];
 
 			bio.iteration.loop(classify, function (d)	{
@@ -2259,7 +2259,7 @@ function layout ()	{
 					.remove();
 			});
 		} else if (typeof classify === 'string')	{
-			bio.iteration.loop(d3.selectAll('svg').nodes(), 
+			bio.iteration.loop(d3.selectAll('svg').nodes(),
 			function (svg)	{
 				classify = classify.replace('/', '');
 
@@ -2281,7 +2281,7 @@ function layout ()	{
 function setting ()	{
 	'use strict';
 
-	var model = null;	
+	var model = null;
 	/*
 		ID 또는 ClassName 으로 된 노드를 찾아
 		DOM 객체로 반환해주는 함수.
@@ -2290,17 +2290,17 @@ function setting ()	{
 		return model.dom = bio.dom().get(element), model.dom;
 	};
 	/*
-		파라미터에 width, height 값이 있으면 그 값을 
+		파라미터에 width, height 값이 있으면 그 값을
 		없는 경우 전달 된 Dom 의 가로, 세로 길이를 반환하는 함수.
 	 */
 	function setTargetedElementSize (opts)	{
-		model.size.width = opts.width || 
+		model.size.width = opts.width ||
 		parseFloat(model.dom.style.width),
-		model.size.height = opts.height || 
+		model.size.height = opts.height ||
 		parseFloat(model.dom.style.height)
 
-		return { 
-			width: model.size.width, 
+		return {
+			width: model.size.width,
 			height: model.size.height,
 		};
 	};
@@ -2309,7 +2309,7 @@ function setting ()	{
 		여기서 각각의 Layout 의 크기도 설정해준다.
 	 */
 	function setLayoutIdData (chart, element, width, height, add, isPlotted, geneList)	{
-		model.ids = 
+		model.ids =
 		bio.sizing.chart[chart](element, width, height, add, isPlotted, geneList);
 
 		return model.ids;
@@ -2339,8 +2339,8 @@ function setting ()	{
 			preprocessData: bio.preprocess(chart)(opts.data, isPlotted),
 			layoutIds: setLayoutIdData(
 									chart,
-									model.dom, 
-									model.size.width, 
+									model.dom,
+									model.size.width,
 									model.size.height, groupLayout, isPlotted,
 									geneList),
 			svgs: setSVGElement(chart, model.ids, isPlotted),
@@ -2355,11 +2355,11 @@ function sizing ()	{
 		Tooltip Tag 를 만드는 함수.
 	 */
 	function makeTooltipNode ()	{
-		if (document.getElementById('biochart_tooltip'))	{		
+		if (document.getElementById('biochart_tooltip'))	{
 			document.body.removeChild(
 			document.getElementById('biochart_tooltip'));
 		}
-		
+
 		var div = document.createElement('div');
 
 		div.id = 'biochart_tooltip';
@@ -2380,14 +2380,14 @@ function sizing ()	{
 					div.style.width = size.width + 'px';
 					div.style.height = size.height + 'px';
 			// 각 layout 에 구성된 div 태그들의 id 값들을 리스트에 넣어준다.
-			model.ids.push(id);	
+			model.ids.push(id);
 
 			this.appendChild(div);
 		});
 	};
 	/*
 		Sizing 객체의 model 객체를 초기화하고 (나중에 ajax 재 요청시,
-		svg 가 사라지지 않는 문제를 해결하기 위해) 
+		svg 가 사라지지 않는 문제를 해결하기 위해)
 		전체 element 의 가로, 세로 크기를 설정한다.
 	 */
 	function setSize (ele, width, height)	{
@@ -2403,13 +2403,13 @@ function sizing ()	{
 		값으로 변환하여 반환해주는 함수.
 	 */
 	model.setMargin = function (margin)	{
-		if (!margin.length && 
+		if (!margin.length &&
 				typeof(margin) === 'string')	{
-			return { 
-				top: margin, left: margin, 
-				bottom: margin, right: margin 
+			return {
+				top: margin, left: margin,
+				bottom: margin, right: margin
 			};
-		} else if (bio.objects.getType(margin) === 
+		} else if (bio.objects.getType(margin) ===
 							'Object')	{
 			return margin;
 		} else {
@@ -2419,7 +2419,7 @@ function sizing ()	{
 				top: margin[0],
 				left: len > 1 ? margin[1] : margin[0],
 				bottom: len > 2 ? margin[2] : margin[0],
-				right: len === 1 ? margin[0] : 
+				right: len === 1 ? margin[0] :
 							 len > 3 ? margin[3] : margin[1],
 			};
 		}
@@ -2460,10 +2460,10 @@ function sizing ()	{
 			var name = group.name.removeWhiteSpace().replace('/', ''),
 					prefix = prefixes[type] === 'group' ? '' : type;
 
-			id['landscape_' + prefix + '_group_' + name] = 
-				{ 
-					width: prefixes[type].w.toFixed(1), 
-					height: prefixes[type].h.toFixed(1), 
+			id['landscape_' + prefix + '_group_' + name] =
+				{
+					width: prefixes[type].w.toFixed(1),
+					height: prefixes[type].h.toFixed(1),
 				};
 		});
 
@@ -2526,7 +2526,7 @@ function sizing ()	{
 
 		return model.ids;
 	};
-	
+
 	model.chart.variants = function (ele, w, h)	{
 		var id = {
 			variants_needle: {width: w * 0.82, height: h * 0.825},
@@ -2564,7 +2564,7 @@ function sizing ()	{
 
 		return model.ids;
 	};
-	
+
 	model.chart.exclusivity = function (ele, w, h)	{
 		var id =  {
 			exclusivity_select_geneset: {width: w * 0.59, height: h * 0.12},
@@ -2595,14 +2595,14 @@ function sizing ()	{
 	 */
 	model.chart.default = function (that, opts)	{
 		that.id = opts.element.attr('id');
-		that.margin = opts.margin ? 
+		that.margin = opts.margin ?
 									bio.sizing.setMargin(opts.margin) : null;
 		that.width = parseFloat(opts.element.attr('width'));
 		that.height = parseFloat(opts.element.attr('height'));
-		that.element = bio.objects.getType(opts.element) === 'Object' || 
-									 bio.objects.getType(opts.element) === 'Array' ? 
-									 opts.element : (/\W/).test(opts.element[0]) ? 
-									 d3.select(opts.element) : 
+		that.element = bio.objects.getType(opts.element) === 'Object' ||
+									 bio.objects.getType(opts.element) === 'Array' ?
+									 opts.element : (/\W/).test(opts.element[0]) ?
+									 d3.select(opts.element) :
 									 d3.select('#' + opts.element);
 
 		return that;
@@ -2634,7 +2634,7 @@ function colorGradient ()	{
 
 			model.offsets.show.push({
 				offset: value - model.adjustValue + '%',
-				color: colors[idx + 1]  
+				color: colors[idx + 1]
 			});
 
 			model.offsets.data.push({
@@ -2663,8 +2663,8 @@ function colorGradient ()	{
 		model.lineGradient.selectAll('stop')
 		 .data(model.offsets.show).enter()
 		 .append('stop')
-		 .attr('offset', function (data, idx)	{ 
-			return data.offset; 
+		 .attr('offset', function (data, idx)	{
+			return data.offset;
 		 })
 		 .attr('stop-color', function (data, idx)	{
 			return data.color;
@@ -2681,21 +2681,21 @@ function expression ()	{
 	function changedFunction (value)	{
 		model.now.function = value.toLowerCase();
 		model.data.bar = model.data.func.bar[value.toLowerCase()]
-		model.data.axis.bar.x = 
+		model.data.axis.bar.x =
 		model.data.func.xaxis[value.toLowerCase()];
-		model.data.axis.bar.y = 
+		model.data.axis.bar.y =
 		model.data.func.yaxis[value.toLowerCase()];
-		model.data.axis.scatter.x = 
+		model.data.axis.scatter.x =
 		model.data.func.xaxis[value.toLowerCase()];
-		model.data.axis.heatmap.x = 
+		model.data.axis.heatmap.x =
 		model.data.func.xaxis[value.toLowerCase()];
 	};
-	
+
 	function drawFuncSelectBox ()	{
 		var funcNames = ['Average'],
 				defaultFunction = 'Average';
 
-		bio.iteration.loop(model.riskFunctions, 
+		bio.iteration.loop(model.riskFunctions,
 		function (risk)	{
 			funcNames.push(risk.name);
 			if (risk.isDefault)	{
@@ -2704,7 +2704,7 @@ function expression ()	{
 		});
 
 		changedFunction(defaultFunction)
-		
+
 		bio.selectBox({
 			fontSize: '12px',
 			items: funcNames,
@@ -2737,14 +2737,14 @@ function expression ()	{
 				model.divide.patient_list = undefined;
 				model.divide.scatter = undefined;
 				model.divide = {};
-				
+
 				drawHeatmap(model.data, model.data.axis.heatmap, model.data.axis.gradient.x);
 				drawFunctionBar(model.data, model.data.axis.bar);
 				drawColorMapSelectBox(model.data.subtype, model.now.subtype_mapping);
 				if (model.now.subtype_mapping)	{
 					drawLegendBySubtypeMapping(model.now.subtypeSet);
 				}
-				drawScatter(model.data, model.data.axis.scatter, model.now.osdfs);				
+				drawScatter(model.data, model.data.axis.scatter, model.now.osdfs);
 				drawSurvivalPlot(model.data);
 				drawDivision(model.data);
 				getDivisionData();
@@ -2762,14 +2762,14 @@ function expression ()	{
 			bio.iteration.loop(dataKeys, function (key)	{
 				if (key.toLowerCase() === model.now.subtype_mapping.toLowerCase())	{
 					state = data.info[key];
-				} 
+				}
 			});
-			
+
 			if (state === null)	{
 				return '#333333';
 			}
 
-			return state === 'NA' ? '#D6E2E3' : 
+			return state === 'NA' ? '#D6E2E3' :
 							bio.boilerPlate.clinicalInfo[state].color;
 		}
 	};
@@ -2789,15 +2789,15 @@ function expression ()	{
 			.style('fill', changeBarColor)
 			.style('stroke', changeBarColor);
 
-		drawLegend('color_mapping', 
+		drawLegend('color_mapping',
 			(nowSubtypeSet || model.now.subtypeSet));
 		// Scatter legend 의 위치가 유동적이게 되므로 이를 고정하기
 		// 위해서 아래 코드를 추가함.
-		barLegend.style.marginBottom = 
-		(parseFloat(model.init.bar_legend_height) - 
+		barLegend.style.marginBottom =
+		(parseFloat(model.init.bar_legend_height) -
 		 parseFloat(barLegend.style.height) - 5) + 'px';
 	};
-	
+
 	function drawColorMapSelectBox (subtypes, title)	{
 		bio.selectBox({
 			fontSize: '12px',
@@ -2811,7 +2811,7 @@ function expression ()	{
 			}),
 			clickItem: function (value)	{
 				bio.iteration.loop(subtypes, function (item)	{
-					if (item.key.toLowerCase() === 
+					if (item.key.toLowerCase() ===
 							value.toLowerCase())	{
 						model.now.subtype_mapping = item.key;
 						model.now.subtypeSet = item.value;
@@ -2821,13 +2821,13 @@ function expression ()	{
 				drawLegendBySubtypeMapping(model.now.subtypeSet);
 
 				if (model.subtypeFunc)	{
-					model.subtypeFunc(model.now.subtype_mapping, 
+					model.subtypeFunc(model.now.subtype_mapping,
 														bio.boilerPlate.clinicalInfo, model);
 				}
 			},
 		});
 	};
-	
+
 	function drawSigSelectBox (data)	{
 		bio.selectBox({
 			fontSize: '14px',
@@ -2838,12 +2838,12 @@ function expression ()	{
 			defaultText: model.now.signature,
 			items: data.map(function (d) { return d.signature; }),
 			clickItem: function (value)	{
-				if (!model.now.signature || 
+				if (!model.now.signature ||
 						 model.now.signature === value)	{ return; }
 
 				model.now.signature = value;
 				model.requestData.signature = model.now.signature;
-				
+
 				$.ajax({
 					type:'get',
 					url: model.requestURL,
@@ -2861,8 +2861,8 @@ function expression ()	{
 						var selectedData = '';
 
 						bio.dom().remove(
-							model.setting.targetedElement, 
-							[document.querySelector('#expression_title'), 
+							model.setting.targetedElement,
+							[document.querySelector('#expression_title'),
 							 document.querySelector('#expression_contents')]);
 
 						bio.layout().removeGroupTag();
@@ -2894,7 +2894,7 @@ function expression ()	{
 	function drawLegend (type, data)	{
 		var ids = type === 'scatter' ? 'scatter_leg' : 'bar_leg';
 
-		bio.layout().get(model.setting.svgs, [ids], 
+		bio.layout().get(model.setting.svgs, [ids],
 		function (id, svg)	{
 			var config = bio.expressionConfig().legend(type);
 
@@ -2919,7 +2919,7 @@ function expression ()	{
 		Gene x Sample 의 tpm 값 색 범례를 그려준다.
 	 */
 	function drawColorGradient (axis)	{
-		bio.layout().get(model.setting.svgs, ['gradient'], 
+		bio.layout().get(model.setting.svgs, ['gradient'],
 		function (id, svg)	{
 			var shapeCnf = bio.expressionConfig().gradient('shape'),
 					axisCnf = bio.expressionConfig().gradient('axis', svg);
@@ -2951,7 +2951,7 @@ function expression ()	{
 	};
 
 	function drawHeatmap (data, axis, gradientAxis)	{
-		bio.layout().get(model.setting.svgs, ['heatmap'], 
+		bio.layout().get(model.setting.svgs, ['heatmap'],
 		function (id, svg)	{
 			var colorScale = bio.scales().get(gradientAxis, [
 								'#00FF00', '#000000', '#FF0000']),
@@ -2989,12 +2989,12 @@ function expression ()	{
 	};
 
 	function drawFunctionBar (data, axis)	{
-		bio.layout().get(model.setting.svgs, ['bar_plot'], 
+		bio.layout().get(model.setting.svgs, ['bar_plot'],
 		function (id, svg)	{
 			var config = bio.expressionConfig(),
 					shapeCnf = config.bar('shape', data.axisMargin),
 					axisCnf = config.bar('axis', data.axisMargin);
-			
+
 			bio.bar({
 				element: svg,
 				xaxis: axis.x,
@@ -3034,8 +3034,8 @@ function expression ()	{
 		var idx = temp.length % 2 === 1 ? (temp.length + 1) / 2 : temp.length / 2;
 
 		bio.iteration.loop(temp, function (t, i)	{
-			i <= idx ? 
-			model.data.survival.divide[t.x] = 'unaltered' : 
+			i <= idx ?
+			model.data.survival.divide[t.x] = 'unaltered' :
 			model.data.survival.divide[t.x] = 'altered';
 		});
 	};
@@ -3045,7 +3045,7 @@ function expression ()	{
 	function callScatter (tab, data)	{
 		if (model.now.osdfs !== tab)	{
 			bio.layout().removeGroupTag([
-				'.expression_scatter_plot_svg.scatter-g-tag', 
+				'.expression_scatter_plot_svg.scatter-g-tag',
 				'.expression_scatter_plot_svg.left-axis-g-tag']);
 
 			model.now.osdfs = tab;
@@ -3091,7 +3091,7 @@ function expression ()	{
 				plot = bio.survival({
 					element: '#expression_survival',
 					margin: [0, 20, 20, 0],
-					data: (model.divide.patient_list || 
+					data: (model.divide.patient_list ||
 								 model.setting.defaultData.patient_list),
 					division: (model.divide.divide || data.survival.divide),
 					pvalueURL: undefined,
@@ -3125,8 +3125,8 @@ function expression ()	{
 				});
 
 		model.data.survival.data = plot.survival_data;
-		model.data.scatter = 
-		Object.keys(model.data.scatter).length < 1 ? 
+		model.data.scatter =
+		Object.keys(model.data.scatter).length < 1 ?
 		model.data.survival.data.all : model.data.scatter;
 
 		tabChange(data);
@@ -3149,7 +3149,7 @@ function expression ()	{
 	};
 
 	function drawScatter (data, axis, osdfs)	{
-		bio.layout().get(model.setting.svgs, ['scatter_p'], 
+		bio.layout().get(model.setting.svgs, ['scatter_p'],
 		function (id, svg)	{
 			var config = bio.expressionConfig(),
 					shapeCnf = config.scatter('shape', data.axisMargin),
@@ -3163,19 +3163,19 @@ function expression ()	{
 				on: {
 					mouseover: function (data, idx, that)	{
 						var val = '';
-						
+
 						if (model.now.osdfs === 'os')	{
 							val = data.value === 0 ? 'Alive' : 'Dead';
-						} 
+						}
 
 						if (model.now.osdfs === 'dfs')	{
 							val = data.value === 0 ? 'Disease Free' : 'Relapsed';
-						} 
+						}
 
 						bio.tooltip({
 							element: this,
-							contents: 'ID: <b>' + data.x + '</b></br>' + 
-												'Months: <b>' + parseFloat(data.y).toFixed(2) + '</b></br>' + 
+							contents: 'ID: <b>' + data.x + '</b></br>' +
+												'Months: <b>' + parseFloat(data.y).toFixed(2) + '</b></br>' +
 												'Status: <b>' + val + '</b>',
 						});
 					},
@@ -3196,7 +3196,7 @@ function expression ()	{
 				top: axisCnf.top,
 				left: axisCnf.left,
 				margin: axisCnf.margin,
-				range: [10, svg.attr('height') - 30],	
+				range: [10, svg.attr('height') - 30],
 			}).selectAll('path, line').style('stroke', '#999999');
 		});
 	};
@@ -3219,20 +3219,20 @@ function expression ()	{
 		bio.text({
 			element: legend,
 			attr: {
-				x: function (d, i) { 
-					return config.attr.x(d, i, model); 
+				x: function (d, i) {
+					return config.attr.x(d, i, model);
 				},
-				y: function (d, i) { 
-					return config.attr.y(d, i, model); 
+				y: function (d, i) {
+					return config.attr.y(d, i, model);
 				},
 			},
 			style: {
-				fill: function (d, i) { 
-					return config.style.fill(d, i, model); 
+				fill: function (d, i) {
+					return config.style.fill(d, i, model);
 				},
 			},
-			text: function (d, i) { 
-				return config.text(d, i, model); 
+			text: function (d, i) {
+				return config.text(d, i, model);
 			},
 		});
 	};
@@ -3246,7 +3246,7 @@ function expression ()	{
 						'#dfs_stat_table td b');
 					obj.legend = d3.selectAll('.legend');
 
-					if (obj.os_tb.length > 0 && 
+					if (obj.os_tb.length > 0 &&
 							obj.dfs_tb.length > 0 && obj.legend.node())	{
 						drawPatientOnSurvivalTable(obj.os_tb, obj.dfs_tb);
 						drawPatientOnSurvivalLegend(obj.legend);
@@ -3256,7 +3256,7 @@ function expression ()	{
 	};
 
 	function drawPatient (data)	{
-		bio.layout().get(model.setting.svgs, ['bar_p', 'scatter_p'], 
+		bio.layout().get(model.setting.svgs, ['bar_p', 'scatter_p'],
 		function (id, svg)	{
 			var obj = {},
 					name = id.indexOf('bar') > -1 ? 'bar' : 'scatter',
@@ -3271,7 +3271,7 @@ function expression ()	{
 			obj.scaleX = bio.scales().get(data.axis.heatmap.x, [
 				obj.margin.left, obj.width - obj.margin.right]);
 			obj.scaleY = bio.scales().get(
-				[data.axis.bar.y[2], data.axis.bar.y[0]], 
+				[data.axis.bar.y[2], data.axis.bar.y[0]],
 				[obj.margin.top, obj.height - obj.margin.bottom]);
 
 			bio.triangle({
@@ -3298,25 +3298,25 @@ function expression ()	{
 	 */
 	function toBlur (element, low, high)	{
 		element.style('fill-opacity', function (data, idx, that)	{
-			return low.indexOf(data.x) < 0 && 
-						 high.indexOf(data.x) < 0 ? 0.08 : 
+			return low.indexOf(data.x) < 0 &&
+						 high.indexOf(data.x) < 0 ? 0.08 :
 						 element.attr('id').indexOf('shape') > -1 ? 0.6 : 1;
 		})
 		.style('stroke-opacity', function (data, idx, that)	{
-			return low.indexOf(data.x) < 0 && 
+			return low.indexOf(data.x) < 0 &&
 						 high.indexOf(data.x) < 0 ? 0.08 : 1;
 		});
 	};
 
 	function divideDivisionData (data)	{
-		var low = [], 
-				mid = [], 
+		var low = [],
+				mid = [],
 				high = [];
 
 		if (data.low_arr && data.high_arr)	{
-			bio.iteration.loop(model.data.axis.bar.x, 
+			bio.iteration.loop(model.data.axis.bar.x,
 			function (xaxis) {
-				if (data.low_arr.indexOf(xaxis) < 0 && 
+				if (data.low_arr.indexOf(xaxis) < 0 &&
 						data.high_arr.indexOf(xaxis) < 0)	{
 					mid.push(xaxis);
 				}
@@ -3342,13 +3342,13 @@ function expression ()	{
 		하는 함수이다.
 	 */
 	function getDivisionData ()	{
-		var data = Object.keys(model.divide).length > 0 ? 
+		var data = Object.keys(model.divide).length > 0 ?
 							 model.divide : model.data.survival.divide,
 				division = divideDivisionData(data);
 
 		if (model.divisionFunc)	{
 			model.divisionFunc(
-			division.low, division.mid, division.high, 
+			division.low, division.mid, division.high,
 			model.data.axis.heatmap.y, model.data.all_rna_list);
 		}
 	};
@@ -3379,7 +3379,7 @@ function expression ()	{
 			bio.iteration.loop(arr, function (a)	{
 				if (model.data.patient)	{
 					if (a !== model.data.patient.name)	{
-						bio.iteration.loop(model.setting.defaultData.patient_list, 
+						bio.iteration.loop(model.setting.defaultData.patient_list,
 						function (p)	{
 							if (p.participant_id === a)	{
 								model.divide.patient_list.push(p);
@@ -3389,7 +3389,7 @@ function expression ()	{
 						model.divide.divide[a] = isAltered;
 					}
 				} else {
-					bio.iteration.loop(model.setting.defaultData.patient_list, 
+					bio.iteration.loop(model.setting.defaultData.patient_list,
 						function (p)	{
 							if (p.participant_id === a)	{
 								model.divide.patient_list.push(p);
@@ -3413,7 +3413,7 @@ function expression ()	{
 			// Survival chart update.
 			drawSurvivalPlot(data);
 			if (data.patient)	{
-				drawPatient(data);	
+				drawPatient(data);
 			}
 			// to blur selected targets.
 			toBlur(
@@ -3426,7 +3426,7 @@ function expression ()	{
 
 		var cnf = bio.expressionConfig().division;
 		// Disivion bar on disivion tag.
-		bio.layout().get(model.setting.svgs, ['division'], 
+		bio.layout().get(model.setting.svgs, ['division'],
 		function (id, svg)	{
 			var divCnf = cnf('division', data.axisMargin);
 
@@ -3437,17 +3437,17 @@ function expression ()	{
 					d3.select('#expression_scatter_plot_svg')
 				],
 				info: [
-					{ 
+					{
 						additional: -10,
-						color: '#00AC52', 
+						color: '#00AC52',
 						direction: 'right',
-						text: 'Low score group', 
+						text: 'Low score group',
 					},
-					{ 
+					{
 						additional: 10,
 						color: '#FF6252',
 						direction: 'left',
-						text: 'High score group', 
+						text: 'High score group',
 					}
 				],
 				data: data.bar,
@@ -3492,7 +3492,7 @@ function expression ()	{
 					mouseout: function (data, idx, that)	{
 						if (this.tagName === 'polygon')	{
 							bio.tooltip('hide');
-	
+
 							model.isDraggable = false;
 						}
 					}
@@ -3503,14 +3503,14 @@ function expression ()	{
 					},
 					drag: function (data, idx, that)	{
 						if (data.text.indexOf('Low') > -1)	{
-							that.position.init.low = that.position.init.low ? 
+							that.position.init.low = that.position.init.low ?
 							that.position.init.low : data.path_x;
-							that.position.now.low = that.position.now.low ? 
+							that.position.now.low = that.position.now.low ?
 							that.position.now.low += d3.event.dx: data.path_x;
 
-							var pos = that.position.now.low = 
-									Math.max(data.start, 
-									Math.min(that.position.now.high || data.path_x, 
+							var pos = that.position.now.low =
+									Math.max(data.start,
+									Math.min(that.position.now.high || data.path_x,
 													 that.position.now.low));
 
 							redrawMarker(
@@ -3518,7 +3518,7 @@ function expression ()	{
 							redrawLine(d3.select(low_path), pos);
 							d3.selectAll(rect)
 								.attr('width', function (d, i, t)	{
-									return d.text === data.text ? pos - d.start : 
+									return d.text === data.text ? pos - d.start :
 												 d.end - that.position.now.high;
 							});
 
@@ -3535,18 +3535,18 @@ function expression ()	{
 						});
 
 						} else {
-							that.position.init.high = that.position.init.high ? 
+							that.position.init.high = that.position.init.high ?
 							that.position.init.high : data.path_x;
-							that.position.now.high = that.position.now.high ? 
+							that.position.now.high = that.position.now.high ?
 							that.position.now.high += d3.event.dx: data.path_x;
 
-							var pos = that.position.now.high = 
-									Math.max(that.position.now.low || data.path_x, 
+							var pos = that.position.now.high =
+									Math.max(that.position.now.low || data.path_x,
 									Math.min(data.end, that.position.now.high)),
 									line = d3.select(low_path).attr('d'),
-									linePos = line.substring(line.indexOf('M') + 1, 
+									linePos = line.substring(line.indexOf('M') + 1,
 																					 line.indexOf(','));
-							
+
 							redrawMarker(
 								d3.select(this), data, that.position.now.high);
 							redrawLine(d3.select(high_path), pos);
@@ -3555,7 +3555,7 @@ function expression ()	{
 									return d.text === data.text ? pos : d.start;
 								})
 								.attr('width', function (d, i, t)	{
-									return d.text === data.text ? d.end - pos : 
+									return d.text === data.text ? d.end - pos :
 												 that.position.now.low - d.start;
 							});
 
@@ -3574,16 +3574,16 @@ function expression ()	{
 					},
 					end: function (data, idx, that)	{
 						var axis = [].concat(that.axis);
-						
-						model.divide.low_sample = 
+
+						model.divide.low_sample =
 						that.invert(that.position.now.low);
-						model.divide.high_sample = 
+						model.divide.high_sample =
 						that.invert(that.position.now.high);
 
 						model.divide.high_arr = axis.splice(
-							that.axis.indexOf(model.divide.high_sample), 
+							that.axis.indexOf(model.divide.high_sample),
 							axis.length - 1);
-						model.divide.low_arr = axis.splice(0, 
+						model.divide.low_arr = axis.splice(0,
 							that.axis.indexOf(model.divide.low_sample));
 
 						changeByDrag(model.divide.low_arr, model.divide.high_arr);
@@ -3629,15 +3629,15 @@ function expression ()	{
 		model = bio.initialize('expression');
 		model.isDraggable = false;
 		// Risk function 을 추가하는부분.
-		model.riskFunctions = opts.riskFunctions ? 
+		model.riskFunctions = opts.riskFunctions ?
 		opts.riskFunctions : [];
 		opts.data.riskFunctions = model.riskFunctions;
 		model.setting = bio.setting('expression', opts);
 		model.data = model.setting.preprocessData;
 		bio.clinicalGenerator(model.data.subtype, 'expression');
-		model.divisionFunc = opts.divisionFunc ? 
+		model.divisionFunc = opts.divisionFunc ?
 		opts.divisionFunc : null;
-		model.subtypeFunc = opts.onSubtypeSelection ? 
+		model.subtypeFunc = opts.onSubtypeSelection ?
 		opts.onSubtypeSelection : null;
 		// About request configurations.
 		model.requestData = opts.requestData || {};
@@ -3646,7 +3646,7 @@ function expression ()	{
 		model.init.signature = opts.data.signature_list ? opts.data.signature_list[0].signature : [];
 		// model.now.signature = model.init.signature;
 		model.now.signature = model.requestData.signature;
-		model.init.bar_legend_height = 
+		model.init.bar_legend_height =
 		document.querySelector('#expression_bar_legend').style.height;
 		// Make title of expression.
 		bio.title('#expression_title', 'Expressions');
@@ -3672,9 +3672,9 @@ function exclusivity ()	{
 				result = '.';
 
 		if (samples.length < 1)	{
-			return [ 
-				{ text: '**', color: '#00AC52' }, 
-				{ text: sample + ' Belongs to', color: '#333333' }, 
+			return [
+				{ text: '**', color: '#00AC52' },
+				{ text: sample + ' Belongs to', color: '#333333' },
 				{ text: 'Unaltered group', color: '#00AC52' } ];
 		}
 
@@ -3682,17 +3682,17 @@ function exclusivity ()	{
 			var geneStr = heat[genesetArr.indexOf(s.gene)];
 
 			if (geneStr.indexOf(s.value) > -1)	{
-				result = result !== '.' ? 
+				result = result !== '.' ?
 				result : geneStr[geneStr.indexOf(s.value)];
 			}
 		});
 
-		return result === '.' ? 
-		[ { text: '**', color: '#00AC52' }, 
-			{ text: sample + ' Belongs to', color: '#333333' }, 
-			{ text: 'Unaltered group', color: '#00AC52' } ] : 
-		[ { text: '**', color: '#FF6252' }, 
-			{ text: sample + ' Belongs to', color: '#333333' }, 
+		return result === '.' ?
+		[ { text: '**', color: '#00AC52' },
+			{ text: sample + ' Belongs to', color: '#333333' },
+			{ text: 'Unaltered group', color: '#00AC52' } ] :
+		[ { text: '**', color: '#FF6252' },
+			{ text: sample + ' Belongs to', color: '#333333' },
 			{ text: 'Altered group', color: '#FF6252' } ];
 	};
 
@@ -3712,13 +3712,13 @@ function exclusivity ()	{
 			}
 		});
 
-		model.data.sample.isAltered = 
+		model.data.sample.isAltered =
 			isAltered(model.data.sample.data,
 								model.data.survival.heat[model.now.geneset]);
 	};
 
 	function drawLegend (data)	{
-		bio.layout().get(model.setting.svgs, ['ty_legend'], 
+		bio.layout().get(model.setting.svgs, ['ty_legend'],
 		function (id, svg)	{
 			var config = bio.exclusivityConfig(),
 					lgdCnf = config.legend(data.mostGeneWidth.value);
@@ -3741,7 +3741,7 @@ function exclusivity ()	{
 	};
 
 	function drawSampleLegend (data)	{
-		bio.layout().get(model.setting.svgs, ['sample_legend'], 
+		bio.layout().get(model.setting.svgs, ['sample_legend'],
 		function (id, svg)	{
 			var group = bio.rendering()
 										 .addGroup(svg, 0, 0, 'sample-legend'),
@@ -3760,7 +3760,7 @@ function exclusivity ()	{
 	};
 
 	function drawSampleDivision (data)	{
-		bio.layout().get(model.setting.svgs, ['heatmap'], 
+		bio.layout().get(model.setting.svgs, ['heatmap'],
 		function (id, svg)	{
 			var group = bio.rendering()
 										 .addGroup(svg, 0, 0, 'sample-division'),
@@ -3783,11 +3783,11 @@ function exclusivity ()	{
 			var os = ostable[i],
 					dfs = dfstable[i];
 
-			bio.iteration.loop(model.data.sample.isAltered, 
+			bio.iteration.loop(model.data.sample.isAltered,
 			function (a)	{
 				if (a.text === os.innerHTML)	{
 					os.innerHTML += ' **';
-					dfs.innerHTML += ' **';	
+					dfs.innerHTML += ' **';
 				}
 			});
 		}
@@ -3804,8 +3804,8 @@ function exclusivity ()	{
 				y: function (d, i) { return config.attr.y(d, i, model); },
 			},
 			style: {
-				'fill': function (d, i) { 
-					return config.style.fill(d, i, model); 
+				'fill': function (d, i) {
+					return config.style.fill(d, i, model);
 				},
 				'fontSize': '14px',
 			},
@@ -3822,7 +3822,7 @@ function exclusivity ()	{
 						'#dfs_stat_table td b');
 					obj.legend = d3.selectAll('.legend');
 
-					if (obj.os_tb.length > 0 && 
+					if (obj.os_tb.length > 0 &&
 							obj.dfs_tb.length > 0 && obj.legend.node())	{
 						drawPatientOnSurvivalTable(obj.os_tb, obj.dfs_tb);
 						drawPatientOnSurvivalLegend(obj.legend);
@@ -3838,7 +3838,7 @@ function exclusivity ()	{
 	};
 
 	function drawNetwork (data)	{
-		bio.layout().get(model.setting.svgs, ['network'], 
+		bio.layout().get(model.setting.svgs, ['network'],
 		function (id, svg)	{
 			var config = bio.exclusivityConfig().network();
 
@@ -3851,7 +3851,7 @@ function exclusivity ()	{
 	};
 
 	function drawHeatmap (data, axis)	{
-		bio.layout().get(model.setting.svgs, ['heatmap'], 
+		bio.layout().get(model.setting.svgs, ['heatmap'],
 		function (id, svg)	{
 			var mLeft = data.mostGeneWidth.value,
 					heatCnf = bio.exclusivityConfig()
@@ -3859,7 +3859,7 @@ function exclusivity ()	{
 					axisCnf = bio.exclusivityConfig()
 											 .heatmap('axis', svg, mLeft),
 					height = svg.attr('height');
-			
+
 			bio.heat({
 				element: svg,
 				attr: heatCnf.attr,
@@ -3888,11 +3888,11 @@ function exclusivity ()	{
 	function divideForSurvival (geneset, data)	{
 		var result = {};
 
-		bio.iteration.loop(data.survival.data[geneset], 
+		bio.iteration.loop(data.survival.data[geneset],
 		function (sd, i)	{
 			if (sd)	{
-				result[sd.participant_id] = 
-				i <= data.divisionIdx[geneset].idx ? 
+				result[sd.participant_id] =
+				i <= data.divisionIdx[geneset].idx ?
 				'unaltered' : 'altered';
 			}
 		});
@@ -3940,7 +3940,7 @@ function exclusivity ()	{
 	};
 
 	function drawDivision (data)	{
-		bio.layout().get(model.setting.svgs, ['heatmap'], 
+		bio.layout().get(model.setting.svgs, ['heatmap'],
 		function (id, svg)	{
 			var config = bio.exclusivityConfig()
 											.division(data.mostGeneWidth.value);
@@ -3950,8 +3950,8 @@ function exclusivity ()	{
 				isMarker: false,
 				pathElement: [svg],
 				info: [
-					{ 
-						text: 'Altered group', color: '#FF6252', 
+					{
+						text: 'Altered group', color: '#FF6252',
 					},
 					{ text: 'Unaltered group', color: '#00AC52' }
 				],
@@ -4095,12 +4095,12 @@ function landscape ()	{
 	 */
 	function changeSampleStack (mutationList)	{
 		var changedSampleStack = model.data.iterMut([
-			{ 
-				obj: {}, data: 'participant_id', 
-				type: 'type', keyName: 'sample' 
+			{
+				obj: {}, data: 'participant_id',
+				type: 'type', keyName: 'sample'
 			}
 		], mutationList, true);
-		var changeSampleStacks = model.data.byStack([], 'sample', 
+		var changeSampleStacks = model.data.byStack([], 'sample',
 					changedSampleStack.result.sample),
 				reloadSampleAxis = model.data.makeLinearAxis(
 					'sample', changeSampleStacks.axis);
@@ -4111,12 +4111,12 @@ function landscape ()	{
 
 	function changeGeneStack (mutationList)	{
 		var changedGeneStack = model.data.iterMut([
-			{ 
-				obj: {}, data: 'gene', 
-				type: 'type', keyName: 'gene' 
+			{
+				obj: {}, data: 'gene',
+				type: 'type', keyName: 'gene'
 			}
 		], mutationList, true);
-		var changeGeneStacks = model.data.byStack([], 'gene', 
+		var changeGeneStacks = model.data.byStack([], 'gene',
 					changedGeneStack.result.gene),
 				reloadGeneAxis = model.data.makeLinearAxis(
 					'gene', changeGeneStacks.axis);
@@ -4134,26 +4134,26 @@ function landscape ()	{
 			change: function (event, data)	{
 				bio.layout().removeGroupTag('survival');
 
-				if (data.type === 'refresh')	{					
+				if (data.type === 'refresh')	{
 					changeAxis({ axis: 'x', data: model.init.axis.x });
 					changeAxis({ axis: 'y', data: Object.keys(model.init.geneline.axis) });
 					changeSampleStack(model.init.mutation_list);
 					changeGeneStack(model.init.mutation_list);
 
 					model.data.gene = Object.keys(model.init.geneline.axis);
-					model.now.exclusivity_opt = 
+					model.now.exclusivity_opt =
 					model.init.exclusivity_opt;
 
 					bio.iteration.loop(model.init.geneline.axis, function (key, value)	{
 						value.isGene = 'enable';
 					});
 
-					model.now.mutation_list = 
+					model.now.mutation_list =
 					model.init.mutation_list;
 
-					model.now.geneline.axis = 
+					model.now.geneline.axis =
 					bio.objects.clone(model.init.geneline.axis);
-					model.now.geneline.sortedSiblings = 
+					model.now.geneline.sortedSiblings =
 					model.init.geneline.sortedSiblings;
 
 					model.now.geneline.deHistory = [];
@@ -4188,9 +4188,9 @@ function landscape ()	{
 					model.onClickClinicalName(null);
 
 					return false;
-				} 
+				}
 
-				drawLandscape(model.data, 
+				drawLandscape(model.data,
 					(model.now.width = data.value, model.now.width));
 
 				return false;
@@ -4221,7 +4221,7 @@ function landscape ()	{
 		input.setAttribute('autocomplete', 'off');
 		input.checked = type === '1' ? true : false;
 
-		label.className = 'btn btn-default btn-sm' 
+		label.className = 'btn btn-default btn-sm'
 										+ (type === '1' ? ' active' : '');
 		label.innerText = 'TYPE ' + type;
 		label.appendChild(input);
@@ -4261,8 +4261,8 @@ function landscape ()	{
 		때문이다.
 	 */
 	function removeGroupTempSVG ()	{
-		d3.selectAll('#landscape_group_svg, ' + 
-								 '#landscape_axis_group_svg, ' + 
+		d3.selectAll('#landscape_group_svg, ' +
+								 '#landscape_axis_group_svg, ' +
 								 '#landscape_patient_group_svg').remove();
 	};
 	/*
@@ -4270,7 +4270,7 @@ function landscape ()	{
 	 */
 	function orderByTypePriority (types)	{
 		types = types.sort(function (a, b)	{
-			return bio.boilerPlate.variantInfo[a].order > 
+			return bio.boilerPlate.variantInfo[a].order >
 						 bio.boilerPlate.variantInfo[b].order ? 1 : -1;
 		});
 	};
@@ -4311,7 +4311,7 @@ function landscape ()	{
 	function setWidth (width)	{
 		bio.layout().get(model.setting.svgs, ['e_gr', 'e_s', 'e_h'],
 		function (id, svg)	{
-			svg.attr('width', width || model.now.width || 
+			svg.attr('width', width || model.now.width ||
 																 model.init.width);
 		});
 	};
@@ -4330,7 +4330,7 @@ function landscape ()	{
 		if (Object.keys(
 			model.now.geneline.removedMutationObj).length > 0)	{
 			enableDisableBlur();
-			enabledDisabeldMaximumElement(mutationList);	
+			enabledDisabeldMaximumElement(mutationList);
 		}
 	};
 	/*
@@ -4348,7 +4348,7 @@ function landscape ()	{
 												 .attr('transform')
 												 .replace(/translate\(|\)/ig, '')
 												 .split(',');
-		
+
 		var nowIdx = model.data.gene.indexOf(d),
 				yAxis = Math.max(model.init.geneline.firstYAxis,
 								Math.min((
@@ -4361,13 +4361,13 @@ function landscape ()	{
 
 		try {
 			// disable 된 gene line 은 드래그를 막는다.
-			if (model.now.geneline.axis[d].isGene === 
+			if (model.now.geneline.axis[d].isGene ===
 					'disable')	{
-				return false;			
+				return false;
 			}
 		} catch(err)	{
 			// console.log('')
-		} 
+		}
 
 		d3.select(that)
 			.attr('transform', 'translate(0, ' + yAxis + ')');
@@ -4388,7 +4388,7 @@ function landscape ()	{
 			}
 
 			model.now.geneline.axis[d].idx += direction;
-			model.now.geneline.axis[d].value = 
+			model.now.geneline.axis[d].value =
 			model.now.geneline.axis[targetGene].value;
 
 			model.now.geneline.axis[targetGene].idx -= direction;
@@ -4396,27 +4396,27 @@ function landscape ()	{
 
 			d3.select(model.now.geneline.sortedSiblings[
 								model.data.gene.indexOf(targetGene)])
-				.attr('transform', 'translate(0, ' + 
+				.attr('transform', 'translate(0, ' +
 					model.now.geneline.axis[d].value + ')')
 				.transition()
-				.attr('transform', 'translate(0, ' + 
+				.attr('transform', 'translate(0, ' +
 					model.now.geneline.axis[targetGene].value + ')');
 
-			model.data.gene[nowIdx] = 
+			model.data.gene[nowIdx] =
 			model.data.gene[nowIdx + direction];
 			model.data.gene[nowIdx + direction] = tempGene;
 
-			model.now.geneline.sortedSiblings[nowIdx] = 
+			model.now.geneline.sortedSiblings[nowIdx] =
 			model.now.geneline.sortedSiblings[nowIdx + direction];
 			model.now.geneline.sortedSiblings[nowIdx + direction] = tempParent;
 		};
 
-		if ((yAxis > model.now.geneline.axis[nextGene].value - 
-								 model.init.geneline.axisHalfHeight) && 
+		if ((yAxis > model.now.geneline.axis[nextGene].value -
+								 model.init.geneline.axisHalfHeight) &&
 				tempVal !== model.now.geneline.axis[nextGene].value)	{
 			moveElement(that, direction, nextGene, nowIdx, tempVal, tempGene);
-		} else if ((yAxis < model.now.geneline.axis[beforeGene].value + 
-												model.init.geneline.axisHalfHeight) && 
+		} else if ((yAxis < model.now.geneline.axis[beforeGene].value +
+												model.init.geneline.axisHalfHeight) &&
 						tempVal !== model.now.geneline.axis[beforeGene].value)	{
 			moveElement(that, direction, beforeGene, nowIdx, tempVal, tempGene);
 		}
@@ -4424,8 +4424,8 @@ function landscape ()	{
 
 	function geneDragEnd (d)	{
 		if (model.now.geneline.isDraggable)	{
-			var type = model.now.exclusivity_opt ? 
-								 model.now.exclusivity_opt : 
+			var type = model.now.exclusivity_opt ?
+								 model.now.exclusivity_opt :
 								 model.init.exclusivity_opt;
 
 			bio.layout().removeGroupTag([
@@ -4451,7 +4451,7 @@ function landscape ()	{
 
 				changeAxis({ axis: 'x', data: groups });
 			} else {
-				changeAxis(model.now.geneline.groupList || 
+				changeAxis(model.now.geneline.groupList ||
 								 	 model.exclusive.now);
 			}
 
@@ -4460,12 +4460,12 @@ function landscape ()	{
 			model.data.axis.pq.y = model.data.gene;
 
 			drawAxis('gene', 'Y');
-			drawBar('pq', model.data.pq, 
+			drawBar('pq', model.data.pq,
 							model.data.axis.pq, ['top', 'left']);
-			drawBar('gene', model.data.stack.gene, 
+			drawBar('gene', model.data.stack.gene,
 							model.data.axis.gene, ['top', 'left']);
-			drawHeatmap('heatmap', model.now.heatmap || model.data.heatmap, 
-									model.data.axis.heatmap);	
+			drawHeatmap('heatmap', model.now.heatmap || model.data.heatmap,
+									model.data.axis.heatmap);
 
 			genelineSortedSiblings();
 			drawGeneHSCheckbox(model.data);
@@ -4476,7 +4476,7 @@ function landscape ()	{
 			if (Object.keys(model.now.geneline.removedMutationObj).length > 0)	{
 				enableDisableBlur();
 				enabledDisabeldMaximumElement(
-					model.now.geneline.groupList ? 
+					model.now.geneline.groupList ?
 					model.now.geneline.pidList.data : undefined);
 			}
 		}
@@ -4488,7 +4488,7 @@ function landscape ()	{
 
 	function drawDivisionPath ()	{
 		if (model.now.divisionPathData)	{
-			bio.iteration.loop(model.now.divisionPathData.data, 
+			bio.iteration.loop(model.now.divisionPathData.data,
 			function (dd)	{
 				bio.path({
 					element: d3.select('.landscape_heatmap_svg.heatmap-g-tag'),
@@ -4530,7 +4530,7 @@ function landscape ()	{
 		bio.iteration.loop(list, function (l)	{
 			var idx = model.data.axis.heatmap.x.indexOf(
 									l.participant_id);
-			
+
 			maximum = maximum > idx ? maximum : idx;
 		});
 
@@ -4555,9 +4555,9 @@ function landscape ()	{
 		};
 	};
 
-	function drawDivisionLineForDisableEnable (ml)	{	
+	function drawDivisionLineForDisableEnable (ml)	{
 		if (model.now.mutation_list)	{
-			return ml ? getDivisionLineLocation(ml) : 
+			return ml ? getDivisionLineLocation(ml) :
 									getDivisionLineLocation(
 									model.now.mutation_list);
 		} else {
@@ -4581,9 +4581,9 @@ function landscape ()	{
 			if (!drawDivisionLineForDisableEnable())	{
 				return false;
 			}
-			
+
 			loc.push(drawDivisionLineForDisableEnable());
-		}	
+		}
 
 		bio.iteration.loop(loc, function (l)	{
 			if (l)	{
@@ -4601,7 +4601,7 @@ function landscape ()	{
 				]);
 			});
 
-			bio.iteration.loop(model.now.geneline.axis, 
+			bio.iteration.loop(model.now.geneline.axis,
 			function (key, value)	{
 				if (value.isGene === 'disable')	{
 					isAllEnabled = false;
@@ -4624,7 +4624,7 @@ function landscape ()	{
 				}
 			} else {
 				drawDivisionPath();
-			}	
+			}
 		}
 	};
 
@@ -4636,7 +4636,7 @@ function landscape ()	{
 					d3.selectAll('#landscape_gene_' + k + '_bar_rect')
 						.style('fill-opacity', '1');
 					d3.selectAll('#landscape_gene_' + k + '_heatmap_rect')
-						.style('fill-opacity', '1');	
+						.style('fill-opacity', '1');
 				} else {
 					d3.selectAll('#landscape_gene_' + k + '_bar_rect')
 						.style('fill-opacity', '0.2');
@@ -4654,18 +4654,18 @@ function landscape ()	{
 		var mutationList = [],
 				pidList = [],
 				isRemovable = false,
-				type = model.now.exclusivity_opt || 
+				type = model.now.exclusivity_opt ||
 							 model.init.exclusivity_opt;
 
 		if (model.now.geneline.groupList)	{
-			bio.iteration.loop(model.now.geneline.groupList, 
+			bio.iteration.loop(model.now.geneline.groupList,
 			function (gl)	{
 				var temp = [],
 						tempGene = [],
 						exclusiveGroup = undefined;
 
-				bio.iteration.loop(model.now.mutation_list || 
-												 	 model.init.mutation_list, 
+				bio.iteration.loop(model.now.mutation_list ||
+												 	 model.init.mutation_list,
 				function (ml)	{
 					if (gl.indexOf(ml.participant_id) > -1)	{
 						// obj 로 교체.
@@ -4673,7 +4673,7 @@ function landscape ()	{
 							bio.iteration.loop(obj, function (key, value)	{
 								if (ml.gene !== key)	{
 									temp.push(ml);
-								} 
+								}
 
 								if (value)	{
 									isRemovable = true;
@@ -4692,15 +4692,15 @@ function landscape ()	{
 						value: t.type
 					};
 				});
-				
+
 				exclusiveGroup = bio.landscapeSort().exclusive(
 					temptemp, model.data.gene, type, model.data.type);
 
-				mutationList.push(temp);	
+				mutationList.push(temp);
 				pidList.push(exclusiveGroup);
 			});
 
-			bio.iteration.loop(model.now.geneline.groupList, 
+			bio.iteration.loop(model.now.geneline.groupList,
 			function (gl, gidx)	{
 				bio.iteration.loop(gl, function (pid)	{
 					if (pidList[gidx].data.indexOf(pid) < 0)	{
@@ -4756,7 +4756,7 @@ function landscape ()	{
 				var shkeys = [],
 						shkeysObj = {};
 
-				bio.iteration.loop(model.now.geneline.shownValues, 
+				bio.iteration.loop(model.now.geneline.shownValues,
 				function (k , v)	{
 					bio.iteration.loop(v, function (vval)	{
 						!shkeysObj[vval] ? shkeysObj[vval] = 1 : shkeysObj[vval] += 1;
@@ -4766,7 +4766,7 @@ function landscape ()	{
 				bio.iteration.loop(shkeysObj, function (key, val)	{
 					if (shownValueLen == val)	{
 						shkeys.push(key);
-					} 
+					}
 				});
 
 				list.forEach(function (l)	{
@@ -4780,10 +4780,10 @@ function landscape ()	{
 				enableSample = uniqueParticipantId(shownList);
 				disableSample = uniqueParticipantId(hiddenList);
 				otherSample = otherSample.filter(function (o)	{
-					if (enableSample.indexOf(o) < 0 && 
+					if (enableSample.indexOf(o) < 0 &&
 							disableSample.indexOf(o) < 0)	{
 						return o;
-					}	
+					}
 				});
 				otherSample = otherSample.concat(disableSample);
 				disableSample = [];
@@ -4794,7 +4794,7 @@ function landscape ()	{
 
 				list = shownList.length > 0 ? shownList : list;
 
-				bio.iteration.loop(model.now.geneline.removedMutationObj, 
+				bio.iteration.loop(model.now.geneline.removedMutationObj,
 				function (k, v)	{
 					if (v)	{
 						dekeys.push(k);
@@ -4808,39 +4808,39 @@ function landscape ()	{
 				});
 
 				enableSample = uniqueParticipantId(list);
-				disableSample = shownList.length > 0 ? 
+				disableSample = shownList.length > 0 ?
 				uniqueParticipantId(shownList).filter(function (s)	{
 					return enableSample.indexOf(s) < 0;
-				}) : 
+				}) :
 				model.init.axis.x.filter(function (s)	{
 					return enableSample.indexOf(s) < 0;
 				});
 				otherSample = otherSample.filter(function (o)	{
-					if (enableSample.indexOf(o) < 0 && 
+					if (enableSample.indexOf(o) < 0 &&
 							disableSample.indexOf(o) < 0)	{
 						return o;
-					}	
+					}
 				});
 
 				otherSample = !otherSample ? [] : otherSample;
 			}
 
-			if (Object.keys(model.now.geneline.removedMutationObj).length < 1 && 
+			if (Object.keys(model.now.geneline.removedMutationObj).length < 1 &&
 				Object.keys(model.now.geneline.shownValues).length < 1)	{
 				enableSample = uniqueParticipantId(list);
 				disableSample = model.init.axis.x.filter(function (s)	{
 					return enableSample.indexOf(s) < 0;
 				});
 				otherSample = otherSample.filter(function (o)	{
-					if (enableSample.indexOf(o) < 0 && 
+					if (enableSample.indexOf(o) < 0 &&
 							disableSample.indexOf(o) < 0)	{
 						return o;
-					}	
+					}
 				});
 
 				otherSample = !otherSample ? [] : otherSample;
 			}
-			
+
 			model.divisionFunc(
 				enableSample, disableSample, otherSample);
 		}
@@ -4866,7 +4866,7 @@ function landscape ()	{
 						data = g;
 					}
 				});
-			} 
+			}
 
 			var geneDrag = d3.drag()
 				.on('start', geneDragStart)
@@ -4888,20 +4888,20 @@ function landscape ()	{
 				.on('mouseover', function (data, idx)	{
 					var id = this.parentNode
 											 .parentNode.className.baseVal;
-					if (id.indexOf('gene') > -1 && 
-							id.indexOf('right') > -1 || 
+					if (id.indexOf('gene') > -1 &&
+							id.indexOf('right') > -1 ||
 							id.indexOf('group') > -1)	{
 						var txt = '';
 
 						if (id.indexOf('gene') > -1)	{
 							if (model.now.geneline.removedMutationObj[data])	{
-								txt = 'Sort by <b>' + this.innerHTML + '</b>'; 
+								txt = 'Sort by <b>' + this.innerHTML + '</b>';
 							} else {
-								txt = 'Sort by <b>' + this.innerHTML + '</b>'; 
+								txt = 'Sort by <b>' + this.innerHTML + '</b>';
 							}
 						} else {
-							txt = '<b>' + this.innerHTML + '</b></br>' + 
-										'Click to sort </br> Alt + Click ' + 
+							txt = '<b>' + this.innerHTML + '</b></br>' +
+										'Click to sort </br> Alt + Click ' +
 										'add to key';
 						}
 
@@ -4914,11 +4914,11 @@ function landscape ()	{
 				})
 				.on('click', function (data, idx)	{
 					if (part === 'group' && direction === 'Y')	{
-						var res = config.on ? 
+						var res = config.on ?
 											config.on.click.call(this, data, idx, model) : false,
 								groupList = [];
 						// x 축에 속하는 그룹 id 만 가져온다.
-						bio.iteration.loop(model.now.group.group, 
+						bio.iteration.loop(model.now.group.group,
 						function (group)	{
 							var temp = [];
 
@@ -4927,7 +4927,7 @@ function landscape ()	{
 									if (Object.keys(model.now.geneline.shownValues).length > 0)	{
 										var isShown = true;
 
-										bio.iteration.loop(model.now.geneline.shownValues, 
+										bio.iteration.loop(model.now.geneline.shownValues,
 										function (k, v)	{
 											if (v.indexOf(gp.x) < 0)	{
 												isShown = false;
@@ -4935,10 +4935,10 @@ function landscape ()	{
 										});
 
 										if (isShown)	{
-											temp[res.sorted.data.indexOf(gp.x)] = (gp.x);	
+											temp[res.sorted.data.indexOf(gp.x)] = (gp.x);
 										}
 									} else {
-										temp[res.sorted.data.indexOf(gp.x)] = (gp.x);	
+										temp[res.sorted.data.indexOf(gp.x)] = (gp.x);
 									}
 								}
 							});
@@ -4946,12 +4946,12 @@ function landscape ()	{
 							groupList.push(temp.filter(function (tgp)	{
 								return tgp;
 							}));
-						});	
+						});
 
 						model.now.geneline.groupList = groupList;
 						model.now.geneline.pidList = remakeMutationList(
 							model.now.geneline.removedMutationObj);
-						model.now.geneline.mutationList = 
+						model.now.geneline.mutationList =
 						model.now.geneline.pidList.data;
 
 						var newGroupList = [];
@@ -4966,7 +4966,7 @@ function landscape ()	{
 							}
 						});
 
-						redraw(res, model.now.geneline.pidList.isRemovable ? 
+						redraw(res, model.now.geneline.pidList.isRemovable ?
 												model.now.geneline.pidList.data : undefined);
 
 						reserveCheckboxState('hs');
@@ -4979,7 +4979,7 @@ function landscape ()	{
 
 					if (part === 'gene' && direction === 'Y')	{
 						if (!model.now.geneline.isDraggable)	{
-							var res = config.on ? 
+							var res = config.on ?
 												config.on.click.call(this, data, idx, model) : false;
 
 							model.now.geneline.mutationList = undefined;
@@ -4998,7 +4998,7 @@ function landscape ()	{
 		.attr('dy', function (d)	{
 			var mdy = parseFloat(d3.select(this.parentNode.parentNode.parentNode).attr('height')),
 				th = bio.drawing().textSize.height(d);
-			
+
 			return mdy / 2 + ((th / 2)) - 5;
 		});
 	};
@@ -5006,9 +5006,9 @@ function landscape ()	{
 		Sort 버튼이 어느 버튼인지 반환하는 함수.
 	 */
 	function getSortedTitle (id, common)	{
-		return id.indexOf('pq') < 0 ? 
-					 id.indexOf('gene') > -1 ? 
-					[{ name: 'gene', text: common.titles[0] }] : 
+		return id.indexOf('pq') < 0 ?
+					 id.indexOf('gene') > -1 ?
+					[{ name: 'gene', text: common.titles[0] }] :
 				  [{ name: 'sample', text: common.titles[0] }] :
 					[{ name: 'pq', text: common.titles[1] }];
 	};
@@ -5016,7 +5016,7 @@ function landscape ()	{
 		Sort title 을 그려주는 함수.
 	 */
 	function drawSortTitle (id)	{
-		bio.layout().get(model.setting.svgs, [id], 
+		bio.layout().get(model.setting.svgs, [id],
 		function (id, svg)	{
 			var common = bio.landscapeConfig().title('common'),
 					titles = getSortedTitle(svg.attr('id'), common),
@@ -5036,10 +5036,10 @@ function landscape ()	{
 					click: function (data, idx, that)	{
 						model.sortName = titles[0].name;
 
-						!model.now.sort[data.name] ? 
-						 model.now.sort[data.name] = 'asc' : 
-						 model.now.sort[data.name] === 'asc' ? 
-						 model.now.sort[data.name] = 'desc' : 
+						!model.now.sort[data.name] ?
+						 model.now.sort[data.name] = 'asc' :
+						 model.now.sort[data.name] === 'asc' ?
+						 model.now.sort[data.name] = 'desc' :
 						 model.now.sort[data.name] = 'asc';
 
 						var res = common.on.click.call(
@@ -5062,7 +5062,7 @@ function landscape ()	{
 			pq: { id: part, config: part },
 		}[part];
 
-		bio.layout().get(model.setting.svgs, [parts.id], 
+		bio.layout().get(model.setting.svgs, [parts.id],
 		function (id, svg)	{
 			var config = bio.landscapeConfig().bar(parts.config);
 
@@ -5087,8 +5087,8 @@ function landscape ()	{
 		Heatmap 을 그릴때 ID 검색 시 필요한 그룹 이름을 반환한다.
 	 */
 	function getGroupTitle (part, axis)	{
-		return part.indexOf('group') > -1 || 
-					 part.indexOf('patientGroup') > -1 ? 
+		return part.indexOf('group') > -1 ||
+					 part.indexOf('patientGroup') > -1 ?
 					 axis.y[0].removeWhiteSpace() : '';
 	};
 	/*
@@ -5098,24 +5098,24 @@ function landscape ()	{
 		// Error.
 		var add = getGroupTitle(part, axis);
 		var parts = {
-			group: { id: 'p_group_', config: 'group' }, 
+			group: { id: 'p_group_', config: 'group' },
 			patientGroup: { id: 't_group_', config: 'group' },
-			heatmap: { id: 'e_h', config: 'heatmap' }, 
+			heatmap: { id: 'e_h', config: 'heatmap' },
 			patientHeatmap: { id: 't_h', config: 'heatmap' },
 		};
 
-		bio.layout().get(model.setting.svgs, 
-		[parts[part].id + add.replace('/', '')], // group 명 중에 / 가 들어간 이름이 있을 경우에 표시가 안된다.  
+		bio.layout().get(model.setting.svgs,
+		[parts[part].id + add.replace('/', '')], // group 명 중에 / 가 들어간 이름이 있을 경우에 표시가 안된다.
 		function (id, svg)	{
 			var config = bio.landscapeConfig()
 											.heatmap(parts[part].config),
-					init = part.indexOf('map') > - 1 ? 
+					init = part.indexOf('map') > - 1 ?
 									bio.initialize('landscapeHeatmap') : null;
 
-			if (part.indexOf('patientHeatmap') > -1 || 
+			if (part.indexOf('patientHeatmap') > -1 ||
 					part.indexOf('patientGroup') > -1)	{
 				config.margin[3] = 5;
-			} 
+			}
 
 			bio.heat({
 				data: data,
@@ -5133,7 +5133,7 @@ function landscape ()	{
 		Legend 를 그려주는 함수.
 	 */
 	function drawLegend (data)	{
-		bio.layout().get(model.setting.svgs, ['legend'], 
+		bio.layout().get(model.setting.svgs, ['legend'],
 		function (id, svg)	{
 			var config = bio.landscapeConfig().legend();
 
@@ -5159,19 +5159,19 @@ function landscape ()	{
 			});
 	};
 	/*
-		gene bar 옆 check box 추가 할때 위치 지정 함수. 
+		gene bar 옆 check box 추가 할때 위치 지정 함수.
 	 */
 	function locatedCheckbox (type, callback)	{
 		d3.selectAll('.landscape_gene_svg.right-axis-g-tag g')
 			.each(function (gene)	{
-				model.now.checkboxState[type][gene] = 
-				model.now.checkboxState[type][gene] !== undefined ? 
-				model.now.checkboxState[type][gene] : 
+				model.now.checkboxState[type][gene] =
+				model.now.checkboxState[type][gene] !== undefined ?
+				model.now.checkboxState[type][gene] :
 				type === 'ed' ? true : false;
 
 				var translate = d3.select(this).attr('transform'),
 						textY = parseFloat(translate.substring(
-										translate.indexOf(',') + 1, 
+										translate.indexOf(',') + 1,
 										translate.indexOf(')'))),
 						x = 0,
 						y = textY - 5.5;
@@ -5190,27 +5190,27 @@ function landscape ()	{
 				geneHeight = parseFloat(geneSVG.attr('height')),
 				group = geneSVG.append('g')
 				.attr('class', 'landscape_gene_svg ed-chkGroup')
-				.attr('transform', 'translate(' + 
+				.attr('transform', 'translate(' +
 							(geneWidth - ((size * 2) + stroke * 4)) + ', 0)');
 
 		locatedCheckbox('ed', function (gene, x, y)	{
 			bio.checkBox(
-				group, 
+				group,
 				{ x: x, y: y, len: size },
 				[{ gene: gene, checked: true }],
 				function (d)	{ return d.checked ? 1 : 0; },
 				function (d)	{
-					bio.tooltip({ 
-						element: this, 
-						contents: 
-						'<b>Choose whether to count patients with alterations in the altered group or not</b>', 
+					bio.tooltip({
+						element: this,
+						contents:
+						'<b>Choose whether to count patients with alterations in the altered group or not</b>',
 					});
 				},
 				function (d)	{ bio.tooltip('hide'); },
-				function (d, i, mark)	{ 
+				function (d, i, mark)	{
 					var gene = d.gene;
 
-					d.checked = model.now.checkboxState.ed[d.gene] !== undefined ? 
+					d.checked = model.now.checkboxState.ed[d.gene] !== undefined ?
 					!model.now.checkboxState.ed[d.gene] : d.checked
 
 					model.now.checkboxState.ed[d.gene] = d.checked;
@@ -5224,7 +5224,7 @@ function landscape ()	{
 					if (!d.checked)	{
 						tempGeneList.splice(tempGeneList.indexOf(gene), 1);
 						tempGeneList.push(gene);
-						// 현재 라인 disable 
+						// 현재 라인 disable
 						model.data.gene = tempGeneList;
 						model.now.geneline.axis[gene].isGene = 'disable';
 
@@ -5235,12 +5235,12 @@ function landscape ()	{
 
 						model.now.geneline.deHistory.push(gene);
 
-						model.now.mutation_list = model.now.mutation_list ? 
+						model.now.mutation_list = model.now.mutation_list ?
 						model.now.mutation_list : model.init.mutation_list;
 						// Disable 된 gene 을 포함하는 sample 을 제거.
 						// 지금은 mutation_list 만 제거하지만
 						// 나중에는 patient_list 도 제거해야 한다.
-						model.now.mutation_list = 
+						model.now.mutation_list =
 						model.now.mutation_list.filter(function (d)	{
 							if (d.gene !== gene)	{
 								return d;
@@ -5252,7 +5252,7 @@ function landscape ()	{
 													 .indexOf(d.participant_id) < 0)	{
 										model.now.geneline.removedMutationObj[d.gene]
 												 .push(d.participant_id);
-									} 
+									}
 								}
 
 								if (!model.now.geneline.removedMutationArr[d.gene])	{
@@ -5268,7 +5268,7 @@ function landscape ()	{
 
 						model.now.geneline.pidList = remakeMutationList(
 							model.now.geneline.removedMutationObj);
-						isGroupMutationList = model.now.geneline.pidList.data; 
+						isGroupMutationList = model.now.geneline.pidList.data;
 						isNewPidGroupList = model.now.geneline.pidList.arr;
 
 						nowGeneLineValue();
@@ -5278,15 +5278,15 @@ function landscape ()	{
 
 						tempGeneList = []
 
-						bio.iteration.loop(model.now.geneline.geneIndexList, 
+						bio.iteration.loop(model.now.geneline.geneIndexList,
 						function (gi, giv)	{
 							tempGeneList[giv[historyIndex]] = gi;
 						});
-						
+
 						model.data.gene = tempGeneList;
 						model.now.geneline.axis[gene].isGene = 'enable';
 
-						model.now.mutation_list = 
+						model.now.mutation_list =
 						model.now.mutation_list.concat(
 							model.now.geneline.removedMutationArr[gene]);
 
@@ -5303,7 +5303,7 @@ function landscape ()	{
 							}
 						});
 
-						isGroupMutationList = !isTerminated ? undefined : 
+						isGroupMutationList = !isTerminated ? undefined :
 																	model.now.geneline.pidList.data;
 						isNewPidGroupList = model.now.geneline.pidList.arr;
 
@@ -5312,31 +5312,31 @@ function landscape ()	{
 
 					model.data.axis.gene.y = model.data.gene;
 					model.data.axis.heatmap.y = model.data.gene;
-					model.data.axis.pq.y = model.data.gene;	
+					model.data.axis.pq.y = model.data.gene;
 
-					var type = model.now.exclusivity_opt ? 
-										 model.now.exclusivity_opt : 
+					var type = model.now.exclusivity_opt ?
+										 model.now.exclusivity_opt :
 										 model.init.exclusivity_opt;
 
 					bio.layout().removeGroupTag('survival');
-					// ward3 
-					// TODO. Hidden/Shown 이 적용된 상태에서 
+					// ward3
+					// TODO. Hidden/Shown 이 적용된 상태에서
 					// model.data.heamap 이 아닌, 새로운 스케일 값이 적용된
 					// heatmap 데이터를 가져와야 한다.
-					model.exclusive.now = 
+					model.exclusive.now =
 					bio.landscapeSort().exclusive(
-						model.now.heatmap || model.data.heatmap, 
+						model.now.heatmap || model.data.heatmap,
 						model.data.gene, type, model.data.type);
 
 					if (Object.keys(model.now.geneline.shownValues).length > 0)	{
 						var tempShownArr = [];
 
-						bio.iteration.loop(model.now.geneline.shownValues, 
+						bio.iteration.loop(model.now.geneline.shownValues,
 						function (k, v)	{
 							tempShownArr = tempShownArr.concat(v);
 						});
 
-						model.now.mutation_list = 
+						model.now.mutation_list =
 						model.init.mutation_list.filter(function (m)	{
 							if (tempShownArr.indexOf(m.participant_id) > -1)	{
 								return m;
@@ -5345,7 +5345,7 @@ function landscape ()	{
 					} else {
 						model.now.mutation_list = model.init.mutation_list;
 					}
-					
+
 					changeSampleStack(model.now.mutation_list);
 					changeGeneStack(model.now.mutation_list);
 					// Group 별로 정렬된 상태에서 enable / disable 을 할때,
@@ -5390,9 +5390,9 @@ function landscape ()	{
 		.style('fill-opacity', 0.8)
 		.style('cursor', 'pointer')
 		.on('mouseover', function (d)	{
-			bio.tooltip({ 
-				element: this, 
-				contents: '<b>Choose whether to count patients with alterations in the altered group or not</b>', 
+			bio.tooltip({
+				element: this,
+				contents: '<b>Choose whether to count patients with alterations in the altered group or not</b>',
 			});
 		})
 		.on('mouseout', function (d)	{
@@ -5409,9 +5409,9 @@ function landscape ()	{
 		.style('cursor', 'pointer')
 		.text('G')
 		.on('mouseover', function (d)	{
-			bio.tooltip({ 
-				element: this, 
-				contents: '<b>Choose whether to count patients with alterations in the altered group or not</b>', 
+			bio.tooltip({
+				element: this,
+				contents: '<b>Choose whether to count patients with alterations in the altered group or not</b>',
 			});
 		})
 		.on('mouseout', function (d)	{
@@ -5429,19 +5429,19 @@ function landscape ()	{
 				geneHeight = parseFloat(geneSVG.attr('height')),
 				group = geneSVG.append('g')
 				.attr('class', 'landscape_gene_svg hs-chkGroup')
-				.attr('transform', 'translate(' + 
+				.attr('transform', 'translate(' +
 							(geneWidth - (size + stroke * 2)) + ', 0)');
 
 		locatedCheckbox('hs', function (gene, x, y)	{
 			bio.checkBox(
-				group, 
+				group,
 				{ x: x, y: y, len: size },
 				[{ gene: gene, checked: false }],
 				function (d)	{ return d.checked ? 1 : 0; },
 				function (d)	{
-					bio.tooltip({ 
-						element: this, 
-						contents: '<b>Choose whether to show altered patients only or all</b>', 
+					bio.tooltip({
+						element: this,
+						contents: '<b>Choose whether to show altered patients only or all</b>',
 					});
 				},
 				function (d)	{ bio.tooltip('hide'); },
@@ -5458,7 +5458,7 @@ function landscape ()	{
 				model.now.geneline.shownValuesData = {};
 				model.now.geneline.hiddenValuesData = {};
 
-				model.now.mutation_list = 
+				model.now.mutation_list =
 				model.init.mutation_list.filter(function (m)	{
 					if (model.now.checkboxState.hs[m.gene])	{
 						if (!model.now.geneline.shownValues[m.gene])	{
@@ -5482,7 +5482,7 @@ function landscape ()	{
 				})
 
 				var removingArr = model.data.clinicalList.map(function (ra)	{
-					return '.landscape_group_group_' + ra.replace(' ', '') + 
+					return '.landscape_group_group_' + ra.replace(' ', '') +
 								'_svg.heatmap-g-tag';
 				});
 				removingArr.push('.landscape_gene_svg.bar-g-tag');
@@ -5505,7 +5505,7 @@ function landscape ()	{
 						disabledExclusive = null,
 						combinedExclusive = [];
 
-				bio.iteration.loop(model.now.geneline.shownValues, 
+				bio.iteration.loop(model.now.geneline.shownValues,
 				function (k, v)	{
 					emptyArr = emptyArr.concat(v);
 				});
@@ -5523,7 +5523,7 @@ function landscape ()	{
 				});
 
 				if (Object.keys(model.now.geneline.shownValues).length === 0)	{
-					bio.iteration.loop(model.now.geneline.hiddenValues, 
+					bio.iteration.loop(model.now.geneline.hiddenValues,
 					function (k, v)	{
 						emptyArr = emptyArr.concat(v);
 					});
@@ -5536,15 +5536,15 @@ function landscape ()	{
 				});
 
 				bio.iteration.loop(exclusiveHeatmap, function (heat)	{
-					disabledArr.indexOf(heat.y) < 0 ? 
+					disabledArr.indexOf(heat.y) < 0 ?
 					enabledData.push(heat) : disabledData.push(heat);
 				});
 
 				enabledExclusive = bio.landscapeSort().exclusive(
-					enabledData, model.data.gene, 
+					enabledData, model.data.gene,
 					model.now.exclusivity_opt, model.data.type).data;
 				disabledExclusive = bio.landscapeSort().exclusive(
-					disabledData, model.data.gene, 
+					disabledData, model.data.gene,
 					model.now.exclusivity_opt, model.data.type).data;
 
 				disabledExclusive = disabledExclusive.filter(function (d)	{
@@ -5603,13 +5603,13 @@ function landscape ()	{
 
 				drawAxis('gene', 'X');
 				drawAxis('sample', 'Y');
-				drawHeatmap('heatmap', model.now.heatmap || model.data.heatmap, 
+				drawHeatmap('heatmap', model.now.heatmap || model.data.heatmap,
 								model.data.axis.heatmap);
 				drawBar('gene', model.data.stack.gene,
 												model.data.axis.gene, ['top', 'left']);
-				drawBar('sample', model.data.stack.sample, 
+				drawBar('sample', model.data.stack.sample,
 													model.data.axis.sample, ['top', 'left']);
-				drawHeatmap('patientHeatmap', 
+				drawHeatmap('patientHeatmap',
 					model.data.patient, model.data.axis.patient.heatmap);
 				bio.iteration.loop(model.data.axis.group.y, function (g, idx)	{
 					var yaxis = model.data.axis.group.y[idx],
@@ -5617,7 +5617,7 @@ function landscape ()	{
 							patient = { x: model.data.axis.patient.group.x, y: yaxis },
 							zipGroup = [];
 
-					bio.iteration.loop(model.data.group.group[idx], 
+					bio.iteration.loop(model.data.group.group[idx],
 					function (g)	{
 						if (model.data.axis.group.x.indexOf(g.x) > -1)	{
 							zipGroup.push(g);
@@ -5625,13 +5625,13 @@ function landscape ()	{
 					});
 
 					drawHeatmap('group', zipGroup, group);
-					drawHeatmap('patientGroup', 
+					drawHeatmap('patientGroup',
 										 [model.data.group.patient[idx]], patient);
-				});	
-				
+				});
+
 				enableDisableBlur();
 				enabledDisabeldMaximumElement(
-					model.now.geneline.groupList ? 
+					model.now.geneline.groupList ?
 					model.now.geneline.pidList.data : undefined);
 				callEnableDisableOtherFunc(exclusivedData);
 
@@ -5655,9 +5655,9 @@ function landscape ()	{
 		.style('fill-opacity', 0.8)
 		.style('cursor', 'pointer')
 		.on('mouseover', function (d)	{
-			bio.tooltip({ 
-				element: this, 
-				contents: '<b>Choose whether to show altered patients only or all</b>', 
+			bio.tooltip({
+				element: this,
+				contents: '<b>Choose whether to show altered patients only or all</b>',
 			});
 		})
 		.on('mouseout', function (d)	{
@@ -5674,9 +5674,9 @@ function landscape ()	{
 		.style('cursor', 'pointer')
 		.text('F')
 		.on('mouseover', function (d)	{
-			bio.tooltip({ 
-				element: this, 
-				contents: '<b>Choose whether to show altered patients only or all</b>', 
+			bio.tooltip({
+				element: this,
+				contents: '<b>Choose whether to show altered patients only or all</b>',
 			});
 		})
 		.on('mouseout', function (d)	{
@@ -5698,12 +5698,12 @@ function landscape ()	{
 		drawSortTitle('gene');
 		drawBar('pq', model.data.pq, model.data.axis.pq, ['top', 'left']);
 		drawBar('gene', model.data.stack.gene, model.data.axis.gene, ['top', 'left']);
-		drawBar('sample', model.data.stack.sample, model.data.axis.sample, 
+		drawBar('sample', model.data.stack.sample, model.data.axis.sample,
 					 ['top', 'left']);
-		drawBar('samplePatient', model.data.stack.patient, 
+		drawBar('samplePatient', model.data.stack.patient,
 						model.data.axis.patient.sample, ['top', 'left']);
 		drawHeatmap('heatmap', model.now.heatmap || model.data.heatmap, model.data.axis.heatmap);
-		drawHeatmap('patientHeatmap', model.data.patient, 
+		drawHeatmap('patientHeatmap', model.data.patient,
 																	model.data.axis.patient.heatmap);
 		bio.iteration.loop(model.data.axis.group.y, function (g, idx)	{
 			var yaxis = model.data.axis.group.y[idx],
@@ -5713,7 +5713,7 @@ function landscape ()	{
 			// Clinical data 가 x-axis 의 양보다 많아지면
 			// 맨앞에 중첩되어서 정렬이 잘못 나온다. 그래서 x-axis 의 개수에 맞춰
 			// clinical data 를 축소 한다.
-			bio.iteration.loop(model.data.group.group[idx], 
+			bio.iteration.loop(model.data.group.group[idx],
 			function (g)	{
 				if (model.data.axis.group.x.indexOf(g.x) > -1)	{
 					zipGroup.push(g);
@@ -5721,7 +5721,7 @@ function landscape ()	{
 			});
 
 			drawHeatmap('group', zipGroup, group);
-			drawHeatmap('patientGroup', 
+			drawHeatmap('patientGroup',
 								 [model.data.group.patient[idx]], patient);
 		});
 		drawLegend(model.data.type);
@@ -5736,22 +5736,22 @@ function landscape ()	{
 				firstIdxVal = 0,
 				lastIdxVal = 0;
 
-		bio.iteration.loop(model.init.geneline.axis, 
+		bio.iteration.loop(model.init.geneline.axis,
 		function (k, v)	{
 			if (model.init.geneline.axis[k].idx === 0)	{
 				zeroIdxVal = model.init.geneline.axis[k].value;
 			} else if (model.init.geneline.axis[k].idx === 1)	{
 				firstIdxVal = model.init.geneline.axis[k].value;
-			} else if (model.init.geneline.axis[k].idx === 
+			} else if (model.init.geneline.axis[k].idx ===
 									model.data.gene.length - 1)	{
 				lastIdxVal = model.init.geneline.axis[k].value;
 			}
 		});
 
 		model.init.geneline.firstYAxis = zeroIdxVal;
-		model.init.geneline.axisHeight = 
+		model.init.geneline.axisHeight =
 			parseFloat((firstIdxVal - zeroIdxVal).toFixed(3));
-		model.init.geneline.axisHalfHeight = 
+		model.init.geneline.axisHalfHeight =
 			model.init.geneline.axisHeight / 2;
 		model.init.geneline.lastYAxis = lastIdxVal;
 	};
@@ -5768,13 +5768,13 @@ function landscape ()	{
 
 			bio.iteration.loop(siblings, function (s, i)	{
 				var gene = s.innerHTML.substring(
-										s.innerHTML.indexOf('>') + 1, 
+										s.innerHTML.indexOf('>') + 1,
 										s.innerHTML.lastIndexOf('<'));
 
 				sortedSiblings[model.data.gene.indexOf(gene)] = s;
 			});
 
-		model.now.geneline.sortedSiblings = 
+		model.now.geneline.sortedSiblings =
 		sortedSiblings;
 	};
 	/*
@@ -5783,7 +5783,7 @@ function landscape ()	{
 	 */
 	function nowGeneLineValue ()	{
 		bio.iteration.loop(model.data.gene, function (g, i)	{
-			var group = 
+			var group =
 					d3.select('.landscape_gene_svg.right-axis-g-tag')
 						.selectAll('g').nodes()[i],
 					value = parseFloat(d3.select(group)
@@ -5791,7 +5791,7 @@ function landscape ()	{
 															 .replace(/translate\(|\)/ig, '')
 															 .split(',')[1]);
 
-			model.now.geneline.axis[g].value = value;		
+			model.now.geneline.axis[g].value = value;
 		});
 	};
 	/*
@@ -5807,10 +5807,10 @@ function landscape ()	{
 		};
 
 		bio.iteration.loop(model.data.gene, function(g, i)	{
-			var axisGroup = 
+			var axisGroup =
 					d3.select('.landscape_gene_svg.right-axis-g-tag')
 						.selectAll('g').nodes()[i];
-			
+
 			var axis = parseFloat(d3.select(axisGroup)
 													.attr('transform')
 													.replace(/translate\(|\)/ig, '')
@@ -5823,11 +5823,11 @@ function landscape ()	{
 					// pq = parseFloat(
 					// 	d3.selectAll('#landscape_gene_' + g + '_pq_rect')
 					// 		.attr('y'));
-			
-			model.init.geneline.axis[g] = 
-			{ 
-				idx: i, value: axis, 
-				group: axisGroup, isGene: 'enable' 
+
+			model.init.geneline.axis[g] =
+			{
+				idx: i, value: axis,
+				group: axisGroup, isGene: 'enable'
 			};
 			model.init.geneline.gene.push({ name: g, y: gene });
 			model.init.geneline.heat.push({ name: g, y: heat });
@@ -5836,7 +5836,7 @@ function landscape ()	{
 			geneAxisTermHeight();
 		});
 		// 초기의 값중에 가장 큰 값을 저장 해 놓는다.
-		// 이는 나중에 나눔선을 지정할 때, disable 한 gene 의 
+		// 이는 나중에 나눔선을 지정할 때, disable 한 gene 의
 		// 최대 위치가 모든 데이터에서의 최대위치 보다 작을때는
 		// 나눔선을 표시하지 않기 위해서 이다.
 		model.now.geneline = bio.objects.clone(model.init.geneline);
@@ -5852,17 +5852,17 @@ function landscape ()	{
 		model.now.geneline.pidList = undefined;
 		// Hide & Show 별로 체크박스의 상태를 확인한다.
 		model.now.geneline.checkboxState = {};
-		// mutation 이 존재 하는 영역과 존재하지 않는영역을 
+		// mutation 이 존재 하는 영역과 존재하지 않는영역을
 		// 나누는 값을 저장하는 객체.
 		model.now.geneline.enabledDivisionValues = {};
 		model.now.geneline.disabledDivisionValues = {};
-		// mutation or cnv 가 존재 하는 부분과 존재하지 않는 부분을 
+		// mutation or cnv 가 존재 하는 부분과 존재하지 않는 부분을
 		// 보여주거나 숨기는 값을 저장하는 객체.
 		model.now.geneline.shownValues = {};
 		model.now.geneline.hiddenValues = {};
 		model.now.geneline.shownValuesData = {};
 		model.now.geneline.hiddenValuesData = {};
-		// gene 을 enable/disable 할때, disable 한 gene 의 
+		// gene 을 enable/disable 할때, disable 한 gene 의
 		// mutation_list 값을 가지는 객체이다.
 		model.now.geneline.removedMutationObj = {};
 		model.now.geneline.removedMutationArr = {};
@@ -5871,7 +5871,7 @@ function landscape ()	{
 	};
 
 	function drawExclusivityLandscape (type)	{
-		model.init.mutation_list = 
+		model.init.mutation_list =
 		model.setting.defaultData.data.mutation_list;
 		// 초기 exclusive 값을 설정한다.
 		model.exclusive.init = bio.landscapeSort().exclusive(
@@ -5891,14 +5891,14 @@ function landscape ()	{
 
 			model.now.geneline.pidList = remakeMutationList(
 				model.now.geneline.removedMutationObj);
-			bio.iteration.loop(model.now.geneline.pidList.arr, 
+			bio.iteration.loop(model.now.geneline.pidList.arr,
 			function (gl)	{
 				groups = groups.concat(gl.data);
 			});
 
 			changeAxis({ axis: 'x', data: groups });
 		} else {
-			changeAxis(model.exclusive.now || 
+			changeAxis(model.exclusive.now ||
 								 model.exclusive.init);
 		}
 
@@ -5908,7 +5908,7 @@ function landscape ()	{
 
 				model.now.geneline.pidList = remakeMutationList(
 					model.now.geneline.removedMutationObj);
-				bio.iteration.loop(model.now.geneline.pidList.arr, 
+				bio.iteration.loop(model.now.geneline.pidList.arr,
 				function (gl)	{
 					groups = groups.concat(gl.data);
 				});
@@ -5918,7 +5918,7 @@ function landscape ()	{
 				model.exclusive.now = bio.landscapeSort().exclusive(
 				model.now.heatmap || model.data.heatmap, model.data.gene, type, model.data.type);
 
-				changeAxis(model.exclusive.now || 
+				changeAxis(model.exclusive.now ||
 									 model.exclusive.init);
 			}
 		}
@@ -5928,7 +5928,7 @@ function landscape ()	{
 		drawLandscape(model.data, model.init.width);
 		enableDisableBlur();
 		enabledDisabeldMaximumElement(
-			model.now.geneline.groupList ? 
+			model.now.geneline.groupList ?
 			model.now.geneline.pidList.data : undefined);
 	};
 
@@ -5937,19 +5937,19 @@ function landscape ()	{
 		model.isPlotted = opts.plot;
 		model.setting = bio.setting('landscape', opts);
 		model.data = model.setting.preprocessData;
-		model.divisionFunc = opts.divisionFunc ? 
+		model.divisionFunc = opts.divisionFunc ?
 		opts.divisionFunc : null;
-		model.clinicalFunc = opts.clinicalFunc ? 
+		model.clinicalFunc = opts.clinicalFunc ?
 		opts.clinicalFunc : null;
-		model.onClickClinicalName = 
-		opts.onClickClinicalName ? 
+		model.onClickClinicalName =
+		opts.onClickClinicalName ?
 		opts.onClickClinicalName : null;
 
 		bio.clinicalGenerator(model.data.group.group, 'landscape');
 
 		removeGroupTempSVG();
 		// Set landscape title.
-		bio.title('#landscape_title', 
+		bio.title('#landscape_title',
 			model.setting.defaultData.title);
 
 		defaultSize(model.init);
@@ -5962,14 +5962,14 @@ function landscape ()	{
 		callEnableDisableOtherFunc(
 			model.now.mutation_list || model.init.mutation_list);
 		if (model.clinicalFunc)	{
-			model.clinicalFunc(model.data.group, 
+			model.clinicalFunc(model.data.group,
 				bio.boilerPlate.clinicalInfo);
 		}
 
 		bio.handler().scroll('#landscape_heatmap', function (e)	{
 			var sample = bio.dom().get('#landscape_sample'),
 					group = bio.dom().get('#landscape_group');
-			
+
 			sample.scrollLeft = this.scrollLeft;
 			group.scrollLeft = this.scrollLeft;
 		});
@@ -5987,7 +5987,7 @@ function landscapeSort ()	{
 		var obj = {};
 
 		bio.iteration.loop(data, function (d, i)	{
-			obj[d[what]] = obj[d[what]] ? 
+			obj[d[what]] = obj[d[what]] ?
 			obj[d[what]] += d.value : obj[d[what]] = d.value;
 		});
 
@@ -6022,7 +6022,7 @@ function landscapeSort ()	{
 	function byMutation (align, data)	{
 		var dt = ascdesc(align, toObject(byStack(data, 'y')));
 
-		return { 
+		return {
 			axis: 'y', data: dt.map(function (d) { return d.key; })
 		};
 	};
@@ -6031,8 +6031,8 @@ function landscapeSort ()	{
 	 */
 	function bySample (align, data)	{
 		var dt = ascdesc(align, toObject(byStack(data, 'x')));
-		
-		return { 
+
+		return {
 			axis: 'x', data: dt.map(function (d) { return d.key; })
 		};
 	};
@@ -6042,7 +6042,7 @@ function landscapeSort ()	{
 	function byPQ (align, data)	{
 		var dt = ascdesc(align, data);
 
-		return { 
+		return {
 			axis: 'y', data: dt.map(function (d)	{ return d.y; })
 		};
 	};
@@ -6103,13 +6103,13 @@ function landscapeSort ()	{
 		var result = [];
 
 		bio.iteration.loop(Object.keys(obj).sort(function (a, b)	{
-			return bio.boilerPlate.clinicalInfo[a].order > 
+			return bio.boilerPlate.clinicalInfo[a].order >
 						 bio.boilerPlate.clinicalInfo[b].order ? 1 : -1;
 		}), function (d, i)	{
 			result.push(obj[d]);
 		});
 
-		return result;		
+		return result;
 	};
 	/*
 		Group 을 exclusive 하게 만들어주는 함수.
@@ -6126,9 +6126,9 @@ function landscapeSort ()	{
 
 			heat.push(
 				bio.landscapeSort().exclusive(
-					temp, 
-					this.data.gene, 
-					this.now.exclusivity_opt, 
+					temp,
+					this.data.gene,
+					this.now.exclusivity_opt,
 					this.data.type));
 		});
 
@@ -6145,7 +6145,7 @@ function landscapeSort ()	{
 
 		bio.iteration.loop(heatmap, function (h)	{
 			result.axis = h.axis;
-			result.data ? result.data.push(h.data) : 
+			result.data ? result.data.push(h.data) :
 										result.data = [h.data];
 		});
 
@@ -6182,19 +6182,19 @@ function landscapeSort ()	{
 						group: [], axis: { axis: 'x', data: [] }
 					};
 
-			bio.iteration.loop.call(this, this.now.group.group, 
+			bio.iteration.loop.call(this, this.now.group.group,
 			function (ng)	{
 				temp.push(groupSort.call(this, matching(data, ng)));
 			});
 
 			bio.iteration.loop(temp, function (t)	{
 				result.group = result.group.concat(t.group);
-				result.axis.data = 
+				result.axis.data =
 				result.axis.data.concat(t.axis.data);
 			});
 
 			return result;
-		} 
+		}
 
 		return groupSort.call(this, data);
 	};
@@ -6226,18 +6226,18 @@ function landscapeSort ()	{
 						if (cnvOrd > -1)	{
 							r.innerSort = r.innerSort.replaceAt(
 								genLen + (genOrd * cnvLen) + cnvOrd, '1');
-						} 
+						}
 
 						if (somOrd > -1)	{
 							var somStart = genLen + genLen * cnvLen;
 
 							r.innerSort = r.innerSort.replaceAt(
 								somStart + (genOrd * somLen) + somOrd, '1');
-						} 
+						}
 					}
 
-					r.value = r.value.replaceAt(mutIdx, mutVal === 'cnv' ? 
-																		 (type === '1' ? '1' : '0') : 
+					r.value = r.value.replaceAt(mutIdx, mutVal === 'cnv' ?
+																		 (type === '1' ? '1' : '0') :
 																		 r.value[mutIdx] === '1' ? '1' : '0');
 				}
 			});
@@ -6250,7 +6250,7 @@ function landscapeSort ()	{
 		result = sortByExclusive(result);
 
 		bio.iteration.loop(result.resort, function (rs)	{
-			!obj[rs.value] ? obj[rs.value] = [rs] : 
+			!obj[rs.value] ? obj[rs.value] = [rs] :
 			obj[rs.value].push(rs);
 		});
 
@@ -6280,9 +6280,9 @@ function landscapeSort ()	{
 			return a.value < b.value ? 1 : -1;
 		});
 
-		return { 
-			axis: 'x', 
-			data: res.map(function (r)	{ return r.key; }), 
+		return {
+			axis: 'x',
+			data: res.map(function (r)	{ return r.key; }),
 			resort: res,
 		};
 	};
@@ -6346,7 +6346,7 @@ function landscapeSort ()	{
 			}
 		});
 
-		return model.exclusive = 
+		return model.exclusive =
 					typeToString(result, genes, data, type, orderStr.length);
 	};
 	/*
@@ -6356,7 +6356,7 @@ function landscapeSort ()	{
 		var obj = {};
 
 		bio.iteration.loop(data, function (d)	{
-			!obj[d.value] ? obj[d.value] = [d] : 
+			!obj[d.value] ? obj[d.value] = [d] :
 											obj[d.value].push(d);
 		});
 
@@ -6380,7 +6380,7 @@ function scaleSet ()	{
 
 	var model = {};
 	/*
-		가장 테두리가 되는 Form 태그를 만드는 함수. 
+		가장 테두리가 되는 Form 태그를 만드는 함수.
 	 */
 	function makeDiv ()	{
 		var e = document.createElement('div');
@@ -6397,13 +6397,13 @@ function scaleSet ()	{
 				e.value = value || '100%';
 
 		return e;
-	};		
+	};
 	/*
 		Option 버튼의 종류를 반환하는 함수.
 	 */
 	function getOptionType (className)	{
-		return className.indexOf('caret') > -1 ? 
-					 className.indexOf('up') > -1 ? 
+		return className.indexOf('caret') > -1 ?
+					 className.indexOf('up') > -1 ?
 					 'up' : 'down' : 'refresh';
 	}
 	/*
@@ -6412,49 +6412,49 @@ function scaleSet ()	{
 	function scaleEvent (event)	{
 		if (!model.change)	{
 			return;
-		}	
+		}
 
 		var type = getOptionType(this.className),
 				sTerm = parseInt(model.defaultValue * 0.1),
 				sign = { up: 1, down: -1 }[type];
 		// 실제 크기에 변경 값 적용.
-		model.scaleValue = type !== 'refresh' ? type === 'up' ? 
-		model.scaleValue + (sign * sTerm) : 
-		model.scaleValue + (sign * sTerm) : 
-		model.defaultValue; 
+		model.scaleValue = type !== 'refresh' ? type === 'up' ?
+		model.scaleValue + (sign * sTerm) :
+		model.scaleValue + (sign * sTerm) :
+		model.defaultValue;
 		// Input 태그에 보여질 비율 값 변경 적용.
-		model.scaleRate = type !== 'refresh' ? type === 'up' ? 
-		(model.scaleRate += model.termRate, model.scaleRate) : 
-		(model.scaleRate -= model.termRate, model.scaleRate) : 
+		model.scaleRate = type !== 'refresh' ? type === 'up' ?
+		(model.scaleRate += model.termRate, model.scaleRate) :
+		(model.scaleRate -= model.termRate, model.scaleRate) :
 		model.defaultRate;
 		// Input 태그 값 범위 제한.
-		// model.scaleRate = 
-		// model.defaultValue / 2 > model.scaleValue ? 
-		// (model.scaleRate += model.termRate, model.scaleRate) : 
-		// model.defaultValue * 2 < model.scaleValue ? 
+		// model.scaleRate =
+		// model.defaultValue / 2 > model.scaleValue ?
+		// (model.scaleRate += model.termRate, model.scaleRate) :
+		// model.defaultValue * 2 < model.scaleValue ?
 		// model.defaultRate * 2 : model.scaleRate;
 		// // 실제 크기 값 범위 제한.
-		// model.scaleValue = 
-		// model.defaultValue / 2 > model.scaleValue ? 
-		// model.defaultValue / 2 : 
-		// model.defaultValue * 2 < model.scaleValue ? 
+		// model.scaleValue =
+		// model.defaultValue / 2 > model.scaleValue ?
+		// model.defaultValue / 2 :
+		// model.defaultValue * 2 < model.scaleValue ?
 		// model.defaultValue * 2 : model.scaleValue;
 		// 2018.01.02 Paper support code.
-		model.scaleRate = 
-		model.defaultValue > model.scaleValue ? 
-		(model.scaleRate += model.termRate, model.scaleRate) : 
-		model.defaultValue * 2 < model.scaleValue ? 
+		model.scaleRate =
+		model.defaultValue > model.scaleValue ?
+		(model.scaleRate += model.termRate, model.scaleRate) :
+		model.defaultValue * 2 < model.scaleValue ?
 		model.defaultRate * 2 : model.scaleRate;
 		// 실제 크기 값 범위 제한.
-		model.scaleValue = 
-		model.defaultValue > model.scaleValue ? 
-		model.defaultValue : 
-		model.defaultValue * 2 < model.scaleValue ? 
+		model.scaleValue =
+		model.defaultValue > model.scaleValue ?
+		model.defaultValue :
+		model.defaultValue * 2 < model.scaleValue ?
 		model.defaultValue * 2 : model.scaleValue;
 		// Input 태그 값 변경 적용.
 		model.input.value = model.scaleRate + '%';
 		// Option type 과 현재 실제 값을 반환한다.
-		model.change.call(this, event, { 
+		model.change.call(this, event, {
 			type: type, value: model.scaleValue,
 		});
 	};
@@ -6472,7 +6472,7 @@ function scaleSet ()	{
 					d = document.createElement('div'),
 					b = document.createElement('button');
 
-			b.className = 'scale-' + btn;		
+			b.className = 'scale-' + btn;
 			// i.className = 'fa fa-' + btn + ' fa-lg';
 			i.className = 'fa fa-' + btn;
 			b.addEventListener('click', scaleEvent);
@@ -6483,7 +6483,7 @@ function scaleSet ()	{
 		});
 
 		return div;
-	};	
+	};
 
 	return function (opts)	{
 		if (!opts.element)	{
@@ -6522,7 +6522,7 @@ function sortTitle ()	{
 
 		bio.rendering().dropShadow(opts.element, 1, -0.1, 1);
 
-		model.font = opts.style.fontSize + ' ' + 
+		model.font = opts.style.fontSize + ' ' +
 								 opts.style.fontWeight;
 		model.mostWidth = bio.drawing().mostWidth(
 												opts.titles, model.font);
@@ -6540,10 +6540,10 @@ function sortTitle ()	{
 			shape: bio.objects.clone(opts),
 		};
 		model.opts.text.id = model.id + '_sorttitle_text';
-		model.opts.text.element = 
+		model.opts.text.element =
 		model.group.selectAll('#' + model.id + '_text');
 		model.opts.shape.id = model.id + '_sorttitle_shape';
-		model.opts.shape.element = 
+		model.opts.shape.element =
 		model.group.selectAll('#' + model.id + '_shape');
 
 		bio.rectangle(model.opts.shape, model);
@@ -6613,10 +6613,10 @@ function sortTitle ()	{
 		math: math(),
 		// >>> Events.
 		handler: handler(),
-		// strings 객체는 String 의 프로토 타입을 
+		// strings 객체는 String 의 프로토 타입을
 		// 확장한 객체로 여기서 실행만 시켜놓고 따로 객체를 호출하거나
 		// 인스턴스를 생성하지 않는다.
-		strings: strings(), 
+		strings: strings(),
 		objects: objects(),
 		iteration: iteration(),
 		dependencies: dependencies(),
@@ -6647,7 +6647,7 @@ function initialize ()	{
 	var SIZING = { ids: [], chart: {} };
 	var SETTING = {
 		idx: [],
-		dom: null, 
+		dom: null,
 		size: { width: 0, height: 0 },
 	};
 	var LAYOUT = {
@@ -6700,11 +6700,11 @@ function initialize ()	{
 				average: function (data)	{
 					var result = [];
 
-					bio.iteration.loop(data, 
+					bio.iteration.loop(data,
 					function (d)	{
 						var sum = 0, avg = 0;
 
-						bio.iteration.loop(d.values, 
+						bio.iteration.loop(d.values,
 						function (v)	{
 							sum += v.tpm;
 						});
@@ -6714,7 +6714,7 @@ function initialize ()	{
 							score: sum / d.values.length
 						});
 					});
-					
+
 					return result;
 				},
 			},
@@ -6786,7 +6786,7 @@ function initialize ()	{
 			sort: {
 				gene: null,
 				sample: null,
-				pq: null,	
+				pq: null,
 			},
 			group: [],
 			axis: { x: [], y: [] },
@@ -6799,8 +6799,8 @@ function initialize ()	{
 	};
 	var LANDSCAPESORT = { exclusive: [] };
 	var LANDSCAPEHEATMAP = {
-		mutationType: ['cnv', 'var'], 
-		value: {}, 
+		mutationType: ['cnv', 'var'],
+		value: {},
 		duplicate: [],
 	};
 
@@ -6849,7 +6849,7 @@ function pathway ()	{
 			}
 		});
 
-		return !result ? { is: false, data: null } : 
+		return !result ? { is: false, data: null } :
 						result;
 	};
 
@@ -6868,14 +6868,14 @@ function pathway ()	{
 
 	function fillColor (elem, data, opt, marker)	{
 		var config = bio.pathwayConfig().node();
-		
+
 		if (marker > -1)	twinkle(elem, marker);
 
 		elem.attr('cursor', 'pointer')
 				.style('fill', function (d)	{
 					return config.style.fill.call(this, data)
 				})
-				.on('mouseover', function (d, i) { 
+				.on('mouseover', function (d, i) {
 					config.on.mouseover.call(this, data, i, opt);
 				})
 				.on('mouseout', function (d, i)	{
@@ -6884,7 +6884,7 @@ function pathway ()	{
 	};
 
 	function defineIndex (parent)	{
-		bio.iteration.loop(parent.childNodes, 
+		bio.iteration.loop(parent.childNodes,
 		function (i, child)	{
 			if ((/gene_/i).test(child.id))	{
 				d3.select(child).data({ 'index': i });
@@ -6895,8 +6895,8 @@ function pathway ()	{
 		Pathway 의 노드에 값에 상응하는 색상을 입히는 함수.
 	 */
 	function colorGenes (data, patient)	{
-		var texts = bio.dependencies.version.d3v4() ? 
-								d3.selectAll('text').nodes() : 
+		var texts = bio.dependencies.version.d3v4() ?
+								d3.selectAll('text').nodes() :
 								bio.drawing().nodes(d3.selectAll('text'));
 
 		bio.iteration.loop(texts, function (txt)	{
@@ -6938,7 +6938,7 @@ function pathway ()	{
 
 	function disableDrugs (list)	{
 		var drugs = d3.selectAll('g[id*="drug_"]').nodes();
-		
+
 		bio.iteration.loop(drugs, function (dr)	{
 			var id = dr.id.replace('drug_', '').replace('_', '/').toUpperCase();
 			var hasDrug = false;
@@ -6955,7 +6955,7 @@ function pathway ()	{
 
 					coloringDrugs(dr, dr.id, l.drugs[0].drug_type);
 				}
-			});	
+			});
 
 			if (!hasDrug)	{
 				d3.select(dr).remove();
@@ -6976,8 +6976,8 @@ function pathway ()	{
 		d3.selectAll('g[id*="drug_"]')
 			.datum(function (d)	{
 				var transform = d3.select(this).attr('transform'),
-						trans = bio.dependencies.version.d3v4() ? 
-										bio.rendering().translation(transform) : 
+						trans = bio.dependencies.version.d3v4() ?
+										bio.rendering().translation(transform) :
 										d3.transform(transform);
 
 				return {
@@ -7006,13 +7006,13 @@ function pathway ()	{
 			model.data = model.setting.preprocessData;
 			model.modalID = 'drug_modal';
 
-			bio.title('#pathway_title', 
-								opts.cancer_type.toUpperCase() + ' - Pathway');	
+			bio.title('#pathway_title',
+								opts.cancer_type.toUpperCase() + ' - Pathway');
 
 			var contents = document.getElementById(
 											'pathway_contents'),
 					modal = document.querySelector('.modal-body');
-		
+
 			var margin = parseFloat(d3.select('#pathway_title')
 																.node().style.height);
 
@@ -7021,12 +7021,12 @@ function pathway ()	{
 			d3.select(xml.documentElement)
 				.attr('width', parseFloat(contents.style.width))
 				.attr('height', parseFloat(contents.style.height));
-			
+
 			contents.appendChild(xml.documentElement);
 
-			modal.style.height = 
+			modal.style.height =
 			parseFloat(contents.style.height) * 0.8 + 'px';
-			
+
 			colorGenes(model.setting.defaultData.pathway,
 								model.setting.defaultData.patient);
 			drugEvent(opts.cancer_type, model.data.drugs);
@@ -7076,10 +7076,10 @@ function pathway ()	{
 // 	    yScale 		   : "",
 // 	    xAxis 			 : "",
 // 	    yAxis 			 : "",
-// 	    line 				 : "", 
+// 	    line 				 : "",
 // 	    curve 			 : "",
 // 	    dots 				 : [], //The invisible dots laied on top of the curve for mouse over effect
-// 	    censoredDots : "" 
+// 	    censoredDots : ""
 // 	},
 // 	settings : {
 // 	    // canvas_width: 1005,
@@ -7150,7 +7150,7 @@ function pathway ()	{
 // 	},
 // 	vals : {
 // 		pVal : 0
-// 	}	
+// 	}
 // };
 
 /*
@@ -7192,10 +7192,10 @@ var SurvivalCurveBroilerPlate = {
 	    yScale 		   : "",
 	    xAxis 			 : "",
 	    yAxis 			 : "",
-	    line 				 : "", 
+	    line 				 : "",
 	    curve 			 : "",
 	    dots 				 : [], //The invisible dots laied on top of the curve for mouse over effect
-	    censoredDots : "" 
+	    censoredDots : ""
 	},
 	settings : {
 	    // canvas_width: 1005,
@@ -7271,7 +7271,7 @@ var SurvivalCurveBroilerPlate = {
 	},
 	vals : {
 		pVal : 0
-	}	
+	}
 };
 
 
@@ -7710,7 +7710,7 @@ cbio.util = (function() {
             }
         };
     }
-    
+
     /**
      * Converts the given string to title case format. Also replaces each
      * underdash with a space.
@@ -7779,7 +7779,7 @@ cbio.util = (function() {
 
         return target;
     }
-    
+
     //Get hotspot description. TODO: add type as parameter for different source of hotspot sources.
     function getHotSpotDesc() {
         //Single quote attribute is not supported in mutation view Backbone template.
@@ -7795,7 +7795,7 @@ cbio.util = (function() {
             "Explore all mutations at " +
             "<a href=\"http://cancerhotspots.org/\" target=\"_blank\">http://cancerhotspots.org/</a>.";
     }
-    
+
     /**
      * This function is used to handle outliers in the data, which will squeeze most of the data to only few bars in the bar chart.
      * It calculates boundary values from the box plot of input array, and that would enable the data to be displayed evenly.
@@ -7816,12 +7816,12 @@ cbio.util = (function() {
             return a - b;
         });
 
-        /* Then find a generous IQR. This is generous because if (values.length / 4) 
-         * is not an int, then really you should average the two elements on either 
+        /* Then find a generous IQR. This is generous because if (values.length / 4)
+         * is not an int, then really you should average the two elements on either
          * side to find q1.
          */
         var q1 = values[Math.floor((values.length / 4))];
-        // Likewise for q3. 
+        // Likewise for q3.
         var q3 = values[(Math.ceil((values.length * (3 / 4))) > values.length - 1 ? values.length - 1 : Math.ceil((values.length * (3 / 4))))];
         var iqr = q3 - q1;
         if(values[Math.ceil((values.length * (1 / 2)))] < 0.001)
@@ -7854,10 +7854,10 @@ cbio.util = (function() {
                 maxValue = values[i-1];
             }
         }
-        
+
         return [minValue, maxValue, smallDataFlag];
     }
-    
+
     return {
         toPrecision: toPrecision,
         getObjectLength: getObjectLength,
@@ -7935,7 +7935,7 @@ if (!Array.prototype.forEach) {
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
- 
+
 var KmEstimator = function() {
 
     return {
@@ -8093,10 +8093,10 @@ var LogRankTest = function(pvalueURL) {
         $.each(mergedArr, function(index, obj) {
             O1 += obj.num_of_failure_1;
             E1 += obj.expectation;
-            V += obj.variance;            
+            V += obj.variance;
         });
         var chi_square_score = (O1 - E1) * (O1 - E1) / V;
-        
+
         $.post(pvalueURL, { chi_square_score: chi_square_score })
             .done( function(_data) {
                 callBackFunc = _callBackFunc;
@@ -8217,11 +8217,11 @@ var SurvivalCurve = function() {
         elem.line = d3.line()
             .curve(d3.curveStepAfter)
             // .interpolate("step-after")
-            .x(function(d) { 
-                return elem.xScale(d.time); 
+            .x(function(d) {
+                return elem.xScale(d.time);
             })
-            .y(function(d) { 
-                return elem.yScale(d.survival_rate); 
+            .y(function(d) {
+                return elem.yScale(d.survival_rate);
             });
     }
 
@@ -8282,7 +8282,7 @@ var SurvivalCurve = function() {
                 .style("opacity", .9);
 
             if(! $(this).data('qtip' )) {
-                //TODO: need to find a better way to grab cancer study ID. 
+                //TODO: need to find a better way to grab cancer study ID.
                 //QuerySession is only available after submitting query.
                 //cancerStudyId is only available in study view
                 //cancer_study_id and cancer_study_id_selected are only available in certain pages.
@@ -8384,7 +8384,7 @@ var SurvivalCurve = function() {
             .filter(function(d){
                 // return d.status==="0";
                 // Modified.
-                return d.status=="0"; 
+                return d.status=="0";
             })
             .attr("transform", function(d) {
                 return "translate(" + elem.xScale(d.time) + "," + elem.yScale(d.survival_rate) + ")";
@@ -8500,17 +8500,17 @@ var SurvivalCurve = function() {
             var width = $('#exclusivity_survival div').width();
 
             $('#' + divs.infoTableDivId).append(
-              '<tr><td style="width: ' + width + 'px; text-align:right;"></td><td style="width:' + width + 'px; text-align:center;"><b style="color : ' + color + ';">' 
-              + obj.groupName + '</b></td></tr>' + 
-              '<tr><td style="width:' + width + 'px; text-align:right;">' 
-              + text.infoTableTitles.total_cases + '</td><td style="width:' + width + 'px; text-align:center;"><b>' 
-              + obj.num_cases + '</b></td></tr>' + 
-              '<tr><td style="width: ' + width + 'px; text-align:right;">' 
-              + text.infoTableTitles.num_of_events_cases + '</td><td style="width: ' + width + 'px; text-align:center;"><b>' 
-              + obj.num_of_events_cases + '</b></td></tr>' + 
-              '<tr><td style="width: ' + width + 'px; text-align:right;">' 
-              + text.infoTableTitles.median + '</td><td style="width: ' + width + 'px; text-align:center;"><b>' 
-              + parseFloat(obj.median).toFixed(2) + '</b></td></tr>' 
+              '<tr><td style="width: ' + width + 'px; text-align:right;"></td><td style="width:' + width + 'px; text-align:center;"><b style="color : ' + color + ';">'
+              + obj.groupName + '</b></td></tr>' +
+              '<tr><td style="width:' + width + 'px; text-align:right;">'
+              + text.infoTableTitles.total_cases + '</td><td style="width:' + width + 'px; text-align:center;"><b>'
+              + obj.num_cases + '</b></td></tr>' +
+              '<tr><td style="width: ' + width + 'px; text-align:right;">'
+              + text.infoTableTitles.num_of_events_cases + '</td><td style="width: ' + width + 'px; text-align:center;"><b>'
+              + obj.num_of_events_cases + '</b></td></tr>' +
+              '<tr><td style="width: ' + width + 'px; text-align:right;">'
+              + text.infoTableTitles.median + '</td><td style="width: ' + width + 'px; text-align:center;"><b>'
+              + parseFloat(obj.median).toFixed(2) + '</b></td></tr>'
             );
             // $("#" + divs.infoTableDivId).append("<tr>" +
             //                                     "<td>" + obj.groupName + "</td>" +
@@ -8765,7 +8765,7 @@ var SurvivalCurveProxy  = function() {
             totalNum = 0,
             caseList = [];
 
-        //First Configure datums by combining AJAX result with caselist 
+        //First Configure datums by combining AJAX result with caselist
         //Then order by time, filtered NA cases and add on num of risk for each time point
         function assembleDatums(_result) {
             // *** //
@@ -8947,32 +8947,32 @@ var SurvivalCurveView = function(_opts) {
         survivalCurve = new SurvivalCurve();
         survivalCurve.init(inputArr, opts);
     };
-    
+
     var getResultInit = function(_caseLists, _data) {
         //Init all the calculators
-        kmEstimator = new KmEstimator(); 
-        logRankTest = new LogRankTest(SurvivalCurveBroilerPlate.pvalueSettings.url);   
-        //confidenceIntervals = new ConfidenceIntervals();   
-        
-        //Split the data into different(altered/unaltered) groups  
+        kmEstimator = new KmEstimator();
+        logRankTest = new LogRankTest(SurvivalCurveBroilerPlate.pvalueSettings.url);
+        //confidenceIntervals = new ConfidenceIntervals();
+
+        //Split the data into different(altered/unaltered) groups
         // window.QuerySession.getPatientSampleIdMap().then(function(patientSampleIdMap) {
-		// for (var key in _caseLists) {  
+		// for (var key in _caseLists) {
 		//     if (_caseLists[key] === "altered") {
-		// 	var tmpPatientId = patientSampleIdMap[key];        
+		// 	var tmpPatientId = patientSampleIdMap[key];
 		// 	alteredGroup.push(tmpPatientId);
 		//     }
 		//     else if (_caseLists[key] === "unaltered") {
-		// 	var tmpPatientId = patientSampleIdMap[key];  
-		// 	unalteredGroup.push(tmpPatientId);    
+		// 	var tmpPatientId = patientSampleIdMap[key];
+		// 	unalteredGroup.push(tmpPatientId);
 		//     }
 		// }
 
-		for (var key in _caseLists) {  
+		for (var key in _caseLists) {
 	    if (_caseLists[key] === "altered") {
 				alteredGroup.push(key);
 	    }
 	    else if (_caseLists[key] === "unaltered") {
-				unalteredGroup.push(key);    
+				unalteredGroup.push(key);
 	    }
 		}
 		//Init data instances for different groups
@@ -8981,7 +8981,7 @@ var SurvivalCurveView = function(_opts) {
 		alteredDataInst.init(_data, alteredGroup, kmEstimator, logRankTest);
 		unalteredDataInst.init(_data, unalteredGroup, kmEstimator, logRankTest);
 
-		//Individual settings 
+		//Individual settings
 		var unalteredSettingsInst = jQuery.extend(true, {}, SurvivalCurveBroilerPlate.subGroupSettings);
 		// unalteredSettingsInst.line_color = "blue";
 		// Modified.
@@ -9073,7 +9073,7 @@ var SurvivalTab = (function() {
 
             //Import default settings
             var osOpts = jQuery.extend(true, {}, SurvivalCurveBroilerPlate);
-            var dfsOpts = jQuery.extend(true, {}, SurvivalCurveBroilerPlate);  
+            var dfsOpts = jQuery.extend(true, {}, SurvivalCurveBroilerPlate);
             //Customize settings
             osOpts.text.xTitle = "Months Survival";
             osOpts.text.yTitle = "Surviving";
@@ -9124,7 +9124,7 @@ var SurvivalTab = (function() {
             //     survivalCurveViewOS.getResultInit(_caseList,data);
             // }, "json");
             // Modified.
-            
+
             var survivalCurveViewDFS = new SurvivalCurveView(dfsOpts);
                 survivalCurveViewDFS.getResultInit(_caseList,data.dfs);
             // params.data_type = "dfs";
@@ -9163,8 +9163,8 @@ function exclusivityConfig ()	{
 	 */
 	function separate (value)	{
 		// 0th element 는 배경, 1st element 는 실제 엘리먼트가 되어야 한다.
-		return value === 'B' ? ['A', 'M'] : 
-					 value === 'E' ? ['D', 'M'] : 
+		return value === 'B' ? ['A', 'M'] :
+					 value === 'E' ? ['D', 'M'] :
 					 value === 'M' ? ['.', 'M'] : [value];
 	};
 	/*
@@ -9183,7 +9183,7 @@ function exclusivityConfig ()	{
 	};
 
 	function abbreviation (name)	{
-		return name === 'Amplification' ? 'A' : 
+		return name === 'Amplification' ? 'A' :
 					 name === 'Homozygous_deletion' ? 'D' : 'M';
 	};
 
@@ -9206,11 +9206,11 @@ function exclusivityConfig ()	{
 	};
 	// To be delete. 알파뱃 순으로 정렬가능하기때문에.
 	function priority (value)	{
-		return { 
-			'Amplification': 0, 
-			'Deletion': 1, 
-			'Mutation': 2, 
-			'None': 3 
+		return {
+			'Amplification': 0,
+			'Deletion': 1,
+			'Mutation': 2,
+			'None': 3
 		}[value];
 	};
 
@@ -9224,8 +9224,8 @@ function exclusivityConfig ()	{
 						var width = tempWidth ? tempWidth : 0,
 								forSize = data.text.replace(' ', 'H');
 						// To be modify
-						tempWidth = tempWidth ? tempWidth + 
-						bio.drawing().textSize.width(forSize, '14px') : 
+						tempWidth = tempWidth ? tempWidth +
+						bio.drawing().textSize.width(forSize, '14px') :
 						bio.drawing().textSize.width(forSize, '14px') + 5;
 
 						return leftMargin + width;
@@ -9252,7 +9252,7 @@ function exclusivityConfig ()	{
 						var width = bio.drawing().textSize.width(
 													data.text, '18px');
 
-						return data.color === '#00AC52' ? 
+						return data.color === '#00AC52' ?
 									 svg.attr('width') - (10 + width) : leftMargin;
 					},
 					y: function (data, idx, that)	{
@@ -9266,7 +9266,7 @@ function exclusivityConfig ()	{
 					// To be modify
 					fontSize: '18px',
 				},
-				text: function (data, idx, that)	{ 
+				text: function (data, idx, that)	{
 					if (data.text === '**')	{ return data.text; }
 				},
 			},
@@ -9281,26 +9281,26 @@ function exclusivityConfig ()	{
 			margin: [0, leftMargin, 0, 0],
 			attr: {
 				x: function (data, idx, that)	{
-					return this.tagName === 'text' ? 
-								 idx * (that.fontWidth.value * 1.3) + 5 : 
+					return this.tagName === 'text' ?
+								 idx * (that.fontWidth.value * 1.3) + 5 :
 								 idx * (that.fontWidth.value * 1.3);
 				},
 				y: function (data, idx, that)	{
-					return this.tagName === 'text' ? 
-								 that.height * 0.8 / 2 + that.height * 0.2 : 
-								 data.indexOf('Mutation') > -1 ? 
-								 that.height * 0.2 + that.height * 0.8 / 4.5 : 
+					return this.tagName === 'text' ?
+								 that.height * 0.8 / 2 + that.height * 0.2 :
+								 data.indexOf('Mutation') > -1 ?
+								 that.height * 0.2 + that.height * 0.8 / 4.5 :
 								 that.height * 0.2;
 				},
 				width: 2.5,
 				height: function (data, idx, that)	{
-					return data === 'Mutation' ? 
+					return data === 'Mutation' ?
 								 that.height * 0.8 / 2 : that.height * 0.8;
 				},
 			},
 			style: {
 				fill: function (data, idx, that)	{
-					return this.tagName === 'text' ? '#333333' : 
+					return this.tagName === 'text' ? '#333333' :
 								 bio.boilerPlate.exclusivityInfo[data]
 				},
 				fontSize: '11px',
@@ -9350,17 +9350,17 @@ function exclusivityConfig ()	{
 						return that.scaleX(data.x);
 					},
 					y: function (data, idx, that)	{
-						return data.value === 'Mutation' ? 
-									 that.scaleY(data.y) + 
-									 bio.scales().band(that.scaleY) / 3 : 
+						return data.value === 'Mutation' ?
+									 that.scaleY(data.y) +
+									 bio.scales().band(that.scaleY) / 3 :
 									 that.scaleY(data.y);
 					},
 					width: function (data, idx, that)	{
 						return bio.scales().band(that.scaleX);
 					},
 					height: function (data, idx, that)	{
-						return data.value === 'Mutation' ? 
-									 bio.scales().band(that.scaleY) / 3 : 
+						return data.value === 'Mutation' ?
+									 bio.scales().band(that.scaleY) / 3 :
 									 bio.scales().band(that.scaleY);
 					},
 				},
@@ -9397,7 +9397,7 @@ function exclusivityConfig ()	{
 				fill: function (data, idx, that)	{
 					var color = null;
 
-					bio.iteration.loop(that.data.sample.isAltered, 
+					bio.iteration.loop(that.data.sample.isAltered,
 					function (a)	{
 						if (a.text === data.text)	{
 							color = data.color;
@@ -9417,18 +9417,18 @@ function exclusivityConfig ()	{
 			margin: [20, leftMargin, 0, 9],
 			attr: {
 				x: function (data, idx, that)	{
-					return this.tagName === 'text' ? 
-								 data.text.indexOf('Un') > -1 ? 
-								 data.end - data.textWidth - that.margin.right : 
-								 data.start + that.margin.right: 
-								 this.tagName === 'path' ? 
+					return this.tagName === 'text' ?
+								 data.text.indexOf('Un') > -1 ?
+								 data.end - data.textWidth - that.margin.right :
+								 data.start + that.margin.right:
+								 this.tagName === 'path' ?
 								 data.path_x : data.start;
 				},
 				y: function (data, idx, that)	{
-					return this.tagName === 'text' ? 
-								 that.height * 0.05 + that.margin.top : 
-								 this.tagName === 'path' ? idx === 0 ? 
-								 that.margin.top : data.path_y : 
+					return this.tagName === 'text' ?
+								 that.height * 0.05 + that.margin.top :
+								 this.tagName === 'path' ? idx === 0 ?
+								 that.margin.top : data.path_y :
 								 that.margin.top;
 				},
 				width: function (data, idx, that)	{
@@ -9440,11 +9440,11 @@ function exclusivityConfig ()	{
 			},
 			style: {
 				fill: function (data, idx, that)	{
-					return this.tagName === 'text' ? 
-								 '#FFFFFF' : data.color;	
+					return this.tagName === 'text' ?
+								 '#FFFFFF' : data.color;
 				},
 				stroke: function (data, idx, that)	{
-					return this.tagName === 'path' ? '#333333' : 'none';	
+					return this.tagName === 'path' ? '#333333' : 'none';
 				},
 				fontSize: '11px',
 			},
@@ -9476,7 +9476,7 @@ function expressionConfig ()	{
 	/*
 		parameter 로 svg 가 존재하면 가로, 세로 값을 반환.
 	 */
-	function isSVG (svg)	{	
+	function isSVG (svg)	{
 		return {
 			width: svg ? svg.attr('width') : 0,
 			height: svg ? svg.attr('height') : 0,
@@ -9494,11 +9494,11 @@ function expressionConfig ()	{
 				margin: [10, 15, 0, 0],
 				attr: {
 					x: function (data, idx, that)	{
-						return this.tagName === 'text' ? 
+						return this.tagName === 'text' ?
 									 that.margin.left : 0;
 					},
 					y: function (data, idx, that)	{
-						return this.tagName === 'text' ? idx * that.fontHeight + 
+						return this.tagName === 'text' ? idx * that.fontHeight +
 									 that.fontHeight / 2 - 1.5 : idx * that.fontHeight;
 					},
 					width: 8,
@@ -9506,8 +9506,8 @@ function expressionConfig ()	{
 				},
 				style: {
 					fill: function (data, idx, that)	{
-						return this.tagName === 'text' ? '#333333' : 
-									 data === 'NA' ? '#A4AAA7' : 
+						return this.tagName === 'text' ? '#333333' :
+									 data === 'NA' ? '#A4AAA7' :
 									 bio.boilerPlate.clinicalInfo[data].color;
 					},
 					fontSize: '11px',
@@ -9518,7 +9518,7 @@ function expressionConfig ()	{
 								rect = bio.drawing().nthChild(r, nIdx),
 								text = bio.drawing().nthChild(t1, nIdx),
 								rgba = bio.rendering().opacity(
-											 data === 'NA' ? '#A4AAA7' : 
+											 data === 'NA' ? '#A4AAA7' :
 											 bio.boilerPlate.clinicalInfo[data].color, 0.3);
 
 						d3.select(rect).transition(10).style('fill', rgba);
@@ -9530,14 +9530,14 @@ function expressionConfig ()	{
 								text = bio.drawing().nthChild(t1, nIdx);
 
 						d3.select(rect).transition(10)
-													 .style('fill', data === 'NA' ? 
+													 .style('fill', data === 'NA' ?
 													 	'#A4AAA7' : bio.boilerPlate.clinicalInfo[data].color);
 						d3.select(text).style('font-weight', 'normal');
 					},
 				},
-				text: function (data, idx, that)	{ 
+				text: function (data, idx, that)	{
 					return bio.drawing().textOverflow(
-							data, '11px', that.width * 0.75); 
+							data, '11px', that.width * 0.75);
 				},
 			},
 			scatter: {
@@ -9565,7 +9565,7 @@ function expressionConfig ()	{
 								rect = bio.drawing().nthChild(c, nIdx),
 								text = bio.drawing().nthChild(t2, nIdx),
 								rgba = bio.rendering().opacity(
-											 (data === 'Alive' || data === 'Disease Free') ? 
+											 (data === 'Alive' || data === 'Disease Free') ?
 											 '#5D5DD8' : '#D86561', 0.3);
 
 						d3.select(rect).transition(10)
@@ -9594,15 +9594,15 @@ function expressionConfig ()	{
 			shape: {
 				margin: [10, leftMargin, 30, 20],
 				attr: {
-					cx: function (data, idx, that)	{ 
+					cx: function (data, idx, that)	{
 						if (data.y !== null && data.value !== null)	{
 							return that.scaleX(data.x);
-						} 
+						}
 					},
-					cy: function (data, idx, that)	{ 
+					cy: function (data, idx, that)	{
 						if (data.y !== null && data.value !== null)	{
-							return that.scaleY(data.y); 
-						} 
+							return that.scaleY(data.y);
+						}
 					},
 					r: function (data, idx, that)	{
 						if (data.y !== null && data.value !== null)	{
@@ -9614,7 +9614,7 @@ function expressionConfig ()	{
 					fill: function (data, idx, that)	{
 						if (data.y !== null && data.value !== null)	{
 							return data.value === 0 ? '#5D5DD8': '#D86561';
-						} 
+						}
 					},
 					fillOpacity: 0.6,
 				},
@@ -9623,9 +9623,9 @@ function expressionConfig ()	{
 					// 	console.log(data, that);
 					// 	bio.tooltip({
 					// 		element: this,
-					// 		contents: 'ID: <b>' + data.x + '</b></br>' + 
-					// 							'Months: <b>' + data.y + '</b></br>' + 
-					// 							'Status: <b>' + (data.value === 1 ? 
+					// 		contents: 'ID: <b>' + data.x + '</b></br>' +
+					// 							'Months: <b>' + data.y + '</b></br>' +
+					// 							'Status: <b>' + (data.value === 1 ?
 					// 							'Alive' : 'Dead') + '</b>',
 					// 	});
 					// },
@@ -9666,8 +9666,8 @@ function expressionConfig ()	{
 					mouseover: function (data, idx, that)	{
 						bio.tooltip({
 							element: this,
-							contents: 'ID: <b>' + data.x + '</b></br>' + 
-												'Gene: <b>' + data.y + '</b></br>' + 
+							contents: 'ID: <b>' + data.x + '</b></br>' +
+												'Gene: <b>' + data.y + '</b></br>' +
 												'TPM: <b>' + data.value + '</b></br>',
 						});
 					},
@@ -9690,11 +9690,11 @@ function expressionConfig ()	{
 			margin: [0, leftMargin, 0, 20],
 			attr: {
 				points: function (data, idx, that)	{
-					var y = that.id.indexOf('bar') > -1 ? 
-									data.y - data.value < 0 ? 
-									that.scaleY(data.y) + 8 : 
+					var y = that.id.indexOf('bar') > -1 ?
+									data.y - data.value < 0 ?
+									that.scaleY(data.y) + 8 :
 									that.scaleY(data.y) + 3 : that.height,
-							dir = that.id.indexOf('bar') > -1 ? 
+							dir = that.id.indexOf('bar') > -1 ?
 										data.y - data.value < 0 ? 'top' : 'bottom' : 'bottom';
 
 					return bio.rendering().triangleStr(
@@ -9706,7 +9706,7 @@ function expressionConfig ()	{
 				mouseover: function (data, idx, that)	{
 					bio.tooltip({
 						element: this,
-						contents: '<b>' + data.x + '</b></br>' + 
+						contents: '<b>' + data.x + '</b></br>' +
 											'Value: <b>' + data.value + '</b></br>',
 					});
 				},
@@ -9734,10 +9734,10 @@ function expressionConfig ()	{
 					},
 					y: function (data, idx, that)	{
 						if (that.extremeValue)	{
-							return data.y - data.value === 0 ? that.scaleY(data.y) : 
+							return data.y - data.value === 0 ? that.scaleY(data.y) :
 										 data.y - data.value < 0 ?
 								 		that.scaleY(data.value) : that.scaleY(data.y);
-						} 
+						}
 
 						return data.y - data.value < 0 ?
 									 that.scaleY(data.value) : that.scaleY(data.y);
@@ -9749,7 +9749,7 @@ function expressionConfig ()	{
 						if (that.extremeValue)	{
 							if ((data.y - data.value) === 0)	{
 								if (that.copyAllYaxis.length === that.copyY.length)	{
-									return that.scaleY(bio.math.max(that.copyY)) - 
+									return that.scaleY(bio.math.max(that.copyY)) -
 										 		 that.scaleY(bio.math.min(that.copyY));
 								} else {
 									return 0;
@@ -9757,16 +9757,16 @@ function expressionConfig ()	{
 							}
 						}
 
-						return data.y - data.value < 0 ? 
-									 that.scaleY(data.y) - that.scaleY(data.value) : 
+						return data.y - data.value < 0 ?
+									 that.scaleY(data.y) - that.scaleY(data.value) :
 									 that.scaleY(data.value) - that.scaleY(data.y);
 					},
 				},
 				style: {
 					fill: function (data, idx, that)	{
 						if (that.extremeValue)	{
-							return bio.math.max(that.copyY) - 
-										 bio.math.min(that.copyY) ? 
+							return bio.math.max(that.copyY) -
+										 bio.math.min(that.copyY) ?
 										 '#62C2E0' : '#FFFFFF';
 						}
 
@@ -9774,8 +9774,8 @@ function expressionConfig ()	{
 					},
 					stroke: function (data, idx, that)	{
 						if (that.extremeValue)	{
-							return bio.math.max(that.copyY) - 
-										 bio.math.min(that.copyY) ? 
+							return bio.math.max(that.copyY) -
+										 bio.math.min(that.copyY) ?
 										 '#62C2E0' : '#FFFFFF';
 						}
 
@@ -9786,7 +9786,7 @@ function expressionConfig ()	{
 					mouseover: function (data, idx, that)	{
 						bio.tooltip({
 							element: this,
-							contents: 'pid: <b>' + data.x + '</b></br>' + 
+							contents: 'pid: <b>' + data.x + '</b></br>' +
 												'score: <b>' + data.value + '</b>',
 						});
 					},
@@ -9823,7 +9823,7 @@ function expressionConfig ()	{
 					width: function (data, idx, that)	{
 						return d3.select(bio.drawing().getParentSVG(this))
 										 .attr('width') - 10;
-					},	
+					},
 					height: 15,
 				},
 				style: {
@@ -9848,44 +9848,44 @@ function expressionConfig ()	{
 				margin: [0, leftMargin, 0, 20],
 				attr: {
 					x: function (data, idx, that)	{
-						that.position.init.low = that.position.init.low ? 
+						that.position.init.low = that.position.init.low ?
 						that.position.init.low : data.path_x;
-						that.position.init.high = that.position.init.high ? 
+						that.position.init.high = that.position.init.high ?
 						that.position.init.high : data.path_x;
 						that.position.now.low = that.position.init.low;
 						that.position.now.high = that.position.init.high;
 
-						return this.tagName === 'text' ? 
-									 data.text.indexOf('Low') > -1 ? 
-									 data.start + 5 :  data.end - 
-									 data.textWidth - 15 : 
-									 this.tagName === 'path' ? 
+						return this.tagName === 'text' ?
+									 data.text.indexOf('Low') > -1 ?
+									 data.start + 5 :  data.end -
+									 data.textWidth - 15 :
+									 this.tagName === 'path' ?
 									 data.path_x : data.start;
 					},
 					y: function (data, idx, that)	{
-						return this.tagName === 'text' ? that.height / 2 : 
-									 this.tagName === 'path' ? 
-									 data.text.indexOf('Low') > -1 ? 
-									 idx === 0 ? data.path_y - 5 : data.path_y : 
+						return this.tagName === 'text' ? that.height / 2 :
+									 this.tagName === 'path' ?
+									 data.text.indexOf('Low') > -1 ?
+									 idx === 0 ? data.path_y - 5 : data.path_y :
 									 idx === 0 ? data.path_y : data.path_y + 5 : 0;
 					},
 					points: function (data, idx, that)	{
 						return bio.rendering().triangleStr(
-										data.path_x + data.additional, 
+										data.path_x + data.additional,
 										data.path_y, 10, data.direction);
 					},
 					width: function (data, idx, that)	{ return data.end - data.start; },
 					height: function (data, idx, that)	{ return that.height; },
-					rx: 3, ry: 3,	
+					rx: 3, ry: 3,
 				},
 				style: {
 					fill: function (data, idx, that)	{
-						return this.tagName === 'text' ? '#FFFFFF' : 
+						return this.tagName === 'text' ? '#FFFFFF' :
 									 data.text.indexOf('Low') > -1 ? '#00AC52' : '#FF6252';
 					},
 					stroke: function (data, idx, that)	{
-						return this.tagName === 'text' ? 
-									 data.text.indexOf('Low') > -1 ? 
+						return this.tagName === 'text' ?
+									 data.text.indexOf('Low') > -1 ?
 									 '#00AC52' : '#FF6252' : 'none';
 					},
 					strokeWidth: '0.5px', fontSize: '12px', fontWeight: 'bold',
@@ -9908,7 +9908,7 @@ function expressionConfig ()	{
 												.getBoundingClientRect();
 
 						return bcr.right - bcr.left;
-						return that.data.patient.data === data.text ? 
+						return that.data.patient.data === data.text ?
 									 bcr.right - bcr.left : -5;
 					},
 					y: function (data, idx, that)	{
@@ -9921,12 +9921,12 @@ function expressionConfig ()	{
 				},
 				style: {
 					fill: function (data, idx, that)	{
-						return that.data.patient.data === data.text ? 
+						return that.data.patient.data === data.text ?
 									 data.color : '#FFFFFF';
 					},
 				},
 				text: function (data, idx, that)	{
-					return that.data.patient.data === data.text ? 
+					return that.data.patient.data === data.text ?
 								 that.data.patient.data === ' **' ? '' : ' **' : '';
 				},
 			}
@@ -9972,7 +9972,7 @@ function landscapeConfig ()	{
 							.style('font-size', 10)
 							.style('font-weight', 'normal');
 					},
-				}, 
+				},
 			};
 		}
 
@@ -9983,16 +9983,16 @@ function landscapeConfig ()	{
 			sampleY: {
 				top: 5,
 				left: w - 5,
-				direction: 'left', 
-				range: [5, h - 25], 
+				direction: 'left',
+				range: [5, h - 25],
 				margin: [5, 0, 25, 0],
 			},
 			groupY: {
 				top: 0,
 				left: 30,
 				range: [0, 0],
-				direction: 'right', 
-				margin: [0, 0, 0, 0], 
+				direction: 'right',
+				margin: [0, 0, 0, 0],
 				exclude: 'path, line',
 				on: {
 					click: function (data, idx, that)	{
@@ -10023,14 +10023,14 @@ function landscapeConfig ()	{
 							data: mergedGroup(that.now.group.axis.data),
 						};
 
-						return { sorted: sorted, model: that };		
+						return { sorted: sorted, model: that };
 					},
 				},
 			},
 			geneY: {
 				top: 0,
 				left: w - 100,
-				direction: 'right', 
+				direction: 'right',
 				range: [10, h - 45],
 				exclude: 'path, line',
 				margin: [10, 0, 45, 0],
@@ -10046,10 +10046,10 @@ function landscapeConfig ()	{
 
 						if (d3.event.altKey)	{
 							return {
-								sorted: bio.landscapeSort().gene(that.data.axis.heatmap.x, temp, 
+								sorted: bio.landscapeSort().gene(that.data.axis.heatmap.x, temp,
 													 			 that.now.exclusivity_opt, that.data.type),
 								model: that,
-							};	
+							};
 						}
 					},
 				},
@@ -10059,14 +10059,14 @@ function landscapeConfig ()	{
 				top: h - 45,
 				range: [15, w - 115],
 				direction: 'bottom',
-				margin: [0, 15, 0, 115], 
+				margin: [0, 15, 0, 115],
 			},
 			pqX: {
 				left: 5,
 				top: h - 45,
-				direction: 'bottom', 
+				direction: 'bottom',
 				range: [10, w - 20],
-				margin: [0, 10, 20, 20], 
+				margin: [0, 10, 20, 20],
 			},
 		}[part + direction];
 	};
@@ -10080,13 +10080,13 @@ function landscapeConfig ()	{
 				attr: {
 					rx: 3, ry: 3,
 					x: function (data, idx, that) {
-						return this.tagName === 'text' ? 
-									 that.margin.left : 
+						return this.tagName === 'text' ?
+									 that.margin.left :
 									 that.margin.left - that.margin.right;
 					},
 					y: function (data, idx, that) {
-						return this.tagName === 'text' ? 
-									 that.height - that.margin.bottom : 
+						return this.tagName === 'text' ?
+									 that.height - that.margin.bottom :
 									 that.height - that.margin.bottom * 1.75;
 					},
 					width: function (data, idx, that)	{
@@ -10102,14 +10102,14 @@ function landscapeConfig ()	{
 				attr: {
 					rx: 3, ry: 3,
 					x: function (data, idx, that) {
-						return this.tagName === 'text' ? 
-									 that.width - that.margin.right : 
-									 that.width - that.margin.right - 
+						return this.tagName === 'text' ?
+									 that.width - that.margin.right :
+									 that.width - that.margin.right -
 									 that.margin.left;
 					},
 					y: function (data, idx, that) {
-						return this.tagName === 'text' ? 
-									 that.height - that.margin.bottom : 
+						return this.tagName === 'text' ?
+									 that.height - that.margin.bottom :
 									 that.height - that.margin.bottom * 1.75;
 					},
 					width: function (data, idx, that)	{
@@ -10125,14 +10125,14 @@ function landscapeConfig ()	{
 				attr: {
 					rx: 3, ry: 3,
 					x: function (data, idx, that) {
-						return this.tagName === 'text' ? 
-								 	 that.height * -1 + that.margin.bottom : 
+						return this.tagName === 'text' ?
+								 	 that.height * -1 + that.margin.bottom :
 								 	 that.height * -1 + that.margin.bottom * 0.65;
 					},
 					y: function (data, idx, that) {
-						return this.tagName === 'text' ? 
-									 that.width - that.margin.right : 
-									 that.width - that.margin.right - 
+						return this.tagName === 'text' ?
+									 that.width - that.margin.right :
+									 that.width - that.margin.right -
 									 that.margin.top;
 					},
 					width: function (data, idx, that)	{
@@ -10150,7 +10150,7 @@ function landscapeConfig ()	{
 					fontWeight: 'bold',
 					filter: 'url(#drop_shadow)',
 					fill: function (data, idx, that)	{
-						return this.tagName === 'text' ? 
+						return this.tagName === 'text' ?
 									'#FFFFFF' : '#595959';
 					},
 				},
@@ -10164,8 +10164,8 @@ function landscapeConfig ()	{
 					},
 					mouseover: function (data, idx, that)	{
 						bio.tooltip({
-							element: this.tagName === 'text' ? 
-											 this.nextSibling ? this.nextSibling : 
+							element: this.tagName === 'text' ?
+											 this.nextSibling ? this.nextSibling :
 											 this.previousSibling : this,
 							contents: 'Sort by <b>' + data.text + '</b>',
 						});
@@ -10187,7 +10187,7 @@ function landscapeConfig ()	{
 				margin: [10, 15, 45.5, 30],
 				attr: {
 					id: function (data, idx, that)	{
-						return 'landscape_gene_' + data.y + 
+						return 'landscape_gene_' + data.y +
 										'_pq_rect';
 					},
 					x: function (data, idx, that) {
@@ -10208,9 +10208,9 @@ function landscapeConfig ()	{
 				},
 				on: {
 					mouseover: function (data, idx, that)	{
-						bio.tooltip({ 
-							element: this, 
-							contents: '<b>' + data.y + '</b></br>' + 
+						bio.tooltip({
+							element: this,
+							contents: '<b>' + data.y + '</b></br>' +
 				 				 'Value: <b>' + data.value + '</b>' });
 
 						d3.select(this)
@@ -10232,7 +10232,7 @@ function landscapeConfig ()	{
 				margin: [10, 30, 45.5, 100],
 				attr: {
 					id: function (data, idx, that)	{
-						return 'landscape_gene_' + data.y + 
+						return 'landscape_gene_' + data.y +
 										'_bar_rect';
 					},
 					x: function (data, idx, that) {
@@ -10242,7 +10242,7 @@ function landscapeConfig ()	{
 						return that.scaleY(data.y) + 0.25;
 					},
 					width: function (data, idx, that)	{
-						return that.scaleX(data.x) - 
+						return that.scaleX(data.x) -
 									 that.scaleX(data.x + data.value) - 0.25;
 					},
 					height: function (data, idx, that)	{
@@ -10259,10 +10259,10 @@ function landscapeConfig ()	{
 						var rgba = bio.rendering().opacity(
 							bio.boilerPlate.variantInfo[data.info].color, 0.3);
 
-						bio.tooltip({ 
-							element: this, 
-							contents: '<b>' + data.y + '</b></br>' + 
-								  'Type: <b>' + data.info + '</b></br>' + 
+						bio.tooltip({
+							element: this,
+							contents: '<b>' + data.y + '</b></br>' +
+								  'Type: <b>' + data.info + '</b></br>' +
 								 'Count: <b>' + data.value + '</b>' });
 
 						d3.select(this)
@@ -10291,10 +10291,10 @@ function landscapeConfig ()	{
 						return that.scaleY(data.y + data.value) + 0.25;
 					},
 					width: function (data, idx, that)	{
-						return bio.scales().band(that.scaleX) - 0.5; 
+						return bio.scales().band(that.scaleX) - 0.5;
 					},
 					height: function (data, idx, that)	{
-						return that.scaleY(data.y) - 
+						return that.scaleY(data.y) -
 									 that.scaleY(data.y + data.value) - 0.5;
 					},
 				},
@@ -10308,10 +10308,10 @@ function landscapeConfig ()	{
 						var rgba = bio.rendering().opacity(
 							bio.boilerPlate.variantInfo[data.info].color, 0.3);
 
-						bio.tooltip({ 
-							element: this, 
-							contents: '<b>' + data.x + '</b></br>' + 
-								  'Type: <b>' + data.info + '</b></br>' + 
+						bio.tooltip({
+							element: this,
+							contents: '<b>' + data.x + '</b></br>' +
+								  'Type: <b>' + data.info + '</b></br>' +
 								 'Count: <b>' + data.value + '</b>' });
 
 						d3.select(this)
@@ -10341,23 +10341,23 @@ function landscapeConfig ()	{
 				margin: [10, 5, 45.5, 0],
 				attr: {
 					id: function (data, idx, that)	{
-						return 'landscape_gene_' + data.y + 
+						return 'landscape_gene_' + data.y +
 										'_heatmap_rect';
 					},
 					x: function (data, idx, that)	{
 						return that.scaleX(data.x);
 					},
 					y: function (data, idx, that)	{
-						return byCase(data.value) !== 'cnv' ? 
-									bio.scales().band(that.scaleY) / 3 + 
+						return byCase(data.value) !== 'cnv' ?
+									bio.scales().band(that.scaleY) / 3 +
 									that.scaleY(data.y) : that.scaleY(data.y);
 					},
 					width: function (data, idx, that)	{
 						return bio.scales().band(that.scaleX);
 					},
 					height: function (data, idx, that)	{
-						return byCase(data.value) !== 'cnv' ? 
-									bio.scales().band(that.scaleY) / 3 : 
+						return byCase(data.value) !== 'cnv' ?
+									bio.scales().band(that.scaleY) / 3 :
 									bio.scales().band(that.scaleY);
 					},
 				},
@@ -10381,9 +10381,9 @@ function landscapeConfig ()	{
 
 						bio.tooltip({
 							element: this,
-							contents: '<b>Gene mutations</b></br>' + 
-										 'X: <b>' + data.x + '</b></br>' + 
-										 'Y: <b>' + data.y + '</b></br>' + 
+							contents: '<b>Gene mutations</b></br>' +
+										 'X: <b>' + data.x + '</b></br>' +
+										 'Y: <b>' + data.y + '</b></br>' +
 						 'Type: </br><b>' + data.value + '</b>' + typeStr,
 						});
 
@@ -10437,10 +10437,10 @@ function landscapeConfig ()	{
 
 						bio.tooltip({
 							element: this,
-							contents: '<b>' + data.y + '</b></br>' + 
-								'Sample: <b>' + data.x + '</b></br>' + 
+							contents: '<b>' + data.y + '</b></br>' +
+								'Sample: <b>' + data.x + '</b></br>' +
 								 'Value: <b>' + data.value + '</b></br>',
-												
+
 						});
 
 						d3.select(this)
@@ -10459,43 +10459,43 @@ function landscapeConfig ()	{
 					},
 				},
 			},
-		}[part];	
+		}[part];
 	};
 	/*
-		Legend 설정 함수. 
+		Legend 설정 함수.
 	 */
 	function legend ()	{
 		var shape = '.legend-shape-g-tag',
 				texts = '.legend-text-g-tag';
 
-		return {	
+		return {
 			margin: [20, 15, 5, 15],
 			attr: {
-				x: function (data, idx, that)	{ 
-					return this.tagName === 'text' ? 
-								 that.margin.left : 0; 
+				x: function (data, idx, that)	{
+					return this.tagName === 'text' ?
+								 that.margin.left : 0;
 				},
 				y: function (data, idx, that)	{
-					var y = this.tagName === 'text' ? 
-					 idx * (that.fontHeight + that.padding) : 
-					 idx * (that.fontHeight + that.padding) - 
+					var y = this.tagName === 'text' ?
+					 idx * (that.fontHeight + that.padding) :
+					 idx * (that.fontHeight + that.padding) -
 					 				that.fontHeight / 2 - 1;
 
-					return this.tagName === 'rect' && 
-								 byCase(data) === 'var' ? 
+					return this.tagName === 'rect' &&
+								 byCase(data) === 'var' ?
 								 y + that.fontHeight / 4 : y;
 				},
 				width: function (data, idx, that)	{
 					return that.fontHeight / 2;
 				},
 				height: function (data, idx, that)	{
-					return byCase(data) === 'var' ? 
+					return byCase(data) === 'var' ?
 									that.fontHeight / 2 : that.fontHeight;
 				},
 			},
 			style: {
 				fill: function (data, idx, that)	{
-					return this.tagName === 'text' ? '#333333' : 
+					return this.tagName === 'text' ? '#333333' :
 									bio.boilerPlate.variantInfo[data].color;
 				},
 				fontSize: '8px',
@@ -10558,7 +10558,7 @@ function pathwayConfig ()	{
 					base.l = scale(data.frequency);
 
 			return base;
-		} 
+		}
 
 		return '#d0d0d0';
 	};
@@ -10566,7 +10566,7 @@ function pathwayConfig ()	{
 	function getId (element)	{
 		var full = d3.select(element).node().parentNode.id;
 
-		return full.substring(full.lastIndexOf('_') + 1, 
+		return full.substring(full.lastIndexOf('_') + 1,
 													full.length).toUpperCase();
 	};
 
@@ -10574,26 +10574,26 @@ function pathwayConfig ()	{
 		return {
 			style: {
 				fill: function (data, idx, that)	{
-					return this.tagName === 'rect' ? color(data) : 
-								 data && data.frequency >= 30 ? 
+					return this.tagName === 'rect' ? color(data) :
+								 data && data.frequency >= 30 ?
 								'#F2F2F2' : '#333333';
 				},
 			},
-			on: { 
+			on: {
 				mouseover: function (data, idx, that)	{
-					var elem = this.tagName === 'rect' ? this : 
+					var elem = this.tagName === 'rect' ? this :
 								d3.select(this.parentNode).select('rect').node(),
 							freq = data ? data.frequency : 'NA',
-							color = data ? data.active === 'Y' ? 
+							color = data ? data.active === 'Y' ?
 											'RED' : 'BLUE' : '#E8E8E8',
-							isAct = data ? data.active === 'Y' ? 
+							isAct = data ? data.active === 'Y' ?
 											'Activated' : 'Inactivated' : 'NA',
 							id = getId(this);
 
 					bio.tooltip({
 						element: elem,
-						contents: '<b>' + id + '</b></br>frequency : ' + 
-						freq + '</br><span style="color : ' + color + 
+						contents: '<b>' + id + '</b></br>frequency : ' +
+						freq + '</br><span style="color : ' + color +
 						'"><b>' + isAct + '</b></span>',
 					});
 				},
@@ -10616,10 +10616,10 @@ function pathwayConfig ()	{
 
 			d3.select(this).transition()
 				.attr('transform', function ()	{
-					return 'matrix(' + 
-					(data.scaleX + sv) + ', 0, 0, ' + 
-					(data.scaleY + sv) + ', ' + 
-					(data.translateX + tv) + ', ' + 
+					return 'matrix(' +
+					(data.scaleX + sv) + ', 0, 0, ' +
+					(data.scaleY + sv) + ', ' +
+					(data.translateX + tv) + ', ' +
 					(data.translateY + tv) + ')';
 				})
 				.style('cursor', 'pointer')
@@ -10631,11 +10631,11 @@ function pathwayConfig ()	{
 			data 값에 따른 URL 요청 주소를 반환한다.
 		 */
 		function drugURL (data)	{
-			return data.nci_id ? 
-			'http://www.cancer.gov/about-cancer/treatment/drugs/' + 
-			data.nci_id : !data.nci_id && data.dailymed_id ? 
-			'http://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?' + 
-			'setid=' + data.dailymed_id : null;	
+			return data.nci_id ?
+			'http://www.cancer.gov/about-cancer/treatment/drugs/' +
+			data.nci_id : !data.nci_id && data.dailymed_id ?
+			'http://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?' +
+			'setid=' + data.dailymed_id : null;
 		};
 		/*
 			type 구분을 위한 drug 모양을 반환한다.
@@ -10646,7 +10646,7 @@ function pathwayConfig ()	{
 						'#legend_icon_' + color).cloneNode(true),
 					svg = document.createElement('svg');
 
-			drug.setAttribute('transform', 
+			drug.setAttribute('transform',
 				'matrix(0.04, 0, 0, 0.04, 10, 0)');
 
 			svg.setAttribute('width', 40);
@@ -10674,20 +10674,20 @@ function pathwayConfig ()	{
 								bio.table({
 									height: parseFloat(bodyHeight) - 70,
 									element: body,
-									heads: ['Type', 'Drug', 'Level of approval', 
+									heads: ['Type', 'Drug', 'Level of approval',
 													'Treated Cancer', 'Reference'],
 									data: data.drugs,
 									columns: function (col, row, head, data, that)	{
 										if (col === 0) return drugShape(data.drug_type);
 										else if (col === 1) 	{
 											var urls = drugURL(data);
-											
-											return urls ? data.agent + 
-											'<a class="drug-link" href=' + urls + 
-											' target=\'drug\'>' + 
-											'<i class="fa fa-external-link"></i></a>' : 
+
+											return urls ? data.agent +
+											'<a class="drug-link" href=' + urls +
+											' target=\'drug\'>' +
+											'<i class="fa fa-external-link"></i></a>' :
 												data.agent;
-										}										
+										}
 										else if (col === 2) 	return data.drug_class;
 										else if (col === 3) 	return data.cancer;
 										else if (col === 4) 	return data.source;
@@ -10727,14 +10727,14 @@ function variantsConfig ()	{
 		return {
 			needleX: {
 				top: h - 35, left: 0,
-				direction: 'bottom', 
-				range: [40, w - 40], 
+				direction: 'bottom',
+				range: [40, w - 40],
 				margin: [10, 40, 35, 40],
 			},
 			needleY: {
 				top: 0, left: 40,
-				direction: 'left', 
-				range: [20, h - 80], 
+				direction: 'left',
+				range: [20, h - 80],
 				margin: [20, 40, 80, 0],
 			},
 		}[part + direction];
@@ -10758,18 +10758,18 @@ function variantsConfig ()	{
 					cy: function (data, idx, that)	{
 						return idx * (that.fontHeight + 5);
 					},
-					r: 5, 
+					r: 5,
 					x: function (data, idx, that)	{
-						return this.tagName === 'text' ? 
+						return this.tagName === 'text' ?
 									 that.margin.left * 2 : that.margin.left;
 					},
 					y: function (data, idx, that)	{
-						return idx * (that.fontHeight + 5) + 1;	
+						return idx * (that.fontHeight + 5) + 1;
 					},
 				},
 				style: {
 					fill: function (data, idx, that)	{
-						return this.tagName === 'text' ? '#333333' : 
+						return this.tagName === 'text' ? '#333333' :
 									 bio.boilerPlate.variantInfo[data].color;
 					},
 				},
@@ -10803,7 +10803,7 @@ function variantsConfig ()	{
 				margin: [15, 10, 5, 15],
 				attr: {
 					x: function (data, idx, that)	{
-						return this.tagName === 'text' ? 
+						return this.tagName === 'text' ?
 									 that.margin.left * 2 : that.margin.left;
 					},
 					y: 0,
@@ -10854,7 +10854,7 @@ function variantsConfig ()	{
 				cx: function (data, idx, that)	{
 					var x = that.scaleX(data.x);
 
-					return x > that.width - that.margin.right || 
+					return x > that.width - that.margin.right ||
 								 x < that.margin.left? x * that.width : x;
 				},
 				cy: function (data, idx, that)	{
@@ -10866,7 +10866,7 @@ function variantsConfig ()	{
 				x: function (data, idx, that)	{
 					var x = that.scaleX(data.x);
 
-					return x > that.width - that.margin.right || 
+					return x > that.width - that.margin.right ||
 								 x < that.margin.left? x * that.width : x;
 				},
 				y: function (data, idx, that)	{
@@ -10875,9 +10875,9 @@ function variantsConfig ()	{
 			},
 			style: {
 				fill: function (data, idx, that)	{
-					return this.tagName === 'path' ? '#A8A8A8' : 
+					return this.tagName === 'path' ? '#A8A8A8' :
 								 that.id.indexOf('needle') > -1 ? bio.boilerPlate
-									   .variantInfo[data.info[0].type].color : 
+									   .variantInfo[data.info[0].type].color :
 								 bio.rendering().opacity(bio.boilerPlate
 									  .variantInfo[data.info[0].type].color, 0.3);
 
@@ -10894,10 +10894,10 @@ function variantsConfig ()	{
 
 					bio.tooltip({
 						element: this,
-						contents: 
-						'Type: <b>' + data.info[0].type + 
+						contents:
+						'Type: <b>' + data.info[0].type +
 						'</b></br>AAChange: <b>' + data.info[0].aachange +
-						'</b></br>Counts: <b>' + data.y + 
+						'</b></br>Counts: <b>' + data.y +
 						'</b></br>Position: <b>' + data.x + '</b>'
 					});
 
@@ -10922,21 +10922,21 @@ function variantsConfig ()	{
 			navi: { init: 0, now: 0, width: 0, nowWidth: 0 },
 			attr: {
 				x: function (data, idx, that)	{
-					return data === 'main' ? that.start : 
-								 data === 'end' ? that.end + that.margin.left - 
-								 that.controls.width : 
+					return data === 'main' ? that.start :
+								 data === 'end' ? that.end + that.margin.left -
+								 that.controls.width :
 								 that.start - that.controls.width;
 				},
 				y: function (data, idx, that)	{
 					return data === 'main' ? 0 : that.height * 0.25;
 				},
 				width: function (data, idx, that)	{
-					return data === 'main' ? 
+					return data === 'main' ?
 								 that.end : that.controls.width * 2;
 				},
 				height: function (data, idx, that)	{
-					return data === 'main' ? 
-								 that.height - that.margin.bottom : 
+					return data === 'main' ?
+								 that.height - that.margin.bottom :
 								 that.controls.height;
 				},
 				rx: function (data, idx, that)	{
@@ -10948,7 +10948,7 @@ function variantsConfig ()	{
 			},
 			style: {
 				fill: function (data, idx, that)	{
-					return data === 'main' ? 'rgba(255, 255, 50, 0.1)' : 
+					return data === 'main' ? 'rgba(255, 255, 50, 0.1)' :
 					'#A8A8A8';
 				},
 				stroke: function (data, idx, that)	{
@@ -10976,7 +10976,7 @@ function variantsConfig ()	{
 					function getDragValue (type)	{
 						dg[type].now += d3.event.dx;
 
-						return dg[type].now = 
+						return dg[type].now =
 						Math.max(dg.start[type === 'end' ? 'now' : 'init'],
 						Math.min(dg.end[type === 'end' ? 'init' : 'now'],
 						dg[type === 'end' ? 'end' : 'start'].now)),
@@ -11005,13 +11005,13 @@ function variantsConfig ()	{
 					}	else {
 						dg.navi.now += d3.event.dx;
 
-						var value = dg.navi.now = 
-						Math.max(dg.navi.init, 
-						Math.min((dg.navi.width + that.margin.left) - 
+						var value = dg.navi.now =
+						Math.max(dg.navi.init,
+						Math.min((dg.navi.width + that.margin.left) -
 											dg.navi.nowWidth, dg.navi.now));
 
 						dg.start.now = value - that.controls.width;
-						dg.end.now = (value + dg.navi.nowWidth) - 
+						dg.end.now = (value + dg.navi.nowWidth) -
 															that.controls.width;
 
 						main.attr('x', value);
@@ -11030,19 +11030,19 @@ function variantsConfig ()	{
 				x: function (data, idx, that)	{
 					var x = that.scaleX(data.x);
 
-					return this.id.indexOf('base') > -1 ? 
-								 that.margin.left : 
-								 this.id.indexOf('text') > -1 ? x + 5 : 
-								 x < that.margin.left ? that.margin.left : 
-								 x > that.width - that.margin.right ? 
+					return this.id.indexOf('base') > -1 ?
+								 that.margin.left :
+								 this.id.indexOf('text') > -1 ? x + 5 :
+								 x < that.margin.left ? that.margin.left :
+								 x > that.width - that.margin.right ?
 								 that.width - that.margin.right : x;
 				},
 				y: function (data, idx, that)	{
-					var height = ((that.height - 10) - 
+					var height = ((that.height - 10) -
 												(that.height - that.margin.bottom)) * 0.4
 
-					return this.tagName !== 'text' ? 
-								 that.height - that.margin.bottom : 
+					return this.tagName !== 'text' ?
+								 that.height - that.margin.bottom :
 								 that.height - that.margin.bottom + height / 2;
 				},
 				width: function (data, idx, that)	{
@@ -11053,61 +11053,61 @@ function variantsConfig ()	{
 						width -= (that.margin.left - x);
 
 						if (width < 0)	{ return 0; }
-					} else if (x + (width - x) > 
+					} else if (x + (width - x) >
 										that.width - that.margin.right) {
-						width -= (x + width - x) - 
+						width -= (x + width - x) -
 										 (that.width - that.margin.right);
 
 						if (width - x < 0)	{ return 0; }
 					}
 
-					return this.id.indexOf('base') > -1 ? that.width - 
-								 that.margin.left - that.margin.right : 
+					return this.id.indexOf('base') > -1 ? that.width -
+								 that.margin.left - that.margin.right :
 								 width - x;
 				},
 				height: function (data, idx, that)	{
-					return ((that.height - 10) - 
+					return ((that.height - 10) -
 									(that.height - that.margin.bottom)) * 0.4;
 				},
 				rx: function (data, idx, that)	{
 					return this.id.indexOf('base') > -1 ? 1 : 3;
-				}, 
+				},
 				ry: function (data, idx, that)	{
 					return this.id.indexOf('base') > -1 ? 1 : 3;
 				},
 			},
 			style: {
 				fill: function (data, idx, that)	{
-					return this.id.indexOf('base') > -1 ? '#DADFE1' : 
-								 this.id.indexOf('text') > -1 ? '#FFFFFF' : 
+					return this.id.indexOf('base') > -1 ? '#DADFE1' :
+								 this.id.indexOf('text') > -1 ? '#FFFFFF' :
 								 data.color;
 				},
 			},
 			on: {
 				mouseover: function (data, idx, that)	{
-					var tag = this.id.indexOf('base') > -1 ? null : 
-										this.tagName === 'text' ? 
-										this.previousSibling ? this.previousSibling : 
+					var tag = this.id.indexOf('base') > -1 ? null :
+										this.tagName === 'text' ?
+										this.previousSibling ? this.previousSibling :
 										this.nextSibling : this,
 							rgba = bio.rendering().opacity(data.color, 0.5);
 
 					if (tag)	{
 						bio.tooltip({
 							element: tag,
-							contents: 
-							'<b>' + data.info.identifier + 
+							contents:
+							'<b>' + data.info.identifier +
 							'</b></br>Desc: <b>' + data.info.description +
-							'</b></br>Section: <b>' + data.x + ' - ' + 
+							'</b></br>Section: <b>' + data.x + ' - ' +
 								(data.x + data.width) + '</b>'
 						});
 
 						d3.select(tag).transition(10).style('fill', rgba);
-					}	
+					}
 				},
 				mouseout: function (data, idx, that)	{
-					var tag = this.id.indexOf('base') > -1 ? null : 
-										this.tagName === 'text' ? 
-										this.previousSibling ? this.previousSibling : 
+					var tag = this.id.indexOf('base') > -1 ? null :
+										this.tagName === 'text' ?
+										this.previousSibling ? this.previousSibling :
 										this.nextSibling : this;
 
 					if (tag)	{
@@ -11121,7 +11121,7 @@ function variantsConfig ()	{
 			text: function (data, idx, that)	{
 				var x = that.scaleX(data.x),
 						width = that.scaleX(data.x + data.width);
-				
+
 				return bio.drawing().textOverflow(
 							data.info.identifier, '10px', (width - x), 5);
 			},
@@ -11138,19 +11138,19 @@ function variantsConfig ()	{
 				points: function (data, idx, that)	{
 					var x = that.scaleX(data.x);
 
-					if (x < that.margin.left || 
+					if (x < that.margin.left ||
 							x > that.width - that.margin.right)	{
 						x = that.width + that.margin.right;
 					}
 
 					return bio.rendering().triangleStr(
-								x, that.scaleY(0) - that.margin.bottom, 
+								x, that.scaleY(0) - that.margin.bottom,
 								10, 'top');
 				},
 			},
 			style: {
 				fill: function (data, idx, that)	{
-					return this.tagName === 'path' ? '#A8A8A8' : 
+					return this.tagName === 'path' ? '#A8A8A8' :
 								 bio.boilerPlate
 									  .variantInfo[data.info[0].type].color;
 				},
@@ -11236,8 +11236,8 @@ function variantsConfig ()	{
 //         },
 //         data: d[0].data,
 //         riskFunctions: [
-//           { 
-//             name: 'Test', 
+//           {
+//             name: 'Test',
 //             isDefault: true, // default false
 //             func: function (data)  {
 //               var result = [];
@@ -11245,7 +11245,7 @@ function variantsConfig ()	{
 //               data.forEach(function (d, i) {
 //                 var sum = 0, avg = 0;
 
-//                 bio.iteration.loop(d.values, 
+//                 bio.iteration.loop(d.values,
 //                 function (v)  {
 //                   sum += v.tpm;
 //                 });
@@ -11345,7 +11345,7 @@ function checkBox ()	{
 	'use strict';
 
 	return function (base, size, data, opacityEvt, mouseoverEvt, mouseoutEvt, clickEvt)	{
-		var line = (bio.dependencies.version.d3v4() ? 
+		var line = (bio.dependencies.version.d3v4() ?
 								d3.line() : d3.svg.line())
 								.x(function (d)	{ return d.x; })
 								.y(function (d)	{ return d.y; });
@@ -11364,7 +11364,7 @@ function checkBox ()	{
 	  .style('opacity', opacityEvt)
 	  .style('stroke', '#333333')
 	  .style('stroke-width', 2);
-		
+
 		var border = base.append('rect')
 		.data(data)
 		.attr('width', size.len)
@@ -11449,7 +11449,7 @@ function clinicalGenerator ()	{
 	};
 
 	function orders (clinicals)	{
-		bio.iteration.loop(clinicals, 
+		bio.iteration.loop(clinicals,
 		function (clinical, values)	{
 			var na = null;
 
@@ -11459,7 +11459,7 @@ function clinicalGenerator ()	{
 
 				bio.iteration.loop(values.sort(function (a, b)	{
 					return a > b ? 1 : -1;
-				}), 
+				}),
 				function (v, i)	{
 					if (!model[v])	{
 						model[v] = { order: i + 1 };
@@ -11472,12 +11472,12 @@ function clinicalGenerator ()	{
 			}	else {
 				bio.iteration.loop(values.sort(function (a, b)	{
 					return a > b ? 1 : -1;
-				}), 
+				}),
 				function (v, i)	{
 					if (!model[v])	{
 						model[v] = { order: i + 1 };
 					}
-				});			
+				});
 			}
 		});
 	};
@@ -11513,7 +11513,7 @@ function clinicalGenerator ()	{
 				setClinicals(clinicals, d.key, val);
 			});
 		});
-		
+
 		orders(clinicals);
 		colors(clinicals);
 	};
@@ -11530,10 +11530,10 @@ function clinicalGenerator ()	{
 
 	return function (clinicalData, chart)	{
 		model = {};
-		
+
 		toArrClinicalData(clinicalData, chart);
 
-		bio.boilerPlate.clinicalInfo = model; 
+		bio.boilerPlate.clinicalInfo = model;
 	};
 };
 function loading ()	{
@@ -11545,7 +11545,7 @@ function loading ()	{
 		var result = [];
 
 		bio.iteration.loop(classes, function (cls)	{
-			var circle = document.createElement('div');	
+			var circle = document.createElement('div');
 
 			circle.className = 'loading-circle-' + cls;
 
@@ -11583,10 +11583,10 @@ function loading ()	{
 	function start (parent, width, height)	{
 		if (!width || !height)	{
 			throw new Error('Please define the width and height');
-		}	
+		}
 
-		model.loadingElement = document.querySelector('.loading') ? 
-														document.querySelector('.loading') : 
+		model.loadingElement = document.querySelector('.loading') ?
+														document.querySelector('.loading') :
 														makeLoading(parent, width, height);
 
 		if (model.loadingElement.style.display === 'none')	{
@@ -11597,7 +11597,7 @@ function loading ()	{
 	function end (num, sec)	{
 		$(model.loadingElement).fadeOut('slow')
 	};
-	
+
 	return function (parent, num, sec)	{
 		return { start: start, end: end };
 	}
@@ -11606,14 +11606,14 @@ function modal ()	{
 	'use strict';
 
 	var model = {};
-	// TODO.. 
+	// TODO..
 	function okButton ()	{
 
 	};
 	// Make close button.
 	function closeButton ()	{
 		var btn = document.createElement('button');
-		
+
 		btn.id = 'modal_close';
 		// Bootstrap style button.
 		btn.className = 'btn btn-default';
@@ -11662,7 +11662,7 @@ function modal ()	{
 
 	return function (opts)	{
 		makeModal(opts.id || 'modal');
-		
+
 		model.element = opts.element;
 		model.element.appendChild(model.modal);
 	};
@@ -11677,7 +11677,7 @@ function selectBox ()	{
 	function makeSelectBoxFrame (className)	{
 		var div = document.createElement('div'),
 				width = (model.width - model.margin.left * 2),
-				height = (model.height - model.margin.top * 2) < 40 ? 
+				height = (model.height - model.margin.top * 2) < 40 ?
 								 (model.height - model.margin.top * 2) : 40;
 
 		div.className = className + ' drop-menu';
@@ -11764,7 +11764,7 @@ function selectBox ()	{
 		// 	e.preventDefault();
 
 		// 	var ul = bio.drawing().findDom(this, '.dropeddown');
-			
+
 		// 	this.classList.remove('active');
 		// 	bio.drawing().slideUp(ul);
 		// }, true);
@@ -11791,7 +11791,7 @@ function selectBox ()	{
 		// 		tag.classList.remove('active');
 		// 		bio.drawing().slideUp(ul);
 
-		// 		return !callback ? false : 
+		// 		return !callback ? false :
 		// 						callback(this.id.toLowerCase());
 		// 	}, true);
 		// });
@@ -11815,7 +11815,7 @@ function selectBox ()	{
       $(this).parents('.drop-menu')
       			 .find('input').attr('value', $(this).attr('id'));
 
-      return !callback ? false : 
+      return !callback ? false :
       				callback($(this).attr('id').toLowerCase());
     });
 	};
@@ -11826,9 +11826,9 @@ function selectBox ()	{
 		model.className = opts.className || '';
 		model.margin = bio.sizing.setMargin(
 			opts.margin || [0, 0, 0, 0]);
-		model.width = 
+		model.width =
 		opts.width || parseFloat(model.element.style.width);
-		model.height = 
+		model.height =
 		opts.height || parseFloat(model.element.style.height);
 		model.defaultText = opts.defaultText || 'Select';
 		model.viewName = opts.viewName || 'viewName';
@@ -11906,7 +11906,7 @@ function table ()	{
 
 	function getWidth (text)	{
 		var div = document.createElement('div'),
-				txt = text.indexOf('<') > -1 ? 
+				txt = text.indexOf('<') > -1 ?
 					 		text.substring(0, text.indexOf('<')) : text,
 				width = 0;
 
@@ -11946,8 +11946,8 @@ function table ()	{
 			bio.iteration.loop(heads, function (head, col)	{
 				var cols = callback(col, row, head, data);
 
-				model.cellWidth[col] = 
-				model.cellWidth[col] > getWidth(cols) ? 
+				model.cellWidth[col] =
+				model.cellWidth[col] > getWidth(cols) ?
 				model.cellWidth[col] : getWidth(cols);
 
 				temp.push(cols);
@@ -11983,7 +11983,7 @@ function table ()	{
 
 	function makeContents (frame, cellDatas, opts)	{
 		var div = document.createElement('div');
-		
+
 		div.className = 'table-contents';
 		div.style.height = opts.height + 'px';
 
@@ -11993,14 +11993,14 @@ function table ()	{
 			bio.iteration.loop(cell, function (c, i)	{
 				row.appendChild(cells(c, model.cellWidth[i]));
 			});
-			
+
 			div.appendChild(row);
 		});
 
 		if (opts.data.length < 1)	{
 			return div;
 		} else {
-			frame.appendChild(div);			
+			frame.appendChild(div);
 		}
 	};
 
@@ -12067,7 +12067,7 @@ function tooltip ()	{
 		} else {
 			return 'top';
 		}
-	};	
+	};
 	/*
 		Tooltip 을 띄워주는 함수.
 	 */
@@ -12084,7 +12084,7 @@ function tooltip ()	{
 			Tooltip 의 위쪽 Position 값 설정.
 		 */
 		function setTop (dir, pos, height)	{
-			if (dir !== 'left' && dir !=='top' && 
+			if (dir !== 'left' && dir !=='top' &&
 					dir !== 'bottom' && dir !== 'right')	{
 				throw new Error('Wrong direction');
 			}
@@ -12100,7 +12100,7 @@ function tooltip ()	{
 			Tooltip 의 왼쪽 Position 값 설정.
 		 */
 		function setLeft (dir, pos, width)	{
-			if (dir !== 'left' && dir !=='top' && 
+			if (dir !== 'left' && dir !=='top' &&
 					dir !== 'bottom' && dir !== 'right')	{
 				throw new Error('Wrong direction');
 			}
@@ -12142,7 +12142,7 @@ function tooltip ()	{
 			if (!document.getElementById('biochart_tooltip'))	{
 				throw new Error('Not found "#biochart_tooltip"');
 			}
-			
+
 			return hide(document.getElementById('biochart_tooltip'));
 		}
 
@@ -12163,7 +12163,7 @@ function dependencies ()	{
 		version: {},	// Dependencies library 의 버전관련 객체.
 	};
 	/*
-		현재 적용 된 D3JS 의 버전이 
+		현재 적용 된 D3JS 의 버전이
 		4 버전이면 true,
 		3 버전이면 false 를 반환하는 함수.
 	 */
@@ -12217,7 +12217,7 @@ function dom ()	{
 		});
 	};
 	/*
-		Element 파라미터 하위 Element 들을 
+		Element 파라미터 하위 Element 들을
 		모두 제거하는 함수.
 	 */
 	model.removeAll = function (element)	{
@@ -12267,7 +12267,7 @@ function iteration ()	{
 			}
 		}
 	};
-	// >>> About Array. 
+	// >>> About Array.
 	/*
 		주어진 길이 만큼 주어진 값으로 리스트를 채워넣고 반환하는 함수.
 	 */
@@ -12307,16 +12307,16 @@ function math ()	{
 		두 수 혹은 숫자 리스트에서 가장 작은 값을 반환한다.
 	 */
 	model.min = function (v1, v2)	{
-		return arguments.length < 2 ? 
-					 Math.min.apply(null, v1) : 
+		return arguments.length < 2 ?
+					 Math.min.apply(null, v1) :
 					 Math.min.call(null, v1, v2);
 	};
 	/*
 		두 수 혹은 숫자 리스트에서 가장 큰 값을 반환한다.
 	 */
 	model.max = function (v1, v2)	{
-		return arguments.length < 2 ? 
-					 Math.max.apply(null, v1) : 
+		return arguments.length < 2 ?
+					 Math.max.apply(null, v1) :
 					 Math.max.call(null, v1, v2);
 	};
 	/*
@@ -12344,7 +12344,7 @@ function objects ()	{
 										.toString.call(obj);
 
 		return str.substring(
-					 str.indexOf(' ') + 1, 
+					 str.indexOf(' ') + 1,
 					 str.indexOf(']'));
 	};
 	/*
@@ -12401,7 +12401,7 @@ function strings ()	{
 		String 을 대명사 표기법 형태로 바꿔 반환하는 함수.
 	 */
 	String.prototype.pronoun = function ()	{
-		return this[0].toUpperCase() + 
+		return this[0].toUpperCase() +
 					 this.substring(1).toLowerCase();
 	};
 	/*
@@ -12421,10 +12421,10 @@ function strings ()	{
 		String 객체의 프로토타입으로 지정하였다.
 	 */
 	String.prototype.replaceAt = function (idx, rep)	{
-		// substring !== substr 
+		// substring !== substr
 		// substring 은 start 부터 end 까지,
 		// substr 은 start 부터 num 개를 자른다.
-		return this.substring(0, idx) + rep + 
+		return this.substring(0, idx) + rep +
 					 this.substring(idx + 1);
 	};
 	/*
@@ -12437,8 +12437,8 @@ function strings ()	{
 		문자열의 Hashcode 값을 추출하는 함수.
 	*/
 	String.prototype.hashCode = function (shift)	{
-		var hash = 0, 
-			i, 
+		var hash = 0,
+			i,
 			chr;
 
 		shift = shift || 5;
@@ -12466,7 +12466,7 @@ function variants ()	{
 	function drawAxis (part, direction)	{
 		var yData = [].concat(model.data.axis.needle.y);
 
-		bio.layout().get(model.setting.svgs, ['needle'], 
+		bio.layout().get(model.setting.svgs, ['needle'],
 		function (id, svg)	{
 			var config = bio.variantsConfig().axis(
 										part, direction, svg),
@@ -12488,16 +12488,16 @@ function variants ()	{
 		Legend 를 그리는 함수.
 	 */
 	function drawLegend (part, data)	{
-		var tags = { 
-			needle: 's_legend', patient: 't_legend' 
+		var tags = {
+			needle: 's_legend', patient: 't_legend'
 		}[part];
 
 		data = data.sort(function (a, b)	{
-			return bio.boilerPlate.variantInfo[a].order > 
+			return bio.boilerPlate.variantInfo[a].order >
 						 bio.boilerPlate.variantInfo[b].order ? 1 : -1;
 		});
 
-		bio.layout().get(model.setting.svgs, [tags], 
+		bio.layout().get(model.setting.svgs, [tags],
 		function (id, svg)	{
 			var config = bio.variantsConfig().legend(part);
 
@@ -12516,7 +12516,7 @@ function variants ()	{
 		Needle Plot 을 그려주는 함수.
 	 */
 	function drawNeedle (line, shape, axis, toDrag)	{
-		bio.layout().get(model.setting.svgs, ['needle'], 
+		bio.layout().get(model.setting.svgs, ['needle'],
 		function (id, svg)	{
 			var config = bio.variantsConfig().needle();
 
@@ -12537,7 +12537,7 @@ function variants ()	{
 		Needle plot 의 Navigator 를 그려주는 함수.
 	 */
 	function drawNeedleNavi (data, axis)	{
-		bio.layout().get(model.setting.svgs, ['navi'], 
+		bio.layout().get(model.setting.svgs, ['navi'],
 		function (id, svg)	{
 			var config = bio.variantsConfig().navi();
 
@@ -12559,7 +12559,7 @@ function variants ()	{
 									iv(dg.start.now + that.controls.width),
 									iv(dg.end.now + that.controls.width)],
 								range = [
-									that.margin.left, 
+									that.margin.left,
 									that.width - that.margin.right];
 
 						d3.selectAll('.bottom-axis-g-tag')
@@ -12567,18 +12567,18 @@ function variants ()	{
 										bio.scales().get(domain, range), 'bottom'));
 
 						bio.layout().removeGroupTag([
-							'.variants_needle_svg.needle-line-g-tag', 
+							'.variants_needle_svg.needle-line-g-tag',
 							'.variants_needle_svg.needle-shape-g-tag',
-							'.variants_needle_svg.needle-graph-g-tag', 
+							'.variants_needle_svg.needle-graph-g-tag',
 							'.variants_needle_svg.needle-patient-shape-g-tag'
 							]);
 
 						drawNeedle(
-							model.data.needle.line, model.data.needle.shape, 
+							model.data.needle.line, model.data.needle.shape,
 							model.data.axis.needle, domain);
-						drawNeedleGraph(model.data.graph, 
+						drawNeedleGraph(model.data.graph,
 														model.data.axis.needle, domain);
-						drawPatient(model.data.patient.shape, 
+						drawPatient(model.data.patient.shape,
 												model.data.axis.needle, domain);
 					},
 				},
@@ -12589,7 +12589,7 @@ function variants ()	{
 		Needle plot 의 Graph 를 그려주는 함수.
 	 */
 	function drawNeedleGraph (data, axis, toDrag)	{
-		bio.layout().get(model.setting.svgs, ['needle'], 
+		bio.layout().get(model.setting.svgs, ['needle'],
 		function (id, svg)	{
 			var config = bio.variantsConfig().graph();
 
@@ -12610,7 +12610,7 @@ function variants ()	{
 		Patient 를 표시해주는 함수.
 	 */
 	function drawPatient (data, axis, toDrag)	{
-		bio.layout().get(model.setting.svgs, ['needle'], 
+		bio.layout().get(model.setting.svgs, ['needle'],
 		function (id, svg)	{
 			var config = bio.variantsConfig().patient(),
 					needleConfig = bio.variantsConfig().needle();
@@ -12649,7 +12649,7 @@ function variants ()	{
 		model.setting = bio.setting('variants', opts);
 		model.data = model.setting.preprocessData;
 		// Set landscape title.
-		bio.title('#variants_title', 
+		bio.title('#variants_title',
 			model.setting.defaultData.variants.title);
 
 		drawVariants(model.data);
@@ -12671,9 +12671,9 @@ function variantsGraph ()	{
 
 		model.copyX = [].concat(opts.xaxis);
 		model.copyY = [].concat(opts.yaxis);
-		model.rangeX = [model.margin.left, 
+		model.rangeX = [model.margin.left,
 			model.width - model.margin.right];
-		model.rangeY = [model.margin.top, 
+		model.rangeY = [model.margin.top,
 			model.height - model.margin.bottom];
 		model.scaleX = bio.scales().get(model.copyX, model.rangeX);
 		model.scaleY = bio.scales().get(model.copyY, model.rangeY);
@@ -12687,20 +12687,20 @@ function variantsGraph ()	{
 		};
 		model.opts.base.data = [''];
 		model.opts.base.id = model.id + '_graph_base';
-		model.opts.base.element = 
+		model.opts.base.element =
 		model.group.selectAll('#' + model.id + '_graph_base');
 
 		bio.rectangle(model.opts.base, model);
 
 		model.opts.graph.id = model.id + '_graph_group';
 		model.opts.graph.data = null;
-		model.opts.graph.element = 
+		model.opts.graph.element =
 		model.group.selectAll('#' + model.id + '_graph_group')
 							 .data(model.graphData).enter()
 							 .append('g')
 							 .attr('id', model.id + '_graph_group')
-							 .attr('transform', 'translate(0, 0)');				
-		
+							 .attr('transform', 'translate(0, 0)');
+
 		bio.rectangle(model.opts.graph, model);
 		bio.text(model.opts.graph, model);
 	};
@@ -12720,7 +12720,7 @@ function variantsNavi ()	{
 
 		model.copyX = [].concat(opts.xaxis);
 		model.copyY = [].concat(opts.yaxis);
-		model.rangeX = [model.margin.left, 
+		model.rangeX = [model.margin.left,
 			model.width - model.margin.right];
 		model.rangeY = [model.height - model.margin.bottom,
 			model.margin.top,];
@@ -12730,11 +12730,11 @@ function variantsNavi ()	{
 		model.controls = { width: 5, height: model.height * 0.4 };
 
 		model.start = model.scaleX(bio.math.min(model.copyX));
-		model.end = model.width - model.margin.left - 
+		model.end = model.width - model.margin.left -
 								model.margin.right;
 
 		config.start.init = model.start - model.controls.width;
-		config.end.init = model.end - model.controls.width + 
+		config.end.init = model.end - model.controls.width +
 													 model.margin.left;
 		config.start.now = config.start.init;
 		config.end.now = config.end.init;
@@ -12751,7 +12751,7 @@ function variantsNavi ()	{
 
 		bio.needle({
 			xaxis: model.copyX,
-			yaxis: model.copyY,		
+			yaxis: model.copyY,
 			element: opts.element,
 			attr: needleConfig.attr,
 			style: needleConfig.style,
@@ -12768,15 +12768,15 @@ function variantsNavi ()	{
 		};
 		model.opts.main.data = ['main'];
 		model.opts.main.id = model.id + '_navi_main';
-		model.opts.main.element = 
+		model.opts.main.element =
 		model.group.selectAll('#' + model.id + '_navi_main');
 		model.opts.start.data = ['start'];
 		model.opts.start.id = model.id + '_navi_start';
-		model.opts.start.element = 
+		model.opts.start.element =
 		model.group.selectAll('#' + model.id + '_navi_start');
 		model.opts.end.data = ['end'];
 		model.opts.end.id = model.id + '_navi_end';
-		model.opts.end.element = 
+		model.opts.end.element =
 		model.group.selectAll('#' + model.id + '_navi_end');
 
 		bio.rectangle(model.opts.main, model);
@@ -12798,22 +12798,22 @@ function variantsPatient ()	{
 
 		model.copyX = [].concat(opts.xaxis);
 		model.copyY = [].concat(opts.yaxis);
-		model.rangeX = [model.margin.left, 
+		model.rangeX = [model.margin.left,
 			model.width - model.margin.right];
-		model.rangeY = [model.height - model.margin.bottom, 
+		model.rangeY = [model.height - model.margin.bottom,
 										model.margin.top];
 		model.scaleX = bio.scales().get(model.copyX, model.rangeX);
 		model.scaleY = bio.scales().get(model.copyY, model.rangeY);
 
 		model.shapeGroup = bio.rendering().addGroup(
 			opts.element, 0, 0, 'needle-patient-shape');
-		
+
 		model.opts = bio.objects.clone(opts);
 		model.opts.data = model.patientData;
-		model.opts.element = 
+		model.opts.element =
 		model.shapeGroup.selectAll(
 			'#' + model.id + '_needle_patient_shape');
-		
+
 		bio.triangle(model.opts, model);
 	};
 };
@@ -12845,9 +12845,9 @@ function preprocExclusivity ()	{
 					copy = bio.objects.clone(geneList);
 
 			!res[type.participant_id] ? (copy[type.gene] = [abb],
-			 res[type.participant_id] = copy, res) : 
-			(res[type.participant_id][type.gene][0] === '.' ? 
- 			 res[type.participant_id][type.gene] = [abb] : 
+			 res[type.participant_id] = copy, res) :
+			(res[type.participant_id][type.gene][0] === '.' ?
+ 			 res[type.participant_id][type.gene] = [abb] :
  			 res[type.participant_id][type.gene].push(abb), res);
 		});
 
@@ -12861,7 +12861,7 @@ function preprocExclusivity ()	{
 				objTypes = toObjectTypes(types, geneList);
 
 		bio.iteration.loop(patient, function (p)	{
-			p.gene = objTypes[p.participant_id] ? 
+			p.gene = objTypes[p.participant_id] ?
 							 objTypes[p.participant_id] : geneList;
 		});
 
@@ -12912,35 +12912,35 @@ function preprocExclusivity ()	{
 			}
 
 			for (;heatIdx < setLen; heatIdx++)	{
-				bio.iteration.loop(heats[heatIdx].split(''), 
+				bio.iteration.loop(heats[heatIdx].split(''),
 				function (variants, idx)	{
 
-					bio.iteration.loop(config.separate(variants), 
+					bio.iteration.loop(config.separate(variants),
 					function (vars)	{
 						vars = config.name(vars);
 
 						model.heatmap[setText].push({
-							x: idx, 
-							y: set[heatIdx >= set.length ? 
-										 heatIdx - (setLen - set.length) : heatIdx], 
+							x: idx,
+							y: set[heatIdx >= set.length ?
+										 heatIdx - (setLen - set.length) : heatIdx],
 							value: vars
 						});
 
-						legend.indexOf(vars) < 0 ? legend.push(vars) : 
+						legend.indexOf(vars) < 0 ? legend.push(vars) :
 						legend = legend;
 					});
 
-					model.divisionIdx[setText].idx = variants !== '.' ? 
-					model.divisionIdx[setText].idx > idx ? 
-					model.divisionIdx[setText].idx : idx : 
+					model.divisionIdx[setText].idx = variants !== '.' ?
+					model.divisionIdx[setText].idx > idx ?
+					model.divisionIdx[setText].idx : idx :
 					model.divisionIdx[setText].idx;
-				});		
+				});
 
 				heat.push(heats[heatIdx]);
 			}
 
 			model.geneset.push(set);
-			model.geneset_all = 
+			model.geneset_all =
 			model.geneset_all.concat(set);
 			model.survival.heat[setText] = heat;
 		});
@@ -12962,7 +12962,7 @@ function preprocExclusivity ()	{
 			bio.iteration.loop(v.split('\t'), function (vs)	{
 				var vss = vs.split(':');
 
-				obj[vss[0]] = vss[0].indexOf('color') < 0 ? 
+				obj[vss[0]] = vss[0].indexOf('color') < 0 ?
 											vss[1] : toRGB(vss[1]);
 			});
 
@@ -12980,7 +12980,7 @@ function preprocExclusivity ()	{
 		bio.iteration.loop(result, function (key, value)	{
 			model.network[key] = formatForNetwork(value);
 
-			bio.iteration.loop(model.network[key], 
+			bio.iteration.loop(model.network[key],
 			function (net)	{
 				if (net.type === 'compound')	{
 					id = net.id;
@@ -12993,7 +12993,7 @@ function preprocExclusivity ()	{
 					net.linecolor = net.linecolor.replace('\"', '');
 				} else if (net.type === 'node')	{
 					net.bgcolor = net.bgcolor.replace('\"', '');
-				}	
+				}
 			});
 		});
 	};
@@ -13009,7 +13009,7 @@ function preprocExclusivity ()	{
 				var joined = gs.join('');
 
 				if (n.indexOf(joined) > -1)	{
-					result[joined] ? result[joined].push(n) : 
+					result[joined] ? result[joined].push(n) :
 													 result[joined] = [n];
 				}
 			});
@@ -13033,12 +13033,12 @@ function preprocExclusivity ()	{
 	function forSurvival (suvs)	{
 		var hasPat = {};
 
-		bio.iteration.loop(model.survival.heat, 
+		bio.iteration.loop(model.survival.heat,
 		function (key, value)	{
 			var idx = model.axis.heatmap.x[key].length,
 					ldx = key.split(' '),
-					all = !model.survival.data[key] ? 
-								 model.survival.data[key] = [] : 
+					all = !model.survival.data[key] ?
+								 model.survival.data[key] = [] :
 								 model.survival.data[key],
 					pat = hasPat[key] = {};
 
@@ -13078,7 +13078,7 @@ function preprocExclusivity ()	{
 		forNetwork(data.network);
 		forSurvival(data.survival);
 
-		model.mostGeneWidth = 
+		model.mostGeneWidth =
 		bio.drawing().mostWidth(model.geneset_all, '12px');
 
 		// console.log('>>> Preprocess exclusivity data: ', data);
@@ -13121,15 +13121,15 @@ function preprocExpression ()	{
 		var obj = {};
 
 		bio.iteration.loop(subtypes, function (s)	{
-			!obj[s.subtype] ? 
-			 obj[s.subtype] = [s.value] : 
+			!obj[s.subtype] ?
+			 obj[s.subtype] = [s.value] :
 			 obj[s.subtype].push(s.value);
 		});
 
 		return obj;
 	};
 	/*
-		Subtype list 를 만드는 함수.		
+		Subtype list 를 만드는 함수.
 	 */
 	function getSubtype (subtypes)	{
 		var temp = tempSubtypes(subtypes);
@@ -13148,9 +13148,9 @@ function preprocExpression ()	{
 		Sample 별로 gene 들의 tpm 값의 합을 저장하는 배열을 만든다.
 	 */
 	function tpmBySample (a) {
-		model.axis.heatmap.x[a.participant_id] ? 
+		model.axis.heatmap.x[a.participant_id] ?
 		model.axis.heatmap.x[a.participant_id].push({
-			key: a.hugo_symbol, value: a.tpm }) : 
+			key: a.hugo_symbol, value: a.tpm }) :
 		model.axis.heatmap.x[a.participant_id] = [{
 			key: a.hugo_symbol, value: a.tpm }];
 	};
@@ -13251,14 +13251,14 @@ function preprocExpression ()	{
 		bio.iteration.loop(result, function (res)	{
 			if (model.func.bar[funcName])	{
 				model.func.bar[funcName].push({
-					x: res.pid, 
-					value: res.score, 
+					x: res.pid,
+					value: res.score,
 					info: model.patient_subtype[res.pid]
 				});
 			} else {
 				model.func.bar[funcName] = [{
-					x: res.pid, 
-					value: res.score, 
+					x: res.pid,
+					value: res.score,
 					info: model.patient_subtype[res.pid]
 				}];
 			}
@@ -13267,12 +13267,12 @@ function preprocExpression ()	{
 				model.func.data[funcName].push(res.score);
 			} else {
 				model.func.data[funcName] = [res.score];
-			}	
+			}
 		});
 
-		bio.iteration.loop(model.func.data, 
+		bio.iteration.loop(model.func.data,
 		function (k, f)	{
-			model.func.data[k] = 
+			model.func.data[k] =
 			model.func.data[k].sort(function (a, b) {
 				return a > b ? 1 : -1;
 			});
@@ -13282,7 +13282,7 @@ function preprocExpression ()	{
 	};
 
 	function geneSortByTpmAverage (alls, genes)	{
-		var result = {},	
+		var result = {},
 				resultArr = [];
 
 		bio.iteration.loop(alls, function (a)	{
@@ -13292,7 +13292,7 @@ function preprocExpression ()	{
 				result[a.hugo_symbol] += a.tpm;
 			}
 		});
-		
+
 		bio.iteration.loop(result, function(gene, tpm)	{
 			resultArr.push({
 				gene: gene, avgTpm: tpm / model.axis.heatmap.x.length
@@ -13326,13 +13326,13 @@ function preprocExpression ()	{
 
 		tpmMinMax(model.tpms);
 
-		bio.iteration.loop(model.riskFuncs, 
+		bio.iteration.loop(model.riskFuncs,
 		function (risk)	{
-			setRiskFunctions(risk, model.riskFuncs[risk], 
+			setRiskFunctions(risk, model.riskFuncs[risk],
 				model.axis.heatmap.x);
 		});
 
-		if (!model.func.now || 
+		if (!model.func.now ||
 				Object.keys(model.func.now).length < 1)	{
 			model.bar = model.func.bar.average;
 			model.axis.bar.y = model.func.yaxis.average;
@@ -13340,7 +13340,7 @@ function preprocExpression ()	{
 			model.func.now = model.func.default;
 		}
 
-		model.axis.heatmap.y = geneSortByTpmAverage(alls, 
+		model.axis.heatmap.y = geneSortByTpmAverage(alls,
 														Object.keys(model.axis.heatmap.y));
 		model.axis.scatter.x = model.axis.heatmap.x;
 		model.axis.bar.x = model.axis.heatmap.x;
@@ -13365,7 +13365,7 @@ function preprocExpression ()	{
 		bio.iteration.loop(by, function (ya) {
 			var byWidth = bio.drawing().textSize.width(ya.toFixed(1).toString(), '10px');
 
-			bmost = bmost > byWidth ? bmost : byWidth;			
+			bmost = bmost > byWidth ? bmost : byWidth;
 		});
 
 		bio.iteration.loop(sy, function (key, val)	{
@@ -13376,7 +13376,7 @@ function preprocExpression ()	{
 
 		bio.iteration.loop(hy, function (ya)	{
 			var hyWidth = bio.drawing().textSize.width(ya, '10px');
-				
+
 			hmost = hmost > hyWidth ? hmost : hyWidth;
 
 			most = most > hyWidth ? most : hyWidth;
@@ -13384,7 +13384,7 @@ function preprocExpression ()	{
 
 		most = bio.math.max([smost, hmost, bmost]) * 1.5;
 
-		return most < 30 ? 30 : most;	
+		return most < 30 ? 30 : most;
 	};
 
 	function addRiskFunctions (funcs)	{
@@ -13451,12 +13451,12 @@ function preprocLandscape ()	{
 		});
 	};
 	/*
-		기준이 되는 값에 해당되는 value 들을 key - value 
+		기준이 되는 값에 해당되는 value 들을 key - value
 		형태의 Object 로 만드는 함수.
 	 */
 	function nested (obj, std, value)	{
 		obj[std] = !obj[std] ? {} : obj[std];
-		obj[std][value] = obj[std][value] ? 
+		obj[std][value] = obj[std][value] ?
 		obj[std][value] + 1 : 1;
 	};
 	/*
@@ -13488,7 +13488,7 @@ function preprocLandscape ()	{
 			bio.iteration.loop(stacks, function (s)	{
 				nested(s.obj, d[s.data], d[s.type]);
 			});
-			
+
 			if (!isChange)	{
 				heatmapDataFormat(model.heatmap, d);
 			}
@@ -13534,7 +13534,7 @@ function preprocLandscape ()	{
 					// 나중에 Group sort 를 위함이다.
 					if (d.participant_id === h.x)	{
 						heat.push(h);
-					} 
+					}
 				});
 
 				temp.push({
@@ -13569,8 +13569,8 @@ function preprocLandscape ()	{
 		다르므로 이를 해당 함수에서 정해준다.
 	 */
 	function stackFormat (type, d1, d2, value, idx)	{
-		return type === 'gene' ? 
-					{ x: d1, y: d2, value: value, info: idx } : 
+		return type === 'gene' ?
+					{ x: d1, y: d2, value: value, info: idx } :
 					{ x: d2, y: d1, value: value, info: idx };
 	};
 	/*
@@ -13619,14 +13619,14 @@ function preprocLandscape ()	{
 			} else {
 				return [
 					bio.math.max(
-					bio.math.max(pat), 
+					bio.math.max(pat),
 					bio.math.max(arr)), 0
 				];
 			}
 		}
-	};	
+	};
 	/*
-		gene 의 mutation 이 가장 높은 값을 가진 
+		gene 의 mutation 이 가장 높은 값을 가진
 		순서대로 정렬한다.
 	 */
 	function orderedYAxis (geneStack)	{
@@ -13634,7 +13634,7 @@ function preprocLandscape ()	{
 				result = [];
 
 		bio.iteration.loop(geneStack, function (g)	{
-			obj[g.y] = !obj[g.y] ? g.value : 
+			obj[g.y] = !obj[g.y] ? g.value :
 									obj[g.y] + g.value;
 		});
 
@@ -13656,7 +13656,7 @@ function preprocLandscape ()	{
 			return g.x;
 		});
 
-		model.axis.sample.x = 
+		model.axis.sample.x =
 		model.axis.sample.x.concat(groupList);
 	};
 	/*
@@ -13665,11 +13665,11 @@ function preprocLandscape ()	{
 	function makeOrdinalAxis (geneStack)	{
 		mergedXAxis();
 
-		model.axis.pq.y = 
-		model.axis.gene.y = 
+		model.axis.pq.y =
+		model.axis.gene.y =
 		// model.axis.heatmap.y = model.gene;
 		model.axis.heatmap.y = orderedYAxis(geneStack);
-		model.axis.heatmap.x = 
+		model.axis.heatmap.x =
 		model.axis.group.x = model.axis.sample.x;
 	};
 	/*
@@ -13705,7 +13705,7 @@ function preprocLandscape ()	{
 		});
 
 		// Mutation, Sample, Gene, Group, Patient 데이터 생성.
-		if (data.group_list[0].data.length > 
+		if (data.group_list[0].data.length >
 				Object.keys(tempMut).length)	{
 			data.mutation_list = adjustMutationList(data.mutation_list, data.group_list[0].data);
 		}
@@ -13803,9 +13803,9 @@ function preprocVariants ()	{
 	function optimizeToDraw (obj, target)	{
 		bio.iteration.loop(obj, function (key, value)	{
 			var count = 0,
-					temp = { 
-						key: key, 
-						value: [ { x: parseFloat(key), y: count, value: 0 } 
+					temp = {
+						key: key,
+						value: [ { x: parseFloat(key), y: count, value: 0 }
 					]};
 			// 0 이 들어가야 하므로 한번 설정하였다.
 			model.axis.needle.y.push(count);
@@ -13835,9 +13835,9 @@ function preprocVariants ()	{
 
 			var str = d.position + ' ' + d.type + ' ' + d.aachange;
 
-			obj[d.position] ? obj[d.position][str] ? 
-			obj[d.position][str].push(d) : 
-			obj[d.position][str] = [d] : 
+			obj[d.position] ? obj[d.position][str] ?
+			obj[d.position][str].push(d) :
+			obj[d.position][str] = [d] :
 		 (obj[d.position] = {}, obj[d.position][str] = [d]);
 
 		 	if (model.type.indexOf(d.type) < 0)	{
@@ -13864,9 +13864,9 @@ function preprocVariants ()	{
 	 */
 	function setAxis (graph)	{
 		model.axis.needle.x = [0, graph[0].length];
-		model.axis.needle.y = 
-		model.axis.needle.y.length < 1 ? [0, 1] : 
-		[bio.math.min(model.axis.needle.y), 
+		model.axis.needle.y =
+		model.axis.needle.y.length < 1 ? [0, 1] :
+		[bio.math.min(model.axis.needle.y),
 		 bio.math.max(model.axis.needle.y)];
 	};
 	/*

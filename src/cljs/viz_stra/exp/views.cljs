@@ -8,6 +8,7 @@
             [goog.dom :as dom]
             [goog.array :as array]
             [cgis.biochart :as bio]
+            [viz-stra.utils :refer [save-as-text]]
             [viz-stra.events :as e]
             [viz-stra.subs :as s]
             [viz-stra.exp.events :as events]
@@ -616,8 +617,6 @@
                :type "sankey"
                :name (str "Concordance to " feature)}]}))
 
-
-
 (defn cluster-sankey-plot [feature c-indices]
   [:div#cluster-sankey
    {:style {:min-width "400px" :max-width "600px"
@@ -695,6 +694,9 @@
 (def risk-all-genes (atom nil))
 (def risk-all-exps (atom nil))
 
+(def risk-median-scores (atom nil))
+(def risk-pi-scores (atom nil))
+
 (defn signature-panel [json]
   [:div#risk-signature
    {:dangerouslySetInnerHTML {:__html "<div id=\"main\"></div>"}
@@ -704,7 +706,9 @@
                 (reset! risk-subtype nil)
                 (reset! risk-sel-genes #{})
                 (reset! risk-all-genes nil)
-                (reset! risk-all-exps nil))
+                (reset! risk-all-exps nil)
+                (reset! risk-median-scores nil)
+                (reset! risk-pi-scores nil))
             (letfn [(on-division [left mid right genes exps]
                       (reset! risk-division {:left (js->clj left)
                                              :mid (js->clj mid)
@@ -738,11 +742,12 @@
                             median (nth tpms midx)]
                         median))
                     (median-scores [data]
-                      (clj->js
-                        (map (fn [d]
-                               {:pid (.-pid d)
-                                :score (->median (map (fn [v] (.-tpm v)) (.-values d)))})
-                             data)))
+                      (let [scores (map (fn [d]
+                                          {:pid (.-pid d)
+                                           :score (->median (map (fn [v] (.-tpm v)) (.-values d)))})
+                                        data)]
+                        (reset! risk-median-scores scores)
+                        (clj->js scores)))
                     (->pi [cox values]
                       (let [coeffs (zipmap (get cox "genes") (get cox "coefficients"))]
                         (reduce (fn [pi v] (+ pi (* (get coeffs (.-gene v) 0.0) (.-tpm v))))
@@ -754,6 +759,7 @@
                                    {:pid (.-pid d) :score (to-fixed 10 (->pi cox (.-values d)))})
                                  data)]
                         ;(println (sort (map :score scores)))
+                        (reset! risk-pi-scores scores)
                         (clj->js scores)))
                     (farthest-centroid [data]
                       (let [correlations (get json "fc")
@@ -1114,16 +1120,135 @@
              disabled? (not= @active-panel :risk-panel)]
          [export-popover [export-button disabled? :showing? showing?]
           :showing? showing?
-          :save-all #(println "Save all")
-          :save-group #(println "Save groups only")])]]
+          :save-all
+          (fn []
+            (reset! showing? false)
+            (let [div @risk-division
+                  pats (->> div vals (apply concat) set)
+                  genes @risk-all-genes
+                  exprs (js->clj @risk-all-exps)
+                  clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
+                  cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id") keys sort))
+                  fields (concat [:group :median]
+                                 (when @risk-pi-scores [:pi])
+                                 (when (@(re-frame/subscribe [::subs/signature-data]) "fc") [:fc])
+                                 genes cnames)
+                  data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
+                            (reduce (fn [m p]
+                                      (assoc m p (apply array-map
+                                                        (concat [:participant_id p]
+                                                                (reduce #(conj %1 %2 nil) [] fields)))))
+                                    (sorted-map) pats)
+                            ; Stratification result -> :group
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "L")) % (:left div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "M")) % (:mid div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "H")) % (:right div)))
+                            ; Median scores
+                            (#(reduce (fn [d m] (assoc-in d [(:pid m) :median] (:score m))) % @risk-median-scores))
+                            ; Prognostic index scores
+                            (#(reduce (fn [d m] (assoc-in d [(:pid m) :pi] (:score m))) % @risk-pi-scores))
+                            ; Farthest centroid scores
+                            (#(reduce (fn [d [pid score]] (assoc-in d [pid :fc] score))
+                                      % (@(re-frame/subscribe [::subs/signature-data]) "fc")))
+                            ; Gene expression values: log2(tpm+1)
+                            (#(reduce (fn [d e]
+                                        (let [pid (e "participant_id")]
+                                          (if (pats pid) (assoc-in d [pid (e "hugo_symbol")] (e "tpm")) d)))
+                                      % exprs))
+                            ; Clinical information
+                            (#(reduce (fn [d c]
+                                        (let [pid (c "participant_id")]
+                                          (if (pats pid)
+                                            (reduce (fn [e n] (assoc-in e [pid n] (c n))) d cnames) d)))
+                                      % clinicals)))
+                  csv (.unparse js/Papa (clj->js (vals data))
+                                #js {:header true :delimiter "\t"})]
+              (save-as-text csv "expr_signature_all.tsv")))
+          :save-group
+          (fn []
+            (reset! showing? false)
+            (let [div @risk-division
+                  data (->> (concat 
+                              (reduce #(conj %1 [%2 "L"]) [] (:left div))
+                              (reduce #(conj %1 [%2 "M"]) [] (:mid div))
+                              (reduce #(conj %1 [%2 "H"]) [] (:right div)))
+                            (sort-by first)
+                            (cons [:participant_id :group]))
+                  csv (.unparse js/Papa (clj->js data)
+                                #js {:header true :delimiter "\t"})]
+              (save-as-text csv "expr_signatrue_groups.tsv")))])]]
      [NavItem {:event-key "cluster-panel"}
       [:span {:style {:font-size "16px"}} "Hierarchical Clsutering"
        (let [showing? (reagent/atom false)
              disabled? (not= @active-panel :cluster-panel)]
          [export-popover [export-button disabled? :showing? showing?]
           :showing? showing?
-          :save-all #(println "Save all")
-          :save-group #(println "Save groups only")])]]]
+          :save-all
+          (fn []
+            (reset! showing? false)
+            (let [il @inchlib-ref
+                  ; patients in data
+                  patients (js->clj (.-header il))
+                  ; patient indices are changed by zooming event
+                  p-indices (-> il .-on_features .-data)
+                  ; patient ids mapped to current zoomed indices
+                  pats (->> p-indices (map (fn [i] (get patients i))) set)
+                  ; patient indices in the selected cluster
+                  c-indices @current-patient-indices
+                  cats (map (fn [i] (get patients i)) c-indices)
+                  genes (as-> @current-cluster-genes ?
+                          (if (nil? ?) (:genes @(re-frame/subscribe [::s/selected-geneset])) ?)
+                          (set ?))
+                  tpms (let [dataset @(re-frame/subscribe [::subs/cluster-data])
+                             pnames (get-in dataset ["data" "feature_names"])]
+                         (reduce #(if-let [[g] (%2 "objects")]
+                                    (concat %1 (map (fn [p exp] {:participant_id p :gene g :tpm exp})
+                                                    pnames (%2 "features")))
+                                    %1)
+                                 [] (vals (get-in dataset ["data" "nodes"]))))
+                  clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
+                  cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id") keys sort))
+                  fields (concat [:group] genes cnames)
+                  data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
+                            (reduce (fn [m p]
+                                      (assoc m p (apply array-map
+                                                        (concat [:participant_id p]
+                                                                (reduce #(conj %1 %2 nil) [] fields)))))
+                                    (sorted-map) pats)
+                            ; Stratification result -> :group
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "D")) % pats))
+                            (#(reduce (fn [d p] (assoc-in d [p :group] "C")) % cats))
+                            ; Gene expression values: log2(tpm+1)
+                            (#(reduce (fn [d e]
+                                        (let [p (e :participant_id)
+                                              g (e :gene)]
+                                          (if (and (genes g) (pats p)) (assoc-in d [p g] (e :tpm)) d)))
+                                      % tpms))
+                            ; Clinical information
+                            (#(reduce (fn [d c]
+                                        (let [pid (c "participant_id")]
+                                          (if (pats pid)
+                                            (reduce (fn [e n] (assoc-in e [pid n] (c n))) d cnames) d)))
+                                      % clinicals)))
+                  csv (.unparse js/Papa (clj->js (vals data)) #js {:header true :delimiter "\t"})]
+              (save-as-text csv "expr_hcluster_all.tsv")))
+          :save-group
+          (fn []
+            (reset! showing? false)
+            (let [il @inchlib-ref
+                  patients (js->clj (.-header il))
+                  p-indices (-> il .-on_features .-data)
+                  pats (->> p-indices (map (fn [i] (get patients i))) set)
+                  c-indices @current-patient-indices
+                  cats (map (fn [i] (get patients i)) c-indices)
+                  data (->> (concat 
+                              (reduce #(conj %1 [%2 "C"]) [] cats)
+                              (reduce #(conj %1 [%2 "D"]) [] (apply (partial disj pats) cats)))
+                            (sort-by first)
+                            (cons [:participant_id :group]))
+                  csv (.unparse js/Papa (clj->js data)
+                                #js {:header true :delimiter "\t"})]
+              (save-as-text csv "expr_hcluster_groups.tsv")))])]]]
     [re-com/alert-box
      :alert-type :info
      :style {:color "#222"

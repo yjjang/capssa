@@ -338,7 +338,7 @@
 
 (defroutes routes
   (GET "/" [] (resource-response "index.html" {:root "public"}))
-  (GET "/mutex" [] (resource-response "data/luad_mutex.json" {:root "public"}))
+  ;(GET "/mutex" [] (resource-response "data/luad_mutex.json" {:root "public"}))
   (POST "/echo" req (response (echo-params req)))
   (POST "/echo.f" req (response (echo-form-params req "chi_square_score")))
   (POST "/expsig" req (response (get-exp-signature req)))
