@@ -230,33 +230,36 @@
 ;; -- Mutation menu UI -----------------------------------------------------
 
 (defn selected-panel [active-panel-id]
-  (case @active-panel-id
-    :exclusivity-panel
-    (let [json @(re-frame/subscribe [::subs/exclusivity-data])]
-      [exclusivity-panel json])
-    :landscape-panel
-    [re-com/h-box
-     :gap "10px"
-     :style {:flex-flow "wrap"}
-     :children [(let [cohort @(re-frame/subscribe [::s/selected-cohort])]
-                  (if (and (:user? cohort) (nil? @(re-frame/subscribe [::s/clinical-data cohort])))
-                    (when-not @(re-frame/subscribe [::s/data-loading?])
-                      (re-frame/dispatch [::e/local-load-clinical-data cohort]))
-                    [landscape-panel]))
-                (if @landscape-loaded?
-                  [re-com/v-box
-                   :gap "10px"
-                   :children
-                   (let [sub-plot (re-frame/subscribe [::subs/landscape-sub-plot])]
-                     [[re-com/single-dropdown
-                       :choices [{:id :surv-plot :label "Survival analysis"}
-                                 {:id :sankey-plot :label "Concordance to subtype"}]
-                       :model sub-plot
-                       :on-change #(re-frame/dispatch [::events/set-landscape-sub-plot %])
-                       :width "200px"]
-                      [landscape-sub-plot @sub-plot]])]
-                  [:div])]]
-    [:div]))
+  (let [cohort @(re-frame/subscribe [::s/selected-cohort])]
+    (if (and (:user? cohort) (not (:alters cohort)))
+      [:h4 [:i {:style {:width "22px" :margin-left "5px"} :class "zmdi zmdi-alert-triangle"}]
+       "Alteration data is not available."]
+      (case @active-panel-id
+        :exclusivity-panel
+        (let [json @(re-frame/subscribe [::subs/exclusivity-data])]
+          [exclusivity-panel json])
+        :landscape-panel
+        [re-com/h-box
+         :gap "10px"
+         :style {:flex-flow "wrap"}
+         :children [(if (and (:user? cohort) (nil? @(re-frame/subscribe [::s/clinical-data cohort])))
+                      (when-not @(re-frame/subscribe [::s/data-loading?])
+                        (re-frame/dispatch [::e/local-load-clinical-data cohort]))
+                      [landscape-panel])
+                    (if @landscape-loaded?
+                      [re-com/v-box
+                       :gap "10px"
+                       :children
+                       (let [sub-plot (re-frame/subscribe [::subs/landscape-sub-plot])]
+                         [[re-com/single-dropdown
+                           :choices [{:id :surv-plot :label "Survival analysis"}
+                                     {:id :sankey-plot :label "Concordance to subtype"}]
+                           :model sub-plot
+                           :on-change #(re-frame/dispatch [::events/set-landscape-sub-plot %])
+                           :width "200px"]
+                          [landscape-sub-plot @sub-plot]])]
+                      [:div])]]
+        [:div]))))
 
 (defn navs [active-panel-id]
   [re-com/h-box
@@ -269,8 +272,10 @@
           :on-select #(when % (re-frame/dispatch [::events/set-active-panel (keyword %)]))}
      [NavItem {:event-key "landscape-panel"}
       [:span {:style {:font-size "16px"}} "Mutational patterns"
-       (let [showing? (reagent/atom false)
-             disabled? (not= @active-panel-id :landscape-panel)]
+       (let [cohort @(re-frame/subscribe [::s/selected-cohort])
+             showing? (reagent/atom false)
+             disabled? (or (not= @active-panel-id :landscape-panel)
+                           (and (:user? cohort) (not (:alters cohort))))]
          [export-popover [export-button disabled? :showing? showing?]
           :showing? showing?
           :save-all
@@ -281,7 +286,7 @@
                   pats (->> div vals (apply concat) set)
                   genes (mapv #(% "gene") (get-in landscape ["data" "gene_list"]))
                   alters (get-in landscape ["data" "mutation_list"])
-                  clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
+                  clinicals @(re-frame/subscribe [::s/clinical-data cohort])
                   cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id" "class") keys sort))
                   fields (concat [:class] genes cnames)
                   data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}

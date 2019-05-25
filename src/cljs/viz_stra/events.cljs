@@ -284,9 +284,6 @@
                     (map #(merge % (if-let [valm (get cmap (get % "participant_id"))]
                                      valm
                                      (reduce (fn [m c] (assoc m c "NA")) {} cnames))))
-                    (map #(->> (dissoc % "participant_id") keys sort
-                               (cons "participant_id")
-                               (select-keys %)))
                     (vec))]
       (println "Clinical data added:" cnames)
       (cond-> db

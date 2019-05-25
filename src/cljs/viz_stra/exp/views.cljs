@@ -1097,15 +1097,19 @@
 ;; -- Expression menu UI ---------------------------------------------------
 
 (defn- panels [panel-id]
-  (case panel-id
-    :risk-panel [risk-panel]
-    :cluster-panel
-    (let [gs @(re-frame/subscribe [::s/selected-geneset])]
-      (if (> (count (:genes gs)) 1)
-        [cluster-panel]
-        [:h4 [:i {:style {:width "22px"} :class "zmdi zmdi-alert-triangle"}]
-         "At least more than 2 genes are required."]))
-    [:div]))
+  (let [co @(re-frame/subscribe [::s/selected-cohort])]
+    (if (and (:user? co) (not (:exp co))) 
+      [:h4 [:i {:style {:width "22px" :margin-left "5px"} :class "zmdi zmdi-alert-triangle"}]
+       "Expression data is not available."]
+      (case panel-id
+        :risk-panel [risk-panel]
+        :cluster-panel
+        (let [gs @(re-frame/subscribe [::s/selected-geneset])]
+          (if (> (count (:genes gs)) 1)
+            [cluster-panel]
+            [:h4 [:i {:style {:width "22px" :margin-left "5px"} :class "zmdi zmdi-alert-triangle"}]
+             "At least more than 2 genes are required."]))
+        [:div]))))
 
 (defn- navs [active-panel]
   [re-com/h-box
@@ -1118,8 +1122,10 @@
           :on-select #(when % (re-frame/dispatch [::events/set-active-panel (keyword %)]))}
      [NavItem {:event-key "risk-panel"}
       [:span {:style {:font-size "16px"}} "Risk Scores"
-       (let [showing? (reagent/atom false)
-             disabled? (not= @active-panel :risk-panel)]
+       (let [cohort @(re-frame/subscribe [::s/selected-cohort])
+             showing? (reagent/atom false)
+             disabled? (or (not= @active-panel :risk-panel)
+                           (and (:user? cohort) (not (:exp cohort))))]
          [export-popover [export-button disabled? :showing? showing?]
           :showing? showing?
           :save-all
@@ -1129,7 +1135,7 @@
                   pats (->> div vals (apply concat) set)
                   genes @risk-all-genes
                   exprs (js->clj @risk-all-exps)
-                  clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
+                  clinicals @(re-frame/subscribe [::s/clinical-data cohort])
                   cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id" "class") keys sort))
                   fields (concat [:class :median]
                                  (when @risk-pi-scores [:pi])
@@ -1181,8 +1187,10 @@
               (save-as-text csv "expr_signatrue_groups.tsv")))])]]
      [NavItem {:event-key "cluster-panel"}
       [:span {:style {:font-size "16px"}} "Hierarchical Clsutering"
-       (let [showing? (reagent/atom false)
-             disabled? (not= @active-panel :cluster-panel)]
+       (let [cohort @(re-frame/subscribe [::s/selected-cohort])
+             showing? (reagent/atom false)
+             disabled? (or (not= @active-panel :cluster-panel)
+                           (and (:user? cohort) (not (:exp cohort))))]
          [export-popover [export-button disabled? :showing? showing?]
           :showing? showing?
           :save-all
@@ -1208,7 +1216,7 @@
                                                     pnames (%2 "features")))
                                     %1)
                                  [] (vals (get-in dataset ["data" "nodes"]))))
-                  clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
+                  clinicals @(re-frame/subscribe [::s/clinical-data cohort])
                   cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id" "class") keys sort))
                   fields (concat [:class] genes cnames)
                   data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
