@@ -283,17 +283,17 @@
                   alters (get-in landscape ["data" "mutation_list"])
                   clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
                   cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id") keys sort))
-                  fields (concat [:group] genes cnames)
+                  fields (concat [:stratification] genes cnames)
                   data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
                             (reduce (fn [m p]
                                       (assoc m p (apply array-map
                                                         (concat [:participant_id p]
                                                                 (reduce #(conj %1 %2 nil) [] fields)))))
                                     (sorted-map) pats)
-                            ; Stratification result -> :group
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "G1")) % (:enabled div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "G2")) % (:disabled div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "O")) % (:others div)))
+                            ; Stratification result -> :stratification
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "M1")) % (:enabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "M2")) % (:disabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "WT")) % (:others div)))
                             ; Mutation status on each genes
                             (#(reduce (fn [d a]
                                         (let [pid (a "participant_id")]
@@ -318,7 +318,7 @@
                               (reduce #(conj %1 [%2 "G2"]) [] (:disabled div))
                               (reduce #(conj %1 [%2 "O"]) [] (:others div)))
                             (sort-by first)
-                            (cons [:participant_id :group]))
+                            (cons [:participant_id :stratification]))
                   csv (.unparse js/Papa (clj->js data)
                                 #js {:header true :delimiter "\t"})]
               (save-as-text csv "alteration_groups.tsv")))])]]]
@@ -362,7 +362,32 @@
                  " @ "
                  (if-let [link (:link co)]
                    [:a {:href link :target "_blank"} (:name co)]
-                   (:name co))])]]])
+                   (:name co))
+                 [:label {:for "upload-clinical"}
+                  [:input.hidden
+                   {:type "file"
+                    :id "upload-clinical"
+                    :accept "*.csv"
+                    :on-change
+                    #(let [target (.-currentTarget %)
+                           file (-> target .-files (aget 0))]
+                       (set! (.-value target) "")
+                       (js/Papa.parse
+                         file
+                         #js {:header true
+                              :dynamicTyping true
+                              :skipEmptyLines "greedy"
+                              :complete
+                              (fn [result]
+                                (let [data (.-data result)]
+                                  (re-frame/dispatch-sync [::e/add-clinical-data co data]))
+                                (re-frame/dispatch [::events/on-cohort-deleted (:id co)]))}))}]
+                  [re-com/md-icon-button
+                   :md-icon-name "zmdi-collection-plus"
+                   :style {:margin-left "5px"}
+                   :size :smaller
+                   ;:mouse-over-row? true
+                   :tooltip "Add more clinical informaton"]]])]]])
 
 (defn main-panel []
   (let [active-panel-id (re-frame/subscribe [::subs/active-panel])]

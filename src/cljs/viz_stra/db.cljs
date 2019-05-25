@@ -193,10 +193,10 @@
                        :institute "tcga"
                        :group "The Cancer Genome Atlas (TCGA)"}
                    51 {:id 51
-                        :code "luad"
-                        :name "Lung Adenocarcinoma (SMCLUAD)"
-                        :institute "smc"
-                        :group "Samsung Medical Center, Korea."}})
+                       :code "luad"
+                       :name "Lung Adenocarcinoma (SMCLUAD)"
+                       :institute "smc"
+                       :group "Samsung Medical Center, Korea."}})
    ;; Clinical data for each cohort i.e. {cohort-id {...clinicals...}}
    :clinical-data {}
    :alert-list []
@@ -204,10 +204,9 @@
 
 ;; inspect the contents of app-db
 #_(let [app-db (deref re-frame.db/app-db)]
-    (js/console.log (get-in app-db [:mutation :landscape-data]))
-    (js/console.log (get-in app-db [:expression :signature-data]))
+    ;(js/console.log (get-in app-db [:mutation :landscape-data]))
+    ;(js/console.log (get-in app-db [:expression :signature-data]))
     (js/console.log (get-in app-db [:expression :cluster-data]))
     (js/console.log (get-in app-db [:clinical-data]))
-    ;(-> app-db :cohorts)
-    )
+    #_(-> app-db :cohorts))
 

@@ -326,12 +326,13 @@
         :info [data-desc data-type]]]
       [re-com/h-box
        :children
-       [[:label.semibold {:style {:cursor "pointer"}}
+       [[:label.semibold {:for (str "upload" data-type) :style {:cursor "pointer"}}
          [re-com/h-box
           :gap "10px"
           :children
           [[:input.hidden
             {:type "file"
+             :id (str "upload" data-type)
              :accept "*.csv"
              :on-change #(let [target (.-currentTarget %)
                                f (-> target .-files (aget 0))]
@@ -699,7 +700,7 @@
     (println "Deleting geneset:" (:name gs))
     (when (= curr-gs-id gs-id)
       (re-frame/dispatch [::e/select-a-geneset 1]))
-    (re-frame/dispatch [::e/remove-a-geneset gs])
+    (re-frame/dispatch-sync [::e/remove-a-geneset gs])
     (re-frame/dispatch [::exp-evts/on-geneset-deleted gs-id])
     (re-frame/dispatch [::mut-evts/on-geneset-deleted gs-id])))
 
@@ -710,7 +711,7 @@
     (when (= curr-co-id co-id)
       ; TCGA LUAD as default
       (re-frame/dispatch [::e/select-a-cohort 13]))
-    (re-frame/dispatch [::e/remove-a-cohort co])
+    (re-frame/dispatch-sync [::e/remove-a-cohort co])
     (re-frame/dispatch [::exp-evts/on-cohort-deleted co-id])
     (re-frame/dispatch [::mut-evts/on-cohort-deleted co-id])))
 

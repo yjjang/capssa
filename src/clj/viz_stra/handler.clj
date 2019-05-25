@@ -12,7 +12,7 @@
             [clojure.java.io :as io]
             [clojure.set :as set]
             [clojure.string :as string]
-            [clojure.walk :refer [stringify-keys]]
+            [clojure.walk :refer [stringify-keys keywordize-keys]]
             [clojure.core.async :refer [>!! alts!! chan timeout]]
             [ajax.core :as ajax]
             [clojure.core.matrix :as m]
@@ -184,37 +184,37 @@
 (defn get-exp-signature [req]
   (if-let [uuid (get-in req [:params :uuid])]
     (let [genes (get-in req [:params :genes])
-          clinical-data (get-in req [:params :clinical-data])
-          subtypes (->> clinical-data
-                        (map #(dissoc % :participant_id :os_days :os_status :dfs_days :dfs_status))
-                        (map #(map (fn [[k v]] {:subtype k :value v :column_type "value"}) %))
-                        (apply concat)
-                        (into #{}) vec
-                        (sort-by (juxt :subtype :value)))
-          patients (map stringify-keys clinical-data)
+          surv-data (get-in req [:params :surv-data])
+          patients (map stringify-keys surv-data)
           cohort-data (get-cohort-exp-values-user CGIS {:uuid uuid :genes genes})]
       {:status 0
        :message "OK"
-       :data {:subtype_list subtypes
-              :patient_list patients
+       :data {:subtype_list []
+              :patient_list []
               :gene_list (map (fn [g] {:hugo_symbol g}) genes)
               :cohort_rna_list cohort-data
               :sample_rna_list []}
-       :cox (when (let [c (first clinical-data)]
+       :cox (when (let [c (first surv-data)]
                     (and (contains? c :os_days) (contains? c :os_status)))
               (cox2 cohort-data patients))
-       :fc (when (and (contains? (first clinical-data) :os_days) (> (count genes) 1))
+       :fc (when (and (contains? (first surv-data) :os_days) (> (count genes) 1))
              (farthest-centroid cohort-data patients))})
     (let [genes (get-in req [:params :genes])
           institute (get-in req [:params :institute])
           cancer-type (get-in req [:params :cancer-type])
-          subtypes (get-subtype-values CGIS {:institute institute :cancer-type cancer-type})
-          patients (get-patients-data institute cancer-type)
+          surv-data (get-in req [:params :surv-data])
+          no-clinical-info? (get-in req [:params :no-clinical-info])
+          subtypes (if no-clinical-info?
+                     []
+                     (get-subtype-values CGIS {:institute institute :cancer-type cancer-type}))
+          patients (if no-clinical-info?
+                     (map stringify-keys surv-data)
+                     (get-patients-data institute cancer-type))
           cohort-data (get-cohort-exp-values CGIS {:institute institute :cancer-type cancer-type :genes genes})]
       {:status 0
        :message "OK"
        :data {:subtype_list subtypes
-              :patient_list patients
+              :patient_list (if no-clinical-info? [] patients)
               :gene_list (map (fn [g] {:hugo_symbol g}) genes)
               :cohort_rna_list cohort-data
               :sample_rna_list []}
@@ -223,28 +223,45 @@
        :cox (cox2 cohort-data patients)
        :fc (when (> (count genes) 1) (farthest-centroid cohort-data patients))})))
 
+(defn- ->array-map [clinical-data]
+  (let [clinical-data (stringify-keys clinical-data)
+        cnames (-> clinical-data
+                   first (dissoc "participant_id")
+                   keys sort (#(cons "participant_id" %)))]
+    (->> clinical-data
+         (map #(apply array-map
+                      (reduce (fn [v c] (concat v [(keyword c) (get % c)]))
+                              [] cnames)))
+         (sort-by #(% :participant_id)))))
+
+#_(->array-map [{:participant_id 2 :b 1 :a 2} {:participant_id 1 :b 3 :a 7}])
+
 (defn response-for-exp-clusters [req]
   (let [genes (get-in req [:params :genes])
         response-channel (chan)]
     (ajax/POST "http://localhost:8008"
                {:format :json
                 :response-format :json
-                :params (if-let [uuid (get-in req [:params :uuid])]
-                          (let [clinical-data (get-in req [:params :clinical-data])]
-                            {:genes genes
-                             :uuid uuid
-                             :c-features (if-let [m (first clinical-data)]
+                :params (let [clinical-data (->array-map (get-in req [:params :clinical-data]))
+                              c-features (if-let [m (first clinical-data)]
                                            (-> m (dissoc :participant_id
                                                          :os_days :os_status
                                                          :dfs_days :dfs_status) keys) [])
-                             :c-values (->> clinical-data
+                              c-values (->> clinical-data
                                             (map #(dissoc % :os_days :os_status :dfs_days :dfs_status))
-                                            (map vals))})
-                          (let [institute (get-in req [:params :institute])
-                                cancer-type (get-in req [:params :cancer-type])]
+                                            (map vals))]
+                          (if-let [uuid (get-in req [:params :uuid])]
                             {:genes genes
-                             :institute institute
-                             :cancer-type cancer-type}))
+                             :uuid uuid
+                             :c-features c-features
+                             :c-values c-values}
+                            (let [institute (get-in req [:params :institute])
+                                  cancer-type (get-in req [:params :cancer-type])]
+                              {:genes genes
+                               :institute institute
+                               :cancer-type cancer-type
+                               :c-features c-features
+                               :c-values c-values})))
                 :handler #(>!! response-channel %)})
     (if-let [data (first (alts!! [response-channel (timeout 60000)]))]
       (response data)
@@ -284,7 +301,8 @@
     (let [genes (get-in req [:params :genes])
           institute (get-in req [:params :institute])
           cancer-type (get-in req [:params :cancer-type])
-          muts (get-mutation-list CGIS {:institute institute :cancer-type cancer-type :genes genes})]
+          muts (get-mutation-list CGIS {:institute institute :cancer-type cancer-type :genes genes})
+          no-group-list? (get-in req [:params :no-group-list])]
       {:status 0
        :message "OK"
        :data {:name (str "Comutations in " (string/upper-case institute) " " (string/upper-case cancer-type))
@@ -292,7 +310,7 @@
               :mutation_list muts
               :gene_list (map (fn [g] {:gene g :p 0.0 :q 0.0})
                               (filter (set (map :gene muts)) genes))
-              :group_list (get-group-list institute cancer-type)
+              :group_list (if no-group-list? [] (get-group-list institute cancer-type))
               :patient_list []}})))
 
 (defn validate-gene-symbols [req]

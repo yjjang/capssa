@@ -257,17 +257,15 @@
           (then (fn [res]
                   (let [NaN->nil #(if (number? %) % nil)
                         docs (->> (js->clj res :keywordize-keys true)
-                                  :rows (map :doc)
+                                  :rows
+                                  (map :doc)
                                   (map #(-> (dissoc % :_id :_rev)
                                             (update :os_days NaN->nil)
                                             (update :os_status NaN->nil)
                                             (update :dfs_days NaN->nil)
                                             (update :dfs_status NaN->nil)))
-                                  (map #(->> (dissoc % :participant_id)
-                                             keys sort
-                                             (cons :participant_id)
-                                             (select-keys %)))
-                                  stringify-keys vec)]
+                                  stringify-keys
+                                  vec)]
                     (re-frame/dispatch (conj on-success docs))
                     (.close pouchdb))))
           (catch #(do (on-failure %) (.close pouchdb)))))))
@@ -276,12 +274,43 @@
 #_(re-frame/dispatch [::local-load-clinical-data {:clinical "102:clinical" :id 102}])
 
 (re-frame/reg-event-db
+  ::add-clinical-data
+  (fn [db [_ cohort json]]
+    (let [clinical-dat (get-in db [:clinical-data (:id cohort)])
+          cmap (reduce #(assoc %1 (get %2 "participant_id") (dissoc %2 "participant_id"))
+                       {} (js->clj json))
+          cnames (-> cmap first second keys)
+          data (->> clinical-dat
+                    (map #(merge % (if-let [valm (get cmap (get % "participant_id"))]
+                                     valm
+                                     (reduce (fn [m c] (assoc m c "NA")) {} cnames))))
+                    (map #(->> (dissoc % "participant_id") keys sort
+                               (cons "participant_id")
+                               (select-keys %)))
+                    (vec))]
+      (cond-> db
+        (not (:user? cohort)) (assoc-in [:cohorts (:id cohort) :clinical] "ADDED")
+        true (assoc-in [:clinical-data (:id cohort)] data)))))
+
+#_(let [dat [{:b 1 :a 2} {:b 3 :a 5}]
+        cnames [:a :b]]
+    (->> dat
+         (map #(apply array-map
+                      (reduce (fn [v c] (concat v [c (get % c)]))
+                              [] cnames)))))
+
+(re-frame/reg-event-db
   ::set-clinical-data
   (fn [db [_ cohort-id json]]
     (println "Clinical data loaded" (if (empty? json) "(empty)" ""))
-    (-> db
-        (assoc-in [:clinical-data cohort-id] json)
-        (assoc :data-loading? false))))
+    (let [cnames (-> json first (dissoc "participant_id") keys sort (#(cons "participant_id" %)))
+          json (->> json
+                    (map #(apply array-map (reduce (fn [v c] (concat v [c (get % c)])) [] cnames)))
+                    (sort-by #(% "participant_id")))]
+      ;(js/console.log json)
+      (-> db
+          (assoc-in [:clinical-data cohort-id] json)
+          (assoc :data-loading? false)))))
 
 (re-frame/reg-event-db
   ::set-active-panel

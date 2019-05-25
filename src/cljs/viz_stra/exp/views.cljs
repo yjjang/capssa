@@ -1129,7 +1129,7 @@
                   exprs (js->clj @risk-all-exps)
                   clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
                   cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id") keys sort))
-                  fields (concat [:group :median]
+                  fields (concat [:stratification :median]
                                  (when @risk-pi-scores [:pi])
                                  (when (@(re-frame/subscribe [::subs/signature-data]) "fc") [:fc])
                                  genes cnames)
@@ -1139,10 +1139,10 @@
                                                         (concat [:participant_id p]
                                                                 (reduce #(conj %1 %2 nil) [] fields)))))
                                     (sorted-map) pats)
-                            ; Stratification result -> :group
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "L")) % (:left div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "M")) % (:mid div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "H")) % (:right div)))
+                            ; Stratification result -> :stratification
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "L")) % (:left div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "M")) % (:mid div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "H")) % (:right div)))
                             ; Median scores
                             (#(reduce (fn [d m] (assoc-in d [(:pid m) :median] (:score m))) % @risk-median-scores))
                             ; Prognostic index scores
@@ -1169,11 +1169,11 @@
             (reset! showing? false)
             (let [div @risk-division
                   data (->> (concat 
-                              (reduce #(conj %1 [%2 "L"]) [] (:left div))
-                              (reduce #(conj %1 [%2 "M"]) [] (:mid div))
-                              (reduce #(conj %1 [%2 "H"]) [] (:right div)))
+                              (reduce #(conj %1 [%2 "LO"]) [] (:left div))
+                              (reduce #(conj %1 [%2 "MI"]) [] (:mid div))
+                              (reduce #(conj %1 [%2 "HI"]) [] (:right div)))
                             (sort-by first)
-                            (cons [:participant_id :group]))
+                            (cons [:participant_id :stratification]))
                   csv (.unparse js/Papa (clj->js data)
                                 #js {:header true :delimiter "\t"})]
               (save-as-text csv "expr_signatrue_groups.tsv")))])]]
@@ -1208,16 +1208,16 @@
                                  [] (vals (get-in dataset ["data" "nodes"]))))
                   clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
                   cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id") keys sort))
-                  fields (concat [:group] genes cnames)
+                  fields (concat [:stratification] genes cnames)
                   data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
                             (reduce (fn [m p]
                                       (assoc m p (apply array-map
                                                         (concat [:participant_id p]
                                                                 (reduce #(conj %1 %2 nil) [] fields)))))
                                     (sorted-map) pats)
-                            ; Stratification result -> :group
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "D")) % pats))
-                            (#(reduce (fn [d p] (assoc-in d [p :group] "C")) % cats))
+                            ; Stratification result -> :stratification
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "OT")) % pats))
+                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "CL")) % cats))
                             ; Gene expression values: log2(tpm+1)
                             (#(reduce (fn [d e]
                                         (let [p (e :participant_id)
@@ -1245,7 +1245,7 @@
                               (reduce #(conj %1 [%2 "C"]) [] cats)
                               (reduce #(conj %1 [%2 "D"]) [] (apply (partial disj pats) cats)))
                             (sort-by first)
-                            (cons [:participant_id :group]))
+                            (cons [:participant_id :stratification]))
                   csv (.unparse js/Papa (clj->js data)
                                 #js {:header true :delimiter "\t"})]
               (save-as-text csv "expr_hcluster_groups.tsv")))])]]]
@@ -1289,8 +1289,36 @@
                  " @ "
                  (if-let [link (:link co)]
                    [:a {:href link :target "_blank"} (:name co)]
-                   (:name co))])]]])
-
+                   (:name co))
+                 [:label {:for "upload-clinical"}
+                  [:input.hidden
+                   {:type "file"
+                    :id "upload-clinical"
+                    :accept "*.csv"
+                    :on-change
+                    #(let [target (.-currentTarget %)
+                           file (-> target .-files (aget 0))]
+                       (set! (.-value target) "")
+                       (js/Papa.parse
+                         file
+                         #js {:header true
+                              :dynamicTyping true
+                              :skipEmptyLines "greedy"
+                              :complete
+                              (fn [result]
+                                (let [data (.-data result)]
+                                  (re-frame/dispatch-sync [::e/add-clinical-data co data])
+                                  (re-frame/dispatch [::events/on-clinical-added (:id co)])
+                                  (case @active-panel
+                                    :cluster-panel
+                                    (re-frame/dispatch
+                                      [::events/update-cluster-data (:id gs) (:id co) data]))))}))}]
+                  [re-com/md-icon-button
+                   :md-icon-name "zmdi-collection-plus"
+                   :style {:margin-left "5px"}
+                   :size :smaller
+                   ;:mouse-over-row? true
+                   :tooltip "Add more clinical informaton"]]])]]])
 
 (defn main-panel []
   (let [active-panel (re-frame/subscribe [::subs/active-panel])]
