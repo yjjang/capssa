@@ -273,9 +273,9 @@
 #_(re-frame/dispatch [::local-load-clinical-data {:clinical "101:clinical" :id 101}])
 #_(re-frame/dispatch [::local-load-clinical-data {:clinical "102:clinical" :id 102}])
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::add-clinical-data
-  (fn [db [_ cohort json]]
+  (fn [{:keys [db]} [_ cohort json]]
     (let [clinical-dat (get-in db [:clinical-data (:id cohort)])
           cmap (reduce #(assoc %1 (get %2 "participant_id") (dissoc %2 "participant_id"))
                        {} (js->clj json))
@@ -286,9 +286,9 @@
                                      (reduce (fn [m c] (assoc m c "NA")) {} cnames))))
                     (vec))]
       (println "Clinical data added:" cnames)
-      (cond-> db
-        (not (:user? cohort)) (assoc-in [:cohorts (:id cohort) :clinical] "ADDED")
-        true (assoc-in [:clinical-data (:id cohort)] data)))))
+      {:db (cond-> db
+             (not (:user? cohort)) (assoc-in [:cohorts (:id cohort) :clinical] "ADDED")) 
+       :dispatch [::set-clinical-data (:id cohort) data]})))
 
 (re-frame/reg-event-db
   ::set-clinical-data

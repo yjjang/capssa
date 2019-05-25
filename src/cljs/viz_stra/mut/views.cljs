@@ -11,6 +11,7 @@
             [viz-stra.subs :as s]
             [viz-stra.mut.db :as db]
             [viz-stra.mut.events :as events]
+            [viz-stra.exp.events :as exp-events]
             [viz-stra.mut.subs :as subs]
             [viz-stra.comp :refer [Nav NavItem NavDropdown MenuItem Glyphicon Loader Spinner
                                    modify-geneset-form export-popover export-button]])
@@ -287,18 +288,18 @@
                   genes (mapv #(% "gene") (get-in landscape ["data" "gene_list"]))
                   alters (get-in landscape ["data" "mutation_list"])
                   clinicals @(re-frame/subscribe [::s/clinical-data cohort])
-                  cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id" "class") keys sort))
-                  fields (concat [:class] genes cnames)
+                  cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id" "mclass") keys sort))
+                  fields (concat [:mclass] genes cnames)
                   data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
                             (reduce (fn [m p]
                                       (assoc m p (apply array-map
                                                         (concat [:participant_id p]
                                                                 (reduce #(conj %1 %2 nil) [] fields)))))
                                     (sorted-map) pats)
-                            ; Stratification result -> :class
-                            (#(reduce (fn [d p] (assoc-in d [p :class] "M1")) % (:enabled div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :class] "M2")) % (:disabled div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :class] "WT")) % (:others div)))
+                            ; Stratification result -> :mclass
+                            (#(reduce (fn [d p] (assoc-in d [p :mclass] "M1")) % (:enabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :mclass] "M2")) % (:disabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :mclass] "WT")) % (:others div)))
                             ; Mutation status on each genes
                             (#(reduce (fn [d a]
                                         (let [pid (a "participant_id")]
@@ -323,7 +324,7 @@
                               (reduce #(conj %1 [%2 "M2"]) [] (:disabled div))
                               (reduce #(conj %1 [%2 "WT"]) [] (:others div)))
                             (sort-by first)
-                            (cons [:participant_id :class]))
+                            (cons [:participant_id :mclass]))
                   csv (.unparse js/Papa (clj->js data)
                                 #js {:header true :delimiter "\t"})]
               (save-as-text csv "alteration_groups.tsv")))])]]]
@@ -386,7 +387,8 @@
                               (fn [result]
                                 (let [data (.-data result)]
                                   (re-frame/dispatch-sync [::e/add-clinical-data co data]))
-                                (re-frame/dispatch [::events/on-cohort-deleted (:id co)]))}))}]
+                                (re-frame/dispatch [::events/on-cohort-deleted (:id co)])
+                                (re-frame/dispatch [::exp-events/on-cohort-deleted (:id co)]))}))}]
                   [re-com/md-icon-button
                    :md-icon-name "zmdi-collection-plus"
                    :style {:margin-left "5px"}

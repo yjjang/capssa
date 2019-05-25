@@ -24,12 +24,6 @@
                   % (keys (get-in % [:expression :signature-data])))))))
 
 (re-frame/reg-event-db
-  ::on-clinical-added
-  (re-frame/path [:expression :signature-data])
-  (fn [signature-data [_ cohort-id]]
-    (reduce #(update %1 %2 dissoc cohort-id) signature-data (keys signature-data))))
-
-(re-frame/reg-event-db
   ::initialize-db
   (fn [db _]
     (merge db exp-db/default-db)))
@@ -89,30 +83,30 @@
       (if (and (not (:user? cohort)) (nil? clinical-data))
         (merge effects {:dispatch [::e/http-load-clinical-data cohort]}) effects))))
 
-(re-frame/reg-event-db
-  ::update-cluster-data
-  (re-frame/path [:expression :cluster-data])
-  (fn [cluster-data [_ geneset-id cohort-id cdata]]
-    (let [cluster-dat (get-in cluster-data [geneset-id cohort-id])
-          cmap (reduce #(assoc %1 (get %2 "participant_id") (dissoc %2 "participant_id"))
-                       {} (js->clj cdata))
-          cnames (-> cmap first second keys)
-          pids (get-in cluster-dat ["data" "feature_names"])
-          values (mapv (fn [c]
-                         (mapv
-                           (fn [p] (if-let [v (get (get cmap p) c)] v "NA"))
-                           pids))
-                       cnames)
-          data (into (sorted-map)
-                     (zipmap 
-                       (concat (get-in cluster-dat ["column_metadata" "feature_names"]) cnames)
-                       (concat (get-in cluster-dat ["column_metadata" "features"]) values)))
-          json (-> cluster-dat
-                   (assoc-in ["column_metadata" "feature_names"] (keys data))
-                   (assoc-in ["column_metadata" "features"] (vals data)))]
-      (println "Cluster data updated for added clinical information.")
-      ;(js/console.log json)
-      (assoc-in cluster-data [geneset-id cohort-id] json))))
+#_(re-frame/reg-event-db
+    ::update-cluster-data
+    (re-frame/path [:expression :cluster-data])
+    (fn [cluster-data [_ geneset-id cohort-id cdata]]
+      (let [cluster-dat (get-in cluster-data [geneset-id cohort-id])
+            cmap (reduce #(assoc %1 (get %2 "participant_id") (dissoc %2 "participant_id"))
+                         {} (js->clj cdata))
+            cnames (-> cmap first second keys)
+            pids (get-in cluster-dat ["data" "feature_names"])
+            values (mapv (fn [c]
+                           (mapv
+                             (fn [p] (if-let [v (get (get cmap p) c)] v "NA"))
+                             pids))
+                         cnames)
+            data (into (sorted-map)
+                       (zipmap 
+                         (concat (get-in cluster-dat ["column_metadata" "feature_names"]) cnames)
+                         (concat (get-in cluster-dat ["column_metadata" "features"]) values)))
+            json (-> cluster-dat
+                     (assoc-in ["column_metadata" "feature_names"] (keys data))
+                     (assoc-in ["column_metadata" "features"] (vals data)))]
+        (println "Cluster data updated for added clinical information.")
+        ;(js/console.log json)
+        (assoc-in cluster-data [geneset-id cohort-id] json))))
 
 (re-frame/reg-event-fx
   ::http-load-signature-data
