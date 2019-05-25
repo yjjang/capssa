@@ -282,18 +282,18 @@
                   genes (mapv #(% "gene") (get-in landscape ["data" "gene_list"]))
                   alters (get-in landscape ["data" "mutation_list"])
                   clinicals @(re-frame/subscribe [::s/clinical-data @(re-frame/subscribe [::s/selected-cohort])])
-                  cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id") keys sort))
-                  fields (concat [:stratification] genes cnames)
+                  cnames (when-let [c (first clinicals)] (-> (dissoc c "participant_id" "class") keys sort))
+                  fields (concat [:class] genes cnames)
                   data (->> ; Initialize the result map as {"pid" {:participant_id "pid" :field "value" ...}}
                             (reduce (fn [m p]
                                       (assoc m p (apply array-map
                                                         (concat [:participant_id p]
                                                                 (reduce #(conj %1 %2 nil) [] fields)))))
                                     (sorted-map) pats)
-                            ; Stratification result -> :stratification
-                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "M1")) % (:enabled div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "M2")) % (:disabled div)))
-                            (#(reduce (fn [d p] (assoc-in d [p :stratification] "WT")) % (:others div)))
+                            ; Stratification result -> :class
+                            (#(reduce (fn [d p] (assoc-in d [p :class] "M1")) % (:enabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :class] "M2")) % (:disabled div)))
+                            (#(reduce (fn [d p] (assoc-in d [p :class] "WT")) % (:others div)))
                             ; Mutation status on each genes
                             (#(reduce (fn [d a]
                                         (let [pid (a "participant_id")]
@@ -314,11 +314,11 @@
             (reset! showing? false)
             (let [div @landscape-division
                   data (->> (concat 
-                              (reduce #(conj %1 [%2 "G1"]) [] (:enabled div))
-                              (reduce #(conj %1 [%2 "G2"]) [] (:disabled div))
-                              (reduce #(conj %1 [%2 "O"]) [] (:others div)))
+                              (reduce #(conj %1 [%2 "M1"]) [] (:enabled div))
+                              (reduce #(conj %1 [%2 "M2"]) [] (:disabled div))
+                              (reduce #(conj %1 [%2 "WT"]) [] (:others div)))
                             (sort-by first)
-                            (cons [:participant_id :stratification]))
+                            (cons [:participant_id :class]))
                   csv (.unparse js/Papa (clj->js data)
                                 #js {:header true :delimiter "\t"})]
               (save-as-text csv "alteration_groups.tsv")))])]]]

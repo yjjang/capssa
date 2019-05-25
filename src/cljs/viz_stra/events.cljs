@@ -225,7 +225,7 @@
 (re-frame/reg-event-fx
   ::http-load-clinical-data
   (fn [{:keys [db]} [_ cohort]]
-    (println "Requesting clinical data for" (:name cohort) "...")
+    (println "(http) Requesting clinical data for" (:name cohort) "...")
     {:db (assoc db :data-loading? true)
      :http-xhrio {:method :post
                   :uri "/clinical"
@@ -239,7 +239,7 @@
 (re-frame/reg-event-fx
   ::local-load-clinical-data
   (fn [{:keys [db]} [_ cohort]]
-    (println "Requesting clinical data for" (:name cohort) "...")
+    (println "(local) Requesting local clinical data for" (:name cohort) "...")
     (if-let [clinical-store (:clinical cohort)]
       {:db (assoc db :data-loading? true)
        :pouchdb-load {:clinical-store clinical-store
@@ -288,16 +288,10 @@
                                (cons "participant_id")
                                (select-keys %)))
                     (vec))]
+      (println "Clinical data added:" cnames)
       (cond-> db
         (not (:user? cohort)) (assoc-in [:cohorts (:id cohort) :clinical] "ADDED")
         true (assoc-in [:clinical-data (:id cohort)] data)))))
-
-#_(let [dat [{:b 1 :a 2} {:b 3 :a 5}]
-        cnames [:a :b]]
-    (->> dat
-         (map #(apply array-map
-                      (reduce (fn [v c] (concat v [c (get % c)]))
-                              [] cnames)))))
 
 (re-frame/reg-event-db
   ::set-clinical-data

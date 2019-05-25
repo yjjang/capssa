@@ -76,13 +76,18 @@
                   :clinical-data (deref (re-frame/subscribe [::s/clinical-data {:id 101}]))}
          :handler #(js/console.log %)})
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::set-cluster-data
-  (fn [db [_ geneset-id cohort-id json]]
+  (fn [{:keys [db]} [_ geneset-id cohort-id json]]
     (println "Cluster data loaded.")
-    (-> db
-        (assoc-in [:expression :cluster-data geneset-id cohort-id] json)
-        (assoc :data-loading? false))))
+    (let [clinical-data (get-in db [:clinical-data cohort-id])
+          cohort (get-in db [:cohorts cohort-id])
+          effects {:db (-> db
+                           (assoc-in [:expression :cluster-data geneset-id cohort-id] json)
+                           (assoc :data-loading? false))}]
+      ; Initial loading for registered cohorts e.g. tcga 
+      (if (and (not (:user? cohort)) (nil? clinical-data))
+        (merge effects {:dispatch [::e/http-load-clinical-data cohort]}) effects))))
 
 (re-frame/reg-event-db
   ::update-cluster-data
@@ -170,7 +175,8 @@
                          (-> db
                              (assoc-in [:expression :signature-data geneset-id cohort-id] json)
                              (assoc :data-loading? false)))}]
-      (if (and (not (:user? cohort)) (nil? clinical-data)) ; Initial loading for registered cohorts e.g. tcga
+      ; Initial loading for registered cohorts e.g. tcga 
+      (if (and (not (:user? cohort)) (nil? clinical-data))
         (merge effects {:dispatch [::e/http-load-clinical-data cohort]})
         effects))))
 
