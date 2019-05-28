@@ -686,7 +686,7 @@
       :popover [re-com/popover-content-wrapper
                 :width "350px"
                 :title [:strong "Select a cohort of interest"]
-                :body [:div "Select a TCGA cancer cohort of interest. Then, click the '"
+                :body [:div "Select a cancer cohort of interest. Then, click the '"
                        [:strong "Next"] "' button to proceed to the sections of analyses."
                        [re-com/make-tour-nav eg-steps]]]]
      [Nav {:pull-right true :active-key @active-panel :bs-style "pills"}

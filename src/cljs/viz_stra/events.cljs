@@ -40,7 +40,7 @@
 (def genesets->local-store
   (re-frame/after
     #(let [gss (into (sorted-map)
-                     (filter (fn [[_ gene]] (:user? gene)) %))]
+                     (filter (fn [[_ gs]] (:user? gs)) (:genesets %)))]
        (.setItem js/localStorage gss-storage-key (str gss)))))
 
 (def cohorts->local-store
@@ -48,50 +48,46 @@
     #(let [cohorts (into (sorted-map) (filter (fn [[_ cohort]] (:user? cohort)) (:cohorts %)))]
        (.setItem js/localStorage cos-storage-key (str cohorts)))))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::add-a-geneset
-  [(re-frame/path :genesets)
-   genesets->local-store]
-  (fn [genesets [_ gs]]
-    (let [id (-> genesets keys last (#(inc (if (> % 100) % 100))))
+  [genesets->local-store]
+  (fn [{:keys [db]} [_ gs]]
+    (let [id (-> (:genesets db) keys last (#(inc (if (> % 100) % 100))))
           geneset (-> gs (assoc :id id) (assoc :user? true))]
-      (re-frame/dispatch
-        [::add-alert {:alert-type (if (empty? (:unknowns gs)) :info :warning)
-                      :heading "Gene set added."
-                      :body [:div
-                             [:p [:strong (:name gs)] " (" (count (:genes gs)) " genes)"]
-                             (when-not (empty? (:unknowns gs))
-                               [:div
-                                [:p "Invalid gene symbols were ignored:"]
-                                [:ul (for [u (:unknowns gs)] ^{:key u} [:li u])]])]}])
-      (assoc genesets id geneset))))
+      {:db (-> db
+               (assoc-in [:genesets id] geneset)
+               (assoc :selected-geneset-id id))
+       :dispatch [::add-alert {:alert-type (if (empty? (:unknowns gs)) :info :warning)
+                               :heading "Gene set added."
+                               :body [:div
+                                      [:p [:strong (:name gs)] " (" (count (:genes gs)) " genes)"]
+                                      (when-not (empty? (:unknowns gs))
+                                        [:div
+                                         [:p "Invalid gene symbols were ignored:"]
+                                         [:ul (for [u (:unknowns gs)] ^{:key u} [:li u])]])]}]})))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::modify-a-geneset
-  [(re-frame/path :genesets)
-   genesets->local-store]
-  (fn [genesets [_ gs]]
-    (re-frame/dispatch
-      [::add-alert {:alert-type (if (empty? (:unknowns gs)) :info :warning)
-                    :heading "Gene set modified."
-                    :body [:div
-                           [:p [:strong (:name gs)] " (" (count (:genes gs)) " genes)"]
-                           (when-not (empty? (:unknowns gs))
-                             [:div
-                              [:p "Invalid gene symbols were ignored:"]
-                              [:ul (for [u (:unknowns gs)] ^{:key u} [:li u])]])]}])
-    (assoc genesets (:id gs) gs)))
+  [genesets->local-store]
+  (fn [{:keys [db]}[_ gs]]
+    {:db (assoc-in db [:genesets (:id gs)] gs)
+     :dispatch [::add-alert {:alert-type (if (empty? (:unknowns gs)) :info :warning)
+                             :heading "Gene set modified."
+                             :body [:div
+                                    [:p [:strong (:name gs)] " (" (count (:genes gs)) " genes)"]
+                                    (when-not (empty? (:unknowns gs))
+                                      [:div
+                                       [:p "Invalid gene symbols were ignored:"]
+                                       [:ul (for [u (:unknowns gs)] ^{:key u} [:li u])]])]}]}))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::remove-a-geneset
-  [(re-frame/path :genesets)
-   genesets->local-store]
-  (fn [genesets [_ gs]]
-    (re-frame/dispatch
-      [::add-alert {:alert-type :warning
-                    :heading "Gene set removed."
-                    :body (:name gs)}])
-    (dissoc genesets (:id gs))))
+  [genesets->local-store]
+  (fn [{:keys [db]} [_ gs]]
+    {:db (update db :genesets dissoc (:id gs))
+     :dispatch [::add-alert {:alert-type :warning
+                             :heading "Gene set removed."
+                             :body (:name gs)}]}))
 
 #_(re-frame/dispatch
     [::add-a-geneset {:name "Test Genes"
@@ -103,6 +99,7 @@
   ::select-a-geneset
   (fn [db [_ geneset-id]]
     (assoc db :selected-geneset-id geneset-id)))
+
 
 (re-frame/reg-event-fx
   ::add-a-cohort

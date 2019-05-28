@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS VS_COHORT_SUBTYPE_TB;
 
 CREATE TABLE VS_COHORT_SUBTYPE_TB (
 	source varchar(10) NOT NULL DEFAULT 'NA',
-	cancer_type varchar(4) NOT NULL DEFAULT 'NA',
+	cancer_type varchar(6) NOT NULL DEFAULT 'NA',
 	column_type varchar(10) NOT NULL DEFAULT 'value',
 	subtype varchar(64) NOT NULL DEFAULT 'NA',
 	value varchar(50) DEFAULT NULL,

@@ -365,6 +365,7 @@
                  (if-let [link (:link gs)]
                    [:a {:href link :target "_blank"} (:name gs)]
                    (:name gs))
+                 " (" (count (:genes gs)) ")"
                  " @ "
                  (if-let [link (:link co)]
                    [:a {:href link :target "_blank"} (:name co)]

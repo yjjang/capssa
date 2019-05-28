@@ -192,6 +192,12 @@
                        :link "https://portal.gdc.cancer.gov/projects/TCGA-UCEC"
                        :institute "tcga"
                        :group "The Cancer Genome Atlas (TCGA)"}
+                   27 {:id 27 
+                       :code "pancan"
+                       :name "TCGA Pan-Cancer (PANCAN)"
+                       :link "https://xenabrowser.net/datapages/?cohort=TCGA%20Pan-Cancer%20(PANCAN)"
+                       :institute "tcga"
+                       :group "The Cancer Genome Atlas (TCGA)"}
                    51 {:id 51
                        :code "luad"
                        :name "Lung Adenocarcinoma (SMCLUAD)"
