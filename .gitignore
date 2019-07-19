@@ -3,7 +3,6 @@
 /*-init.clj
 /resources/public/js/compiled
 out
-/src/clj/viz_stra/db.clj
 
 # Vim swap files
 .*.sw*
@@ -16,10 +15,12 @@ pom.xml
 pom.xml.asc
 *.jar
 *.class
+*.log
 /lib/
 /classes/
 /target/
 /checkouts/
+.lein-env
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/

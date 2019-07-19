@@ -18,7 +18,8 @@
             [clojure.core.matrix :as m]
             [incanter.core :refer [log2]]
             [incanter.stats :refer [mean correlation]]
-            [clojure.java.jdbc :as jdbc]))
+            [clojure.java.jdbc :as jdbc]
+            [config.core :refer [env]]))
 
 (defn echo-params [req]
   (let [params (:params req)]
@@ -238,8 +239,9 @@
 
 (defn response-for-exp-clusters [req]
   (let [genes (get-in req [:params :genes])
-        response-channel (chan)]
-    (ajax/POST "http://localhost:8008"
+        response-channel (chan)
+        port (env :cluster-port)]
+    (ajax/POST (str "http://localhost:" port)
                {:format :json
                 :response-format :json
                 :params (let [clinical-data (->array-map (get-in req [:params :clinical-data]))

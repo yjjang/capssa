@@ -6,8 +6,9 @@
   (:gen-class))
 
 (defn -main [& args]
-  (let [port (Integer/parseInt (or (env :port) "8080"))]
+  (let [port (Integer/parseInt (or (env :port) "8080"))
+        header-size (Integer/parseInt (or (env :header-size) "64000000"))]
     (println "Starting CaPSSA server on port" port "...")
     (run-jetty
       (wrap-with-logger handler)
-      {:port port :join? false :request-header-size 64000000})))
+      {:port port :join? false :request-header-size header-size})))
